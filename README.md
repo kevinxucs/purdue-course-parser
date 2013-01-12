@@ -10,7 +10,7 @@ You will Java (>= 1.6) and maven to build.
 
 To build, you wound run:
 
-	mvn build
+	mvn compile
 
 ## Legal
 
