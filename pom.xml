@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.kevxu.purdueassist</groupId>
 	<artifactId>purdue-course-parser</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.2-SNAPSHOT</version>
 	<name>Purdue Course Parser</name>
 	<description>A Java parser that gets seat information, class name, time, location, etc. from myPurdue website.</description>
 	<properties>
