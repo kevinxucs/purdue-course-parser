@@ -16,7 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-public class BasicHttpClientAsync {
+public class BasicHttpClientAsync implements HttpClientAsync {
 
 	private String mUrl;
 	private HttpMethod mMethod;
@@ -33,10 +33,6 @@ public class BasicHttpClientAsync {
 
 		public void onRequestFinished(IOException e);
 	}
-
-	public enum HttpMethod {
-		GET, POST
-	};
 
 	public BasicHttpClientAsync(String url, HttpMethod httpMethod,
 			OnRequestFinishedListener onRequestFinishedListener) {
@@ -102,6 +98,7 @@ public class BasicHttpClientAsync {
 		}
 	}
 
+	@Override
 	public void getResponse() {
 		mExecutor.execute(mFutureTask);
 	}

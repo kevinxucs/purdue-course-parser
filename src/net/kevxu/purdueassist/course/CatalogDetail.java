@@ -17,8 +17,8 @@ import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.course.shared.Predefined.Subject;
 import net.kevxu.purdueassist.course.shared.Predefined.Term;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
+import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
 import org.apache.http.Header;

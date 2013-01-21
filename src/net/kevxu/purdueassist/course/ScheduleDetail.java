@@ -21,8 +21,8 @@ import net.kevxu.purdueassist.course.shared.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
+import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
 import org.apache.commons.lang.StringEscapeUtils;
