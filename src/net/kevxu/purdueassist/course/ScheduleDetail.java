@@ -235,8 +235,6 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	 */
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
 			throws HttpParseException, ResultNotMatchException {
-		//mLogger.log(Level.INFO, basicInfo);
-		
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length == 4) {
 			entry.setName(basicInfoes[0]);
