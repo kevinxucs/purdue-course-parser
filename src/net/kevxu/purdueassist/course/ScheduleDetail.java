@@ -144,9 +144,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		} catch (CourseNotFoundException e) {
 			mListener.onScheduleDetailFinished(e);
 		} catch (ResultNotMatchException e) {
-			mListener
-					.onScheduleDetailFinished(
-							new HttpParseException(e.getMessage()));
+			mListener.onScheduleDetailFinished(new HttpParseException(e
+					.getMessage()));
 		}
 	}
 
