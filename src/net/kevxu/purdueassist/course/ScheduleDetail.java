@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
@@ -59,7 +60,9 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	public int crn;
 
 	private OnScheduleDetailFinishedListener mListener;
-	private BasicHttpClientAsync httpClient;
+	private BasicHttpClientAsync mHttpClient;
+	
+	private static final Logger mLogger = Logger.getLogger(ScheduleDetail.class.getName());
 
 	/**
 	 * Callback methods you have to implement.
@@ -108,10 +111,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
 		parameters.add(new BasicNameValuePair("crn", Integer.toString(crn)));
 
-		httpClient = new BasicHttpClientAsync(URL_HEAD, HttpMethod.POST, this);
+		mHttpClient = new BasicHttpClientAsync(URL_HEAD, HttpMethod.POST, this);
 		try {
-			httpClient.setParameters(parameters);
-			httpClient.getResponse();
+			mHttpClient.setParameters(parameters);
+			mHttpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
 		}
@@ -369,11 +372,11 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		if (prerequisitesString != null) {
-			entry.setPrerequisites(prerequisitesString.trim());
+			entry.setPrerequisites(prerequisitesString);
 		}
 
 		if (restrictionsString != null) {
-			entry.setRestrictions(restrictionsString.trim());
+			entry.setRestrictions(restrictionsString);
 		}
 	}
 
@@ -466,7 +469,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		private void setName(String name) {
-			this.name = StringEscapeUtils.unescapeHtml(name);
+			this.name = StringEscapeUtils.unescapeHtml(name).trim();
 		}
 
 		private void setCrn(int crn) {
@@ -482,7 +485,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		private void setSection(String section) {
-			this.section = StringEscapeUtils.unescapeHtml(section);
+			this.section = StringEscapeUtils.unescapeHtml(section).trim();
 		}
 
 		private void setTerm(Term term) {
@@ -494,7 +497,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		private void setCampus(String campus) {
-			this.campus = StringEscapeUtils.unescapeHtml(campus);
+			this.campus = StringEscapeUtils.unescapeHtml(campus).trim();
 		}
 
 		private void setType(Type type) {
@@ -514,11 +517,11 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		private void setPrerequisites(String prerequisites) {
-			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites);
+			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites).trim();
 		}
 
 		private void setRestrictions(String restrictions) {
-			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions);
+			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions).trim();
 		}
 
 		@Override
