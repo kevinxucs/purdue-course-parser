@@ -16,6 +16,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+/**
+ * Simplest implementation of HttpClientAsync.
+ * 
+ * @author Kaiwen Xu (kevin)
+ */
 public class BasicHttpClientAsync implements HttpClientAsync {
 
 	private String mUrl;
