@@ -25,6 +25,7 @@ import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
 import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -43,7 +44,7 @@ import org.jsoup.select.Elements;
  * <p>
  * Input: crn term (optional)
  * <p>
- * Output: name crn subject cnbr section term level campus type credits seats
+ * Output: name crn subject cnbr section term levels campus type credits seats
  * waitlist seats prerequisites restrictions
  * 
  * @author Kaiwen Xu (kevin)
@@ -168,7 +169,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				Element tableBasicInfoElement = tableElement
 						.getElementsByClass("ddlabel").first();
 				if (tableBasicInfoElement != null) {
-					entry.setBasicInfo(tableBasicInfoElement.text());
+					setBasicInfo(entry, tableBasicInfoElement.text());
 				} else {
 					throw new HttpParseException();
 				}
@@ -188,10 +189,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 						Elements tableSeatDetailEntryElements = tableSeatDetailElement
 								.getElementsByTag("tbody").first().children();
 						if (tableSeatDetailEntryElements.size() == 3) {
-							entry.setSeats(tableSeatDetailEntryElements.get(1)
+							setSeats(entry, tableSeatDetailEntryElements.get(1)
 									.text());
-							entry.setWaitlistSeats(tableSeatDetailEntryElements
-									.get(2).text());
+							setWaitlistSeats(entry,
+									tableSeatDetailEntryElements.get(2).text());
 						} else {
 							throw new HttpParseException();
 						}
@@ -202,7 +203,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					tableSeatDetailElements.remove();
 
 					// remaining information
-					entry.setRemainingInfo(tableDetailedInfoElement.html());
+					setRemainingInfo(entry, tableDetailedInfoElement.html());
 
 				} else {
 					throw new HttpParseException();
@@ -214,6 +215,166 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		return entry;
+	}
+
+	/**
+	 * Set course name, crn, subject - cnbr and section number based on the
+	 * string passed to this method.
+	 * 
+	 * @param entry
+	 *            ScheduleDetailEntry to be set.
+	 * @param basicInfo
+	 *            String contains course name, crn, subject - cnbr and section
+	 *            number.
+	 * @throws HttpParseException
+	 * @throws ResultNotMatchException
+	 */
+	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
+			throws HttpParseException, ResultNotMatchException {
+		String[] basicInfoes = basicInfo.split(" - ");
+		if (basicInfoes.length == 4) {
+			entry.setName(basicInfoes[0]);
+			entry.setCrn(Integer.valueOf(basicInfoes[1]));
+			if (entry.getCrn() != entry.getSearchCrn())
+				throw new ResultNotMatchException(
+						"Result not match with search option.");
+			entry.setSection(basicInfoes[3]);
+
+			String[] subjectCnbr = basicInfoes[2].split(" ");
+			if (subjectCnbr.length == 2) {
+				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
+				entry.setCnbr(Integer.valueOf(subjectCnbr[1]));
+			} else {
+				throw new HttpParseException();
+			}
+		} else {
+			throw new HttpParseException();
+		}
+	}
+
+	/**
+	 * Set seats information, which contains capacity, actual and remaining.
+	 * 
+	 * @param entry
+	 *            ScheduleDetailEntry to be set.
+	 * @param seatsInfo
+	 *            String contains capacity, actual and remaining.
+	 * @throws HttpParseException
+	 */
+	private void setSeats(ScheduleDetailEntry entry, String seatsInfo)
+			throws HttpParseException {
+		String[] seatsInfoes = seatsInfo.split(" ");
+		if (seatsInfoes.length == 4) {
+			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer
+					.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
+		} else {
+			throw new HttpParseException();
+		}
+	}
+
+	/**
+	 * Same as setSeats().
+	 * 
+	 * @param entry
+	 *            ScheduleDetailEntry to be set.
+	 * @param waitlistSeatsInfo
+	 * @throws HttpParseException
+	 */
+	private void setWaitlistSeats(ScheduleDetailEntry entry,
+			String waitlistSeatsInfo) throws HttpParseException {
+		String[] waitlistSeatsInfoes = waitlistSeatsInfo.split(" ");
+		if (waitlistSeatsInfoes.length == 5) {
+			entry.setWaitlistSeats(new Seats(Integer
+					.valueOf(waitlistSeatsInfoes[2]), Integer
+					.valueOf(waitlistSeatsInfoes[3]), Integer
+					.valueOf(waitlistSeatsInfoes[4])));
+		} else {
+			throw new HttpParseException();
+		}
+	}
+
+	/**
+	 * Set term, levels, campus and etc. based on the html passed to this
+	 * method.
+	 * 
+	 * @param entry
+	 *            ScheduleDetailEntry to be set.
+	 * @param remainingInfoHtml
+	 *            Html String contains information about the term, levels,
+	 *            campus.
+	 */
+	private void setRemainingInfo(ScheduleDetailEntry entry,
+			String remainingInfoHtml) {
+		final int NOT_RECORD = 0;
+		final int PREREQUISTES = 1;
+		final int RESTRICTIONS = 2;
+
+		int recordType = NOT_RECORD;
+
+		String prerequisitesString = null;
+		String restrictionsString = null;
+
+		String[] remainingInfoes = remainingInfoHtml.split("<br />");
+		for (String info : remainingInfoes) {
+			info = info.trim();
+
+			if (recordType == PREREQUISTES) {
+				if (prerequisitesString == null) {
+					prerequisitesString = "";
+				}
+				prerequisitesString += " " + info.replaceAll("\\<[^>]*>", "");
+			}
+
+			if (recordType == RESTRICTIONS) {
+				if (restrictionsString == null) {
+					restrictionsString = "";
+				}
+				restrictionsString += " " + info.replace("&nbsp;", "").trim();
+			}
+
+			if (info.contains("Associated Term: ")) {
+				String termString = info.substring(info.indexOf("</span>")
+						+ "</span>".length());
+				entry.setTerm(Term.valueOf(termString.replace(" ", "")
+						.toUpperCase()));
+				continue;
+			} else if (info.contains("Levels: ")) {
+				String levelsString = info.substring(info.indexOf("</span>")
+						+ "</span>".length());
+				entry.setLevels(new ArrayList<String>(Arrays
+						.asList(levelsString.split(", "))));
+				continue;
+			} else if (info.contains("Campus")) {
+				String campusString = info.substring(0, info.indexOf("Campus"))
+						.trim();
+				entry.setCampus(campusString);
+				continue;
+			} else if (info.contains("Schedule Type")) {
+				String typeString = info.substring(0,
+						info.indexOf("Schedule Type")).trim();
+				entry.setType(Type.valueOf(typeString.replace(" ", "")));
+				continue;
+			} else if (info.contains("Credits")) {
+				String creditsString = info.substring(0,
+						info.indexOf("Credits")).trim();
+				entry.setCredits(Double.valueOf(creditsString));
+				continue;
+			} else if (info.contains("Prerequisites:")) {
+				recordType = PREREQUISTES;
+				continue;
+			} else if (info.contains("Restrictions:")) {
+				recordType = RESTRICTIONS;
+				continue;
+			}
+		}
+
+		if (prerequisitesString != null) {
+			entry.setPrerequisites(prerequisitesString.trim());
+		}
+
+		if (restrictionsString != null) {
+			entry.setRestrictions(restrictionsString.trim());
+		}
 	}
 
 	/**
@@ -243,6 +404,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		private Seats waitlistSeats;
 		private String prerequisites;
 		private String restrictions;
+
+		private int getSearchCrn() {
+			return searchCrn;
+		}
 
 		public String getName() {
 			return name;
@@ -300,6 +465,62 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			return restrictions;
 		}
 
+		private void setName(String name) {
+			this.name = StringEscapeUtils.unescapeHtml(name);
+		}
+
+		private void setCrn(int crn) {
+			this.crn = crn;
+		}
+
+		private void setSubject(Subject subject) {
+			this.subject = subject;
+		}
+
+		private void setCnbr(int cnbr) {
+			this.cnbr = cnbr;
+		}
+
+		private void setSection(String section) {
+			this.section = StringEscapeUtils.unescapeHtml(section);
+		}
+
+		private void setTerm(Term term) {
+			this.term = term;
+		}
+
+		private void setLevels(List<String> levels) {
+			this.levels = levels;
+		}
+
+		private void setCampus(String campus) {
+			this.campus = StringEscapeUtils.unescapeHtml(campus);
+		}
+
+		private void setType(Type type) {
+			this.type = type;
+		}
+
+		private void setCredits(double credits) {
+			this.credits = credits;
+		}
+
+		private void setSeats(Seats seats) {
+			this.seats = seats;
+		}
+
+		private void setWaitlistSeats(Seats waitlistSeats) {
+			this.waitlistSeats = waitlistSeats;
+		}
+
+		private void setPrerequisites(String prerequisites) {
+			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites);
+		}
+
+		private void setRestrictions(String restrictions) {
+			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions);
+		}
+
 		@Override
 		public String toString() {
 			return "Course Name: " + name + "\n" + "CRN: " + crn + "\n"
@@ -311,158 +532,6 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					+ waitlistSeats + "\n" + "Prerequisites: " + prerequisites
 					+ "\n" + "Restrictions: " + restrictions + "\n";
 		}
-
-		/**
-		 * Set course name, crn, subject - cnbr and section number based on the
-		 * string passed to this method.
-		 * 
-		 * @param basicInfo
-		 *            String contains course name, crn, subject - cnbr and
-		 *            section number.
-		 * @throws HttpParseException
-		 * @throws ResultNotMatchException
-		 */
-		private void setBasicInfo(String basicInfo) throws HttpParseException,
-				ResultNotMatchException {
-			String[] basicInfoes = basicInfo.split(" - ");
-			if (basicInfoes.length == 4) {
-				this.name = basicInfoes[0];
-				this.crn = Integer.valueOf(basicInfoes[1]);
-				if (this.crn != this.searchCrn)
-					throw new ResultNotMatchException(
-							"Result not match with search option.");
-				this.section = basicInfoes[3];
-
-				String[] subjectCnbr = basicInfoes[2].split(" ");
-				if (subjectCnbr.length == 2) {
-					this.subject = Subject.valueOf(subjectCnbr[0]);
-					this.cnbr = Integer.valueOf(subjectCnbr[1]);
-				} else {
-					throw new HttpParseException();
-				}
-			} else {
-				throw new HttpParseException();
-			}
-		}
-
-		/**
-		 * Set seats information, which contains capacity, actual and remaining.
-		 * 
-		 * @param seatsInfo
-		 *            String contains capacity, actual and remaining.
-		 * @throws HttpParseException
-		 */
-		private void setSeats(String seatsInfo) throws HttpParseException {
-			String[] seatsInfoes = seatsInfo.split(" ");
-			if (seatsInfoes.length == 4) {
-				this.seats = new Seats(Integer.valueOf(seatsInfoes[1]),
-						Integer.valueOf(seatsInfoes[2]),
-						Integer.valueOf(seatsInfoes[3]));
-			} else {
-				throw new HttpParseException();
-			}
-		}
-
-		/**
-		 * Same as setSeats().
-		 * 
-		 * @param waitlistSeatsInfo
-		 * @throws HttpParseException
-		 */
-		private void setWaitlistSeats(String waitlistSeatsInfo)
-				throws HttpParseException {
-			String[] waitlistSeatsInfoes = waitlistSeatsInfo.split(" ");
-			if (waitlistSeatsInfoes.length == 5) {
-				this.waitlistSeats = new Seats(
-						Integer.valueOf(waitlistSeatsInfoes[2]),
-						Integer.valueOf(waitlistSeatsInfoes[3]),
-						Integer.valueOf(waitlistSeatsInfoes[4]));
-			} else {
-				throw new HttpParseException();
-			}
-		}
-
-		/**
-		 * Set term, levels, campus and etc. based on the html passed to this
-		 * method.
-		 * 
-		 * @param remainingInfoHtml
-		 *            Html String contains information about the term, levels,
-		 *            campus.
-		 */
-		private void setRemainingInfo(String remainingInfoHtml) {
-			final int NOT_RECORD = 0;
-			final int PREREQUISTES = 1;
-			final int RESTRICTIONS = 2;
-
-			int recordType = NOT_RECORD;
-
-			String prerequisitesString = null;
-			String restrictionsString = null;
-
-			String[] remainingInfoes = remainingInfoHtml.split("<br />");
-			for (String info : remainingInfoes) {
-				info = info.trim();
-
-				if (recordType == PREREQUISTES) {
-					if (prerequisitesString == null) {
-						prerequisitesString = "";
-					}
-					prerequisitesString += " "
-							+ info.replaceAll("\\<[^>]*>", "");
-				}
-
-				if (recordType == RESTRICTIONS) {
-					if (restrictionsString == null) {
-						restrictionsString = "";
-					}
-					restrictionsString += " "
-							+ info.replace("&nbsp;", "").trim();
-				}
-
-				if (info.contains("Associated Term: ")) {
-					String termString = info.substring(info.indexOf("</span>")
-							+ "</span>".length());
-					this.term = Term.valueOf(termString.replace(" ", "")
-							.toUpperCase());
-					continue;
-				} else if (info.contains("Levels: ")) {
-					String levelsString = info.substring(info
-							.indexOf("</span>") + "</span>".length());
-					this.levels = new ArrayList<String>(
-							Arrays.asList(levelsString.split(", ")));
-					continue;
-				} else if (info.contains("Campus")) {
-					String campusString = info.substring(0,
-							info.indexOf("Campus")).trim();
-					this.campus = campusString;
-					continue;
-				} else if (info.contains("Schedule Type")) {
-					String typeString = info.substring(0,
-							info.indexOf("Schedule Type")).trim();
-					this.type = Type.valueOf(typeString.replace(" ", ""));
-					continue;
-				} else if (info.contains("Credits")) {
-					String creditsString = info.substring(0,
-							info.indexOf("Credits")).trim();
-					this.credits = Double.valueOf(creditsString);
-					continue;
-				} else if (info.contains("Prerequisites:")) {
-					recordType = PREREQUISTES;
-					continue;
-				} else if (info.contains("Restrictions:")) {
-					recordType = RESTRICTIONS;
-					continue;
-				}
-			}
-
-			if (prerequisitesString != null) {
-				this.prerequisites = prerequisitesString.trim();
-			}
-
-			if (restrictionsString != null) {
-				this.restrictions = restrictionsString.trim();
-			}
-		}
 	}
+
 }
