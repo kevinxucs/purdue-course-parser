@@ -26,26 +26,37 @@ public class CommandLine {
 
 							@Override
 							public void onScheduleDetailFinished(
-									ScheduleDetailEntry entry) {
+									ScheduleDetailEntry entry, int crn,
+									Term term) {
+								System.out.println("Input: " + term.toString()
+										+ " " + crn);
 								System.out.println(entry);
 							}
 
 							@Override
-							public void onScheduleDetailFinished(IOException e) {
-								System.err.println("IO Error.");
+							public void onScheduleDetailFinished(IOException e,
+									int crn, Term term) {
+								System.out.println("Input: " + term.toString()
+										+ " " + crn);
+								System.out.println("IO Error.");
 							}
 
 							@Override
 							public void onScheduleDetailFinished(
-									HttpParseException e) {
-								System.err.println("Parse Error: "
+									HttpParseException e, int crn, Term term) {
+								System.out.println("Input: " + term.toString()
+										+ " " + crn);
+								System.out.println("Parse Error: "
 										+ e.getMessage());
 							}
 
 							@Override
 							public void onScheduleDetailFinished(
-									CourseNotFoundException e) {
-								System.err.println("Course Not Found.");
+									CourseNotFoundException e, int crn,
+									Term term) {
+								System.out.println("Input: " + term.toString()
+										+ " " + crn);
+								System.out.println("Course Not Found.");
 							}
 
 						});

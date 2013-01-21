@@ -12,8 +12,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
@@ -62,22 +60,27 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 	private OnScheduleDetailFinishedListener mListener;
 	private BasicHttpClientAsync mHttpClient;
-	
-	private static final Logger mLogger = Logger.getLogger(ScheduleDetail.class.getName());
+
+	// private static final Logger mLogger =
+	// Logger.getLogger(ScheduleDetail.class.getName());
 
 	/**
-	 * Callback methods you have to implement.
+	 * Callback methods you have to implement. Provide either
+	 * ScheduleDetailEntry object or other exceptions with crn and term.
 	 * 
 	 * @author Kaiwen Xu (kevin)
 	 */
 	public interface OnScheduleDetailFinishedListener {
-		public void onScheduleDetailFinished(ScheduleDetailEntry entry);
+		public void onScheduleDetailFinished(ScheduleDetailEntry entry,
+				int crn, Term term);
 
-		public void onScheduleDetailFinished(IOException e);
+		public void onScheduleDetailFinished(IOException e, int crn, Term term);
 
-		public void onScheduleDetailFinished(HttpParseException e);
+		public void onScheduleDetailFinished(HttpParseException e, int crn,
+				Term term);
 
-		public void onScheduleDetailFinished(CourseNotFoundException e);
+		public void onScheduleDetailFinished(CourseNotFoundException e,
+				int crn, Term term);
 	}
 
 	/**
@@ -134,18 +137,20 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			}
 			stream.close();
 			ScheduleDetailEntry entry = parseDocument(document);
-			mListener.onScheduleDetailFinished(entry);
+			mListener.onScheduleDetailFinished(entry, this.crn, this.term);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.crn, this.term);
 		} catch (HttpParseException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.crn, this.term);
 		} catch (CourseNotFoundException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.crn, this.term);
 		} catch (ResultNotMatchException e) {
-			mListener.onScheduleDetailFinished(new HttpParseException(e
-					.getMessage()));
+			mListener
+					.onScheduleDetailFinished(
+							new HttpParseException(e.getMessage()), this.crn,
+							this.term);
 		}
 	}
 
@@ -156,7 +161,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		mListener.onScheduleDetailFinished(e);
+		mListener.onScheduleDetailFinished(e, this.crn, this.term);
 	}
 
 	private ScheduleDetailEntry parseDocument(Document document)
@@ -518,11 +523,13 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		}
 
 		private void setPrerequisites(String prerequisites) {
-			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites).trim();
+			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites)
+					.trim();
 		}
 
 		private void setRestrictions(String restrictions) {
-			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions).trim();
+			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions)
+					.trim();
 		}
 
 		@Override
