@@ -1,3 +1,10 @@
+/*
+ * ScheduleDetail.java
+ * 
+ * Written by Kaiwen Xu (kevin).
+ * Released under Apache License 2.0.
+ */
+
 package net.kevxu.purdueassist.course;
 
 import java.io.IOException;
@@ -6,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.course.shared.Predefined.Subject;
@@ -27,6 +35,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * This is the class implementing "Schedule Detail Search" described in
+ * document. It utilizes asynchronous function call for non-blocking calling
+ * style. You have to provide callback method by implementing
+ * OnScheduleDetailFinishedListener.
+ * <p>
+ * Input: crn term (optional)
+ * <p>
+ * Output: name crn subject cnbr section term level campus type credits seats
+ * waitlist seats prerequisites restrictions
+ * 
+ * @author Kaiwen Xu (kevin)
+ * @see OnScheduleDetailFinishedListener
+ */
 public class ScheduleDetail implements OnRequestFinishedListener {
 
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
@@ -38,6 +60,11 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	private OnScheduleDetailFinishedListener mListener;
 	private BasicHttpClientAsync httpClient;
 
+	/**
+	 * Callback methods you have to implement.
+	 * 
+	 * @author Kaiwen Xu (kevin)
+	 */
 	public interface OnScheduleDetailFinishedListener {
 		public void onScheduleDetailFinished(ScheduleDetailEntry entry);
 
@@ -48,6 +75,14 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		public void onScheduleDetailFinished(CourseNotFoundException e);
 	}
 
+	/**
+	 * Constructor for specific crn. Term will be set to CURRENT.
+	 * 
+	 * @param crn
+	 *            CRN number for course.
+	 * @param onScheduleDetailFinishedListener
+	 *            callback you have to implement.
+	 */
 	public ScheduleDetail(int crn,
 			OnScheduleDetailFinishedListener onScheduleDetailFinishedListener) {
 		this(Term.CURRENT, crn, onScheduleDetailFinishedListener);
@@ -59,7 +94,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			this.term = term;
 		else
 			this.term = Term.CURRENT;
-		
+
 		this.crn = crn;
 		this.mListener = onScheduleDetailFinishedListener;
 	}
@@ -181,42 +216,17 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		return entry;
 	}
 
+	/**
+	 * This class contains information return by ScheduleDetail.
+	 * 
+	 * @author Kaiwen Xu (kevin)
+	 */
 	public class ScheduleDetailEntry {
 
 		private int searchCrn;
 
 		public ScheduleDetailEntry(int crn) {
 			this.searchCrn = crn;
-		}
-
-		public class Seats {
-			private int capacity;
-			private int actual;
-			private int remaining;
-
-			public Seats(int capacity, int actual, int remaining) {
-				this.capacity = capacity;
-				this.actual = actual;
-				this.remaining = remaining;
-			}
-
-			public int getRemaining() {
-				return remaining;
-			}
-
-			public int getCapacity() {
-				return capacity;
-			}
-
-			public int getActual() {
-				return actual;
-			}
-
-			@Override
-			public String toString() {
-				return "Capacity: " + capacity + "; " + "Actual: " + actual
-						+ "; " + "Remaining: " + remaining + ";";
-			}
 		}
 
 		private String name;

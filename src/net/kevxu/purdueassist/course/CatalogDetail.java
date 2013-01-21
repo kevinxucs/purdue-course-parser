@@ -1,3 +1,10 @@
+/*
+ * CatalogDetail.java
+ * 
+ * Written by Kaiwen Xu (kevin).
+ * Released under Apache License 2.0.
+ */
+
 package net.kevxu.purdueassist.course;
 
 import java.io.IOException;
@@ -55,7 +62,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 			this.term = term;
 		else
 			this.term = Term.CURRENT;
-		
+
 		this.subject = subject;
 		this.cnbr = cnbr;
 		this.mListener = onCatalogDetailFinishedListener;
