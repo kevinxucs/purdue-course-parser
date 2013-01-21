@@ -31,6 +31,7 @@ public class CommandLine {
 								System.out.println("Input: " + term.toString()
 										+ " " + crn);
 								System.out.println(entry);
+								System.out.println();
 							}
 
 							@Override
@@ -39,6 +40,7 @@ public class CommandLine {
 								System.out.println("Input: " + term.toString()
 										+ " " + crn);
 								System.out.println("IO Error.");
+								System.out.println();
 							}
 
 							@Override
@@ -48,6 +50,7 @@ public class CommandLine {
 										+ " " + crn);
 								System.out.println("Parse Error: "
 										+ e.getMessage());
+								System.out.println();
 							}
 
 							@Override
@@ -57,6 +60,7 @@ public class CommandLine {
 								System.out.println("Input: " + term.toString()
 										+ " " + crn);
 								System.out.println("Course Not Found.");
+								System.out.println();
 							}
 
 						});
