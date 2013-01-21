@@ -10,62 +10,82 @@ import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.course.shared.Predefined.Term;
 
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 public class CommandLine {
 
 	public static final String VERSION = "0.1.2";
 
 	public static void main(String[] args) {
-		if (args.length <= 1) {
-			printHelp();
-		} else {
-			Term term = parseTerm(args[0]);
-			for (int i = 1; i < args.length; i++) {
-				ScheduleDetail scheduleDetail = new ScheduleDetail(term,
-						Integer.valueOf(args[i]),
+		Options options = new Options();
+		options.addOption("s", "slient", false, "Do not print anything.");
+		options.addOption("t", "term", true, "Specify school term.");
+
+		CommandLineParser parser = new GnuParser();
+		org.apache.commons.cli.CommandLine cmd;
+		try {
+			cmd = parser.parse(options, args);
+
+			final Term term = Term.valueOf(cmd.getOptionValue("t"));
+			final boolean silent = cmd.hasOption("s");
+			final String[] crns = cmd.getArgs();
+
+			for (final String crnString : crns) {
+				final int crn = Integer.valueOf(crnString);
+				ScheduleDetail detail = new ScheduleDetail(term, crn,
 						new OnScheduleDetailFinishedListener() {
 
 							@Override
 							public void onScheduleDetailFinished(
-									ScheduleDetailEntry entry, int crn,
-									Term term) {
-								System.out.println("Input: " + term.toString()
-										+ " " + crn);
-								System.out.println(entry);
-								System.out.println();
-							}
-
-							@Override
-							public void onScheduleDetailFinished(IOException e,
-									int crn, Term term) {
-								System.out.println("Input: " + term.toString()
-										+ " " + crn);
-								System.out.println("IO Error.");
-								System.out.println();
+									CourseNotFoundException e) {
+								if (!silent) {
+									System.out.println("INPUT: " + crnString
+											+ " " + term);
+									System.out.println("Course Not Found!");
+									System.out.println();
+								}
 							}
 
 							@Override
 							public void onScheduleDetailFinished(
-									HttpParseException e, int crn, Term term) {
-								System.out.println("Input: " + term.toString()
-										+ " " + crn);
-								System.out.println("Parse Error: "
-										+ e.getMessage());
-								System.out.println();
+									HttpParseException e) {
+								if (!silent) {
+									System.out.println("INPUT: " + crnString
+											+ " " + term);
+									System.out.println("Parse Error!");
+									System.out.println();
+								}
+							}
+
+							@Override
+							public void onScheduleDetailFinished(IOException e) {
+								if (!silent) {
+									System.out.println("INPUT: " + crnString
+											+ " " + term);
+									System.out.println("IO Error!");
+									System.out.println();
+								}
 							}
 
 							@Override
 							public void onScheduleDetailFinished(
-									CourseNotFoundException e, int crn,
-									Term term) {
-								System.out.println("Input: " + term.toString()
-										+ " " + crn);
-								System.out.println("Course Not Found.");
-								System.out.println();
+									ScheduleDetailEntry entry) {
+								if (!silent) {
+									System.out.println("INPUT: " + crnString
+											+ " " + term);
+									System.out.println(entry);
+									System.out.println();
+								}
 							}
-
 						});
-				scheduleDetail.getResult();
+				detail.getResult();
 			}
+
+		} catch (ParseException e) {
+			System.err.println("Command line arguments parsing failed. Reason: " + e.getMessage());
 		}
 	}
 

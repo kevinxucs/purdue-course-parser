@@ -66,21 +66,18 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 	/**
 	 * Callback methods you have to implement. Provide either
-	 * ScheduleDetailEntry object or other exceptions with crn and term.
+	 * ScheduleDetailEntry object or other exceptions.
 	 * 
 	 * @author Kaiwen Xu (kevin)
 	 */
 	public interface OnScheduleDetailFinishedListener {
-		public void onScheduleDetailFinished(ScheduleDetailEntry entry,
-				int crn, Term term);
+		public void onScheduleDetailFinished(ScheduleDetailEntry entry);
 
-		public void onScheduleDetailFinished(IOException e, int crn, Term term);
+		public void onScheduleDetailFinished(IOException e);
 
-		public void onScheduleDetailFinished(HttpParseException e, int crn,
-				Term term);
+		public void onScheduleDetailFinished(HttpParseException e);
 
-		public void onScheduleDetailFinished(CourseNotFoundException e,
-				int crn, Term term);
+		public void onScheduleDetailFinished(CourseNotFoundException e);
 	}
 
 	/**
@@ -137,20 +134,19 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			}
 			stream.close();
 			ScheduleDetailEntry entry = parseDocument(document);
-			mListener.onScheduleDetailFinished(entry, this.crn, this.term);
+			mListener.onScheduleDetailFinished(entry);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			mListener.onScheduleDetailFinished(e, this.crn, this.term);
+			mListener.onScheduleDetailFinished(e);
 		} catch (HttpParseException e) {
-			mListener.onScheduleDetailFinished(e, this.crn, this.term);
+			mListener.onScheduleDetailFinished(e);
 		} catch (CourseNotFoundException e) {
-			mListener.onScheduleDetailFinished(e, this.crn, this.term);
+			mListener.onScheduleDetailFinished(e);
 		} catch (ResultNotMatchException e) {
 			mListener
 					.onScheduleDetailFinished(
-							new HttpParseException(e.getMessage()), this.crn,
-							this.term);
+							new HttpParseException(e.getMessage()));
 		}
 	}
 
@@ -161,7 +157,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		mListener.onScheduleDetailFinished(e, this.crn, this.term);
+		mListener.onScheduleDetailFinished(e);
 	}
 
 	private ScheduleDetailEntry parseDocument(Document document)
