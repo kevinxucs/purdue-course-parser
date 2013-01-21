@@ -29,7 +29,8 @@ public class CommandLine {
 		try {
 			cmd = parser.parse(options, args);
 
-			final Term term = Term.valueOf(cmd.getOptionValue("t"));
+			String termString = cmd.getOptionValue("t");
+			final Term term = parseTerm(termString);
 			final boolean silent = cmd.hasOption("s");
 			final String[] crns = cmd.getArgs();
 
