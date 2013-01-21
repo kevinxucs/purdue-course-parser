@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.kevxu.purdueassist.course.elements.Seats;
@@ -234,6 +235,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	 */
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
 			throws HttpParseException, ResultNotMatchException {
+		//mLogger.log(Level.INFO, basicInfo);
+		
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length == 4) {
 			entry.setName(basicInfoes[0]);
