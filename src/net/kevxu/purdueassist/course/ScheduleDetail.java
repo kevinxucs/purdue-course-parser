@@ -55,8 +55,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
 
-	public Term term = Term.CURRENT;
-	public int crn;
+	private Term term;
+	private int crn;
 
 	private OnScheduleDetailFinishedListener mListener;
 	private BasicHttpClientAsync mHttpClient;
@@ -102,6 +102,43 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 		this.crn = crn;
 		this.mListener = onScheduleDetailFinishedListener;
+	}
+
+	/**
+	 * Get school term used for search.
+	 * 
+	 * @return
+	 */
+	public Term getTerm() {
+		return term;
+	}
+
+	/**
+	 * Get crn number used for search.
+	 * 
+	 * @return
+	 */
+	public int getCrn() {
+		return crn;
+	}
+
+	/**
+	 * Set term for search. Search term remain unchanged if the term passed to
+	 * this method is null.
+	 * 
+	 * @param term
+	 */
+	public void setTerm(Term term) {
+		if (term != null)
+			this.term = term;
+	}
+	
+	/**
+	 * Set crn number for search.
+	 * @param crn
+	 */
+	public void setCrn(int crn) {
+		this.crn = crn;
 	}
 
 	/**

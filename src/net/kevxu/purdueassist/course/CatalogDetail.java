@@ -34,9 +34,9 @@ public class CatalogDetail implements OnRequestFinishedListener {
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_catalog_detail";
 
-	public Term term;
-	public Subject subject;
-	public int cnbr;
+	private Term term;
+	private Subject subject;
+	private int cnbr;
 
 	private OnCatalogDetailFinishedListener mListener;
 	private BasicHttpClientAsync httpClient;
