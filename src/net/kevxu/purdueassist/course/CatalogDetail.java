@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
+import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
@@ -139,6 +140,13 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private String name;
 		private String description;
 		private List<String> levels;
+		private Type type;
+		private String offeredBy;
+		private String department;
+		private List<String> campuses;
+		private String restrictions;
+		private String prerequisites;
+		private String generalRequirements;
 
 	}
 

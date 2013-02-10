@@ -477,8 +477,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		private double credits;
 		private Seats seats;
 		private Seats waitlistSeats;
-		private String prerequisites;
 		private String restrictions;
+		private String prerequisites;
 		private String generalRequirements;
 
 		private int getSearchCrn() {
