@@ -29,6 +29,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class CatalogDetail implements OnRequestFinishedListener {
 
@@ -122,6 +123,11 @@ public class CatalogDetail implements OnRequestFinishedListener {
 	private CatalogDetailEntry parseDocument(Document document)
 			throws HttpParseException, CourseNotFoundException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
+		Elements tableElements = document
+				.getElementsByAttributeValue("summary",
+						"This table is used to present the detailed class information.");
+		
+		
 
 		return entry;
 	}
@@ -147,59 +153,59 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private String restrictions;
 		private String prerequisites;
 		private String generalRequirements;
-		
+
 		private Subject getSearchSubject() {
 			return searchSubject;
 		}
-		
+
 		private int getSearchCnbr() {
 			return searchCnbr;
 		}
-		
+
 		public Subject getSubject() {
 			return subject;
 		}
-		
+
 		public int getCnbr() {
 			return cnbr;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getDescription() {
 			return description;
 		}
-		
+
 		public List<String> getLevels() {
 			return levels;
 		}
-		
+
 		public Type getType() {
 			return type;
 		}
-		
+
 		public String getOfferedBy() {
 			return offeredBy;
 		}
-		
+
 		public String getDepartment() {
 			return department;
 		}
-		
+
 		public List<String> getCampuses() {
 			return campuses;
 		}
-		
+
 		public String getRestrictions() {
 			return restrictions;
 		}
-		
+
 		public String getPrerequisites() {
 			return prerequisites;
 		}
-		
+
 		public String getGeneralRequirements() {
 			return generalRequirements;
 		}
