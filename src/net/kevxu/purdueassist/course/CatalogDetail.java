@@ -147,6 +147,62 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private String restrictions;
 		private String prerequisites;
 		private String generalRequirements;
+		
+		private Subject getSearchSubject() {
+			return searchSubject;
+		}
+		
+		private int getSearchCnbr() {
+			return searchCnbr;
+		}
+		
+		public Subject getSubject() {
+			return subject;
+		}
+		
+		public int getCnbr() {
+			return cnbr;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public List<String> getLevels() {
+			return levels;
+		}
+		
+		public Type getType() {
+			return type;
+		}
+		
+		public String getOfferedBy() {
+			return offeredBy;
+		}
+		
+		public String getDepartment() {
+			return department;
+		}
+		
+		public List<String> getCampuses() {
+			return campuses;
+		}
+		
+		public String getRestrictions() {
+			return restrictions;
+		}
+		
+		public String getPrerequisites() {
+			return prerequisites;
+		}
+		
+		public String getGeneralRequirements() {
+			return generalRequirements;
+		}
 
 	}
 
