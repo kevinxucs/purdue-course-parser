@@ -1,4 +1,4 @@
-package net.kevxu.purdueassist.course.shared;
+package net.kevxu.purdueassist.course.elements;
 
 public class Predefined {
 

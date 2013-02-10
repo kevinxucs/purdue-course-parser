@@ -12,10 +12,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.kevxu.purdueassist.course.elements.Predefined.Subject;
+import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
-import net.kevxu.purdueassist.course.shared.Predefined.Subject;
-import net.kevxu.purdueassist.course.shared.Predefined.Term;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;

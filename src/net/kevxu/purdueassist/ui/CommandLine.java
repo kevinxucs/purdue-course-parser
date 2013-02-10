@@ -5,9 +5,9 @@ import java.io.IOException;
 import net.kevxu.purdueassist.course.ScheduleDetail;
 import net.kevxu.purdueassist.course.ScheduleDetail.OnScheduleDetailFinishedListener;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
+import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
-import net.kevxu.purdueassist.course.shared.Predefined.Term;
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
