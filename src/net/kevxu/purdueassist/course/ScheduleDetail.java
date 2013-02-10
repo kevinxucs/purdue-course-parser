@@ -20,6 +20,7 @@ import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
+import net.kevxu.purdueassist.course.shared.Utilities;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
@@ -132,9 +133,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		if (term != null)
 			this.term = term;
 	}
-	
+
 	/**
 	 * Set crn number for search.
+	 * 
 	 * @param crn
 	 */
 	public void setCrn(int crn) {
@@ -349,11 +351,13 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		final int NOT_RECORD = 0;
 		final int PREREQUISTES = 1;
 		final int RESTRICTIONS = 2;
+		final int GENERAL_REQUIREMENTS = 3;
 
 		int recordType = NOT_RECORD;
 
 		String prerequisitesString = null;
 		String restrictionsString = null;
+		String generalRequirementsString = null;
 
 		String[] remainingInfoes = remainingInfoHtml.split("<br />");
 		for (String info : remainingInfoes) {
@@ -363,14 +367,37 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				if (prerequisitesString == null) {
 					prerequisitesString = "";
 				}
-				prerequisitesString += " " + info.replaceAll("\\<[^>]*>", "");
+
+				if (!info.contains("Restrictions:")
+						&& !info.contains("General Requirements:")) {
+					prerequisitesString += " "
+							+ Utilities.removeHtmlTags(info).trim();
+				}
 			}
 
 			if (recordType == RESTRICTIONS) {
 				if (restrictionsString == null) {
 					restrictionsString = "";
 				}
-				restrictionsString += " " + info.replace("&nbsp;", "").trim();
+
+				if (!info.contains("Prerequisites:")
+						&& !info.contains("General Requirements:")) {
+					restrictionsString += " "
+							+ info.replace("&nbsp;", "").trim();
+				}
+			}
+
+			if (recordType == GENERAL_REQUIREMENTS) {
+				if (generalRequirementsString == null) {
+					generalRequirementsString = "";
+				}
+
+				if (!info.contains("Prerequisites:")
+						&& !info.contains("Restrictions:")) {
+					generalRequirementsString += " "
+							+ Utilities.removeHtmlTags(
+									info.replace("&nbsp;", "")).trim();
+				}
 			}
 
 			if (info.contains("Associated Term: ")) {
@@ -400,11 +427,14 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 						info.indexOf("Credits")).trim();
 				entry.setCredits(Double.valueOf(creditsString));
 				continue;
+			} else if (info.contains("Restrictions:")) {
+				recordType = RESTRICTIONS;
+				continue;
 			} else if (info.contains("Prerequisites:")) {
 				recordType = PREREQUISTES;
 				continue;
-			} else if (info.contains("Restrictions:")) {
-				recordType = RESTRICTIONS;
+			} else if (info.contains("General Requirements:")) {
+				recordType = GENERAL_REQUIREMENTS;
 				continue;
 			}
 		}
@@ -415,6 +445,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 		if (restrictionsString != null) {
 			entry.setRestrictions(restrictionsString);
+		}
+
+		if (generalRequirementsString != null) {
+			entry.setGeneralRequirements(generalRequirementsString);
 		}
 	}
 
@@ -445,6 +479,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		private Seats waitlistSeats;
 		private String prerequisites;
 		private String restrictions;
+		private String generalRequirements;
 
 		private int getSearchCrn() {
 			return searchCrn;
@@ -506,6 +541,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			return restrictions;
 		}
 
+		public String getGeneralRequirements() {
+			return generalRequirements;
+		}
+
 		private void setName(String name) {
 			this.name = StringEscapeUtils.unescapeHtml(name).trim();
 		}
@@ -564,6 +603,12 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					.trim();
 		}
 
+		private void setGeneralRequirements(String generalRequirements) {
+			this.generalRequirements = Utilities
+					.shrinkContentInParentheses(StringEscapeUtils.unescapeHtml(
+							generalRequirements).trim());
+		}
+
 		@Override
 		public String toString() {
 			return "Course Name: " + name + "\n" + "CRN: " + crn + "\n"
@@ -572,8 +617,9 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					+ "Levels: " + levels + "\n" + "Campus: " + campus + "\n"
 					+ "Type: " + type + "\n" + "Credits: " + credits + "\n"
 					+ "Seats: " + seats + "\n" + "Waitlist Seats: "
-					+ waitlistSeats + "\n" + "Prerequisites: " + prerequisites
-					+ "\n" + "Restrictions: " + restrictions + "\n";
+					+ waitlistSeats + "\n" + "Restrictions: " + restrictions
+					+ "\n" + "Prerequisites: " + prerequisites + "\n"
+					+ "General Requirements: " + generalRequirements + "\n";
 		}
 	}
 
