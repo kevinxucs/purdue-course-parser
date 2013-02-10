@@ -10,7 +10,7 @@ public class Utilities {
 	 * @return true if crn number is valid, false if invalid.
 	 */
 	public static boolean verifyCrn(int crn) {
-		// To be implemented
+		//TODO: To be implemented
 		return true;
 	}
 
