@@ -23,8 +23,11 @@ public class CommandLine {
 	private static final Options options = new Options();
 
 	public static void main(String[] args) {
-		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (required)");
-		options.addOption("s", "slient", false, "Do not print anything.");
+		options.addOption("t", "term", true,
+				"full name (without space) for school term. i.e. fall2012 (required)");
+		options.addOption("s", "small-silent", false,
+				"Do not print input information.");
+		options.addOption("S", "slient", false, "Do not print anything.");
 
 		CommandLineParser parser = new GnuParser();
 		org.apache.commons.cli.CommandLine cmd;
@@ -44,7 +47,8 @@ public class CommandLine {
 
 				String termString = cmd.getOptionValue("t");
 				final Term term = parseTerm(termString);
-				final boolean silent = cmd.hasOption("s");
+				final boolean silent = cmd.hasOption("S");
+				final boolean smallSilent = cmd.hasOption("s");
 				final String[] crns = cmd.getArgs();
 
 				for (final String crnString : crns) {
@@ -56,10 +60,10 @@ public class CommandLine {
 								public void onScheduleDetailFinished(
 										CourseNotFoundException e) {
 									if (!silent) {
-										System.out.println("INPUT: "
-												+ crnString + " " + term);
+										if (!smallSilent)
+											System.out.println("INPUT: "
+													+ crnString + " " + term);
 										System.out.println("Course Not Found!");
-										System.out.println();
 									}
 								}
 
@@ -67,10 +71,10 @@ public class CommandLine {
 								public void onScheduleDetailFinished(
 										HttpParseException e) {
 									if (!silent) {
-										System.out.println("INPUT: "
-												+ crnString + " " + term);
+										if (!smallSilent)
+											System.out.println("INPUT: "
+													+ crnString + " " + term);
 										System.out.println("Parse Error!");
-										System.out.println();
 									}
 								}
 
@@ -78,10 +82,10 @@ public class CommandLine {
 								public void onScheduleDetailFinished(
 										IOException e) {
 									if (!silent) {
-										System.out.println("INPUT: "
-												+ crnString + " " + term);
+										if (!smallSilent)
+											System.out.println("INPUT: "
+													+ crnString + " " + term);
 										System.out.println("IO Error!");
-										System.out.println();
 									}
 								}
 
@@ -89,10 +93,10 @@ public class CommandLine {
 								public void onScheduleDetailFinished(
 										ScheduleDetailEntry entry) {
 									if (!silent) {
-										System.out.println("INPUT: "
-												+ crnString + " " + term);
+										if (!smallSilent)
+											System.out.println("INPUT: "
+													+ crnString + " " + term);
 										System.out.println(entry);
-										System.out.println();
 									}
 								}
 							});
