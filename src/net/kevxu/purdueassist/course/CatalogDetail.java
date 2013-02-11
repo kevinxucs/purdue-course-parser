@@ -107,6 +107,8 @@ public class CatalogDetail implements OnRequestFinishedListener {
 			mListener.onCatalogDetailFinished(e);
 		} catch (CourseNotFoundException e) {
 			mListener.onCatalogDetailFinished(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -126,8 +128,6 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		Elements tableElements = document
 				.getElementsByAttributeValue("summary",
 						"This table is used to present the detailed class information.");
-		
-		
 
 		return entry;
 	}

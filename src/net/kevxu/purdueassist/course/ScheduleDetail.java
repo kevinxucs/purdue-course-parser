@@ -185,6 +185,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		} catch (ResultNotMatchException e) {
 			mListener.onScheduleDetailFinished(new HttpParseException(e
 					.getMessage()));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
