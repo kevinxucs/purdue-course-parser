@@ -402,39 +402,45 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				}
 			}
 
-			if (info.contains("Associated Term: ")) {
-				String termString = info.substring(info.indexOf("</span>")
-						+ "</span>".length());
-				entry.setTerm(Term.valueOf(termString.replace(" ", "")
-						.toUpperCase()));
-				continue;
-			} else if (info.contains("Levels: ")) {
-				String levelsString = info.substring(info.indexOf("</span>")
-						+ "</span>".length());
-				entry.setLevels(new ArrayList<String>(Arrays
-						.asList(levelsString.split(", "))));
-				continue;
-			} else if (info.contains("Campus")) {
-				String campusString = info.substring(0, info.indexOf("Campus"))
-						.trim();
-				entry.setCampus(campusString);
-				continue;
-			} else if (info.contains("Schedule Type")) {
-				String typeString = info.substring(0,
-						info.indexOf("Schedule Type")).trim();
-				entry.setType(Type.valueOf(typeString.replace(" ", "")));
-				continue;
-			} else if (info.contains("Credits")) {
-				String creditsString;
-				if (!info.contains("TO"))
-					creditsString = info.substring(0, info.indexOf("Credits"))
-							.trim();
-				else
-					creditsString = info.substring(info.indexOf("TO") + 2,
-							info.indexOf("Credits")).trim();
-				entry.setCredits(Double.valueOf(creditsString));
-				continue;
-			} else if (info.contains("Restrictions:")) {
+			if (recordType == NOT_RECORD) {
+
+				if (info.contains("Associated Term: ")) {
+					String termString = info.substring(info.indexOf("</span>")
+							+ "</span>".length());
+					entry.setTerm(Term.valueOf(termString.replace(" ", "")
+							.toUpperCase()));
+					continue;
+				} else if (info.contains("Levels: ")) {
+					String levelsString = info.substring(info
+							.indexOf("</span>") + "</span>".length());
+					entry.setLevels(new ArrayList<String>(Arrays
+							.asList(levelsString.split(", "))));
+					continue;
+				} else if (info.contains("Campus")) {
+					String campusString = info.substring(0,
+							info.indexOf("Campus")).trim();
+					entry.setCampus(campusString);
+					continue;
+				} else if (info.contains("Schedule Type")) {
+					String typeString = info.substring(0,
+							info.indexOf("Schedule Type")).trim();
+					entry.setType(Type.valueOf(typeString.replace(" ", "")));
+					continue;
+				} else if (info.contains("Credits")) {
+					String creditsString;
+					if (!info.contains("TO"))
+						creditsString = info.substring(0,
+								info.indexOf("Credits")).trim();
+					else
+						creditsString = info.substring(info.indexOf("TO") + 2,
+								info.indexOf("Credits")).trim();
+					entry.setCredits(Double.valueOf(creditsString));
+					continue;
+				}
+				
+			}
+
+			if (info.contains("Restrictions:")) {
 				recordType = RESTRICTIONS;
 				continue;
 			} else if (info.contains("Prerequisites:")) {
