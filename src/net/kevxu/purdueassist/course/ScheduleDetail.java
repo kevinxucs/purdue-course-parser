@@ -425,8 +425,13 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				entry.setType(Type.valueOf(typeString.replace(" ", "")));
 				continue;
 			} else if (info.contains("Credits")) {
-				String creditsString = info.substring(0,
-						info.indexOf("Credits")).trim();
+				String creditsString;
+				if (!info.contains("TO"))
+					creditsString = info.substring(0, info.indexOf("Credits"))
+							.trim();
+				else
+					creditsString = info.substring(info.indexOf("TO") + 2,
+							info.indexOf("Credits")).trim();
 				entry.setCredits(Double.valueOf(creditsString));
 				continue;
 			} else if (info.contains("Restrictions:")) {
