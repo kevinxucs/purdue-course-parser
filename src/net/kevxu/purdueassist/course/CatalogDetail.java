@@ -173,41 +173,81 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public String getName() {
 			return name;
 		}
-
+		
+		public void setName(String name){
+			this.name=name;
+		}
+		
 		public String getDescription() {
 			return description;
 		}
-
+		
+		public void setDescription(String description){
+			this.description=description;
+		}
+		
 		public List<String> getLevels() {
 			return levels;
 		}
 
+		public void setLevels(List<String> levels){
+			this.levels=levels;
+		}
+		
 		public Type getType() {
 			return type;
+		}
+		
+		public void setType(Type type){
+			this.type=type;
 		}
 
 		public String getOfferedBy() {
 			return offeredBy;
 		}
+		
+		public void setOfferedBy(String offeredBy){
+			this.offeredBy=offeredBy;
+		}
 
 		public String getDepartment() {
 			return department;
 		}
+		
+		public void setDepartment(String department){
+			this.department=department;
+		}
 
 		public List<String> getCampuses() {
 			return campuses;
+		}
+		
+		public void setCampuses(List<String> campuses){
+			this.campuses=campuses;
 		}
 
 		public String getRestrictions() {
 			return restrictions;
 		}
 
+		public void setRestrictions(String restrictions){
+			this.restrictions=restrictions;
+		}
+		
 		public String getPrerequisites() {
 			return prerequisites;
 		}
 
+		public void setPrerequisites(String prerequisites){
+			this.prerequisites=prerequisites;
+		}
+		
 		public String getGeneralRequirements() {
 			return generalRequirements;
+		}
+		
+		public void setGeneralRequirements(String generalRequirements){
+			this.generalRequirements=generalRequirements;
 		}
 
 	}
