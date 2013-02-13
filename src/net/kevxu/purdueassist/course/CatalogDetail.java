@@ -10,6 +10,7 @@ package net.kevxu.purdueassist.course;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
@@ -29,6 +30,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class CatalogDetail implements OnRequestFinishedListener {
@@ -125,9 +127,59 @@ public class CatalogDetail implements OnRequestFinishedListener {
 	private CatalogDetailEntry parseDocument(Document document)
 			throws HttpParseException, CourseNotFoundException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
-		Elements tableElements = document
-				.getElementsByAttributeValue("summary",
-						"This table is used to present the detailed class information.");
+		Elements tableElements = document.getElementsByAttributeValue(
+				"summary",
+				"This table lists the course detail for the selected term.");
+		if (tableElements.isEmpty() != true) {
+			// get name
+			Element body = tableElements.first().select("tbody").first();
+			String nameBlock = body.select("tr td.nttitle").first().text();
+			String[] temp = nameBlock.split(subject.name() + " "
+					+ String.valueOf(cnbr));
+			String name = temp[temp.length - 1].substring(3);
+			entry.setName(name);
+
+			// get description
+			body = body.select(".ntdefault").first();
+			String text = body.text();
+			int split = text.indexOf("Levels:");
+			String description = text.substring(0, split);
+			description = description.substring(20);
+			entry.setDescription(description);
+
+			// get levels
+			int begin = split;
+			int end = text.indexOf("Schedule Types:");
+			String levels = text.substring(begin + 8, end);
+			temp = levels.split("[ ,]");
+			List<String> lvs = new ArrayList<String>();
+			for (String s : temp)
+				if (!s.equals(""))
+					lvs.add(s);
+			entry.setLevels(lvs);
+
+			// get type and prerequisites
+			List<Type> types = new ArrayList<Type>();
+			List<String> preq = new ArrayList<String>();
+			Elements parsing_A = body.select("a");
+			for (Element e : parsing_A) {
+				if (e.attr("href").contains("schd_in")
+						&& !(e.attr("href").contains("%"))) {
+					try {
+						types.add(Type.valueOf(e.text()));
+					} catch (Exception exception) {
+						throw new HttpParseException();
+					}
+				}else if(e.attr("href").contains("sel_attr=")){
+					preq.add(e.text());
+				}
+			}
+			
+			// TODO
+
+		} else {
+			throw new CourseNotFoundException();
+		}
 
 		return entry;
 	}
@@ -146,12 +198,12 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private String name;
 		private String description;
 		private List<String> levels;
-		private Type type;
+		private List<Type> type;
 		private String offeredBy;
 		private String department;
 		private List<String> campuses;
 		private String restrictions;
-		private String prerequisites;
+		private List<String> prerequisites;
 		private String generalRequirements;
 
 		private Subject getSearchSubject() {
@@ -173,81 +225,81 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public String getName() {
 			return name;
 		}
-		
-		public void setName(String name){
-			this.name=name;
+
+		public void setName(String name) {
+			this.name = name;
 		}
-		
+
 		public String getDescription() {
 			return description;
 		}
-		
-		public void setDescription(String description){
-			this.description=description;
+
+		public void setDescription(String description) {
+			this.description = description;
 		}
-		
+
 		public List<String> getLevels() {
 			return levels;
 		}
 
-		public void setLevels(List<String> levels){
-			this.levels=levels;
+		public void setLevels(List<String> levels) {
+			this.levels = levels;
 		}
-		
-		public Type getType() {
+
+		public List<Type> getType() {
 			return type;
 		}
-		
-		public void setType(Type type){
-			this.type=type;
+
+		public void setType(List<Type> type) {
+			this.type = type;
 		}
 
 		public String getOfferedBy() {
 			return offeredBy;
 		}
-		
-		public void setOfferedBy(String offeredBy){
-			this.offeredBy=offeredBy;
+
+		public void setOfferedBy(String offeredBy) {
+			this.offeredBy = offeredBy;
 		}
 
 		public String getDepartment() {
 			return department;
 		}
-		
-		public void setDepartment(String department){
-			this.department=department;
+
+		public void setDepartment(String department) {
+			this.department = department;
 		}
 
 		public List<String> getCampuses() {
 			return campuses;
 		}
-		
-		public void setCampuses(List<String> campuses){
-			this.campuses=campuses;
+
+		public void setCampuses(List<String> campuses) {
+			this.campuses = campuses;
 		}
 
 		public String getRestrictions() {
 			return restrictions;
 		}
 
-		public void setRestrictions(String restrictions){
-			this.restrictions=restrictions;
+		public void setRestrictions(String restrictions) {
+			this.restrictions = restrictions;
 		}
-		
-		public String getPrerequisites() {
+
+		public List<String> getPrerequisites() {
 			return prerequisites;
 		}
 
-		public void setPrerequisites(String prerequisites){
-			this.prerequisites=prerequisites;
+		public void setPrerequisites(List<String> prerequisites) {
+			this.prerequisites = prerequisites;
 		}
-		
+
 		public String getGeneralRequirements() {
 			return generalRequirements;
 		}
-		
-		public void setGeneralRequirements(String generalRequirements){
-			this.generalRequirements=generalRequirements;
+
+		public void setGeneralRequirements(String generalRequirements) {
+			this.generalRequirements = generalRequirements;
 		}
 
 	}
