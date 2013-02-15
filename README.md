@@ -22,14 +22,6 @@ To package class files into jar:
 
 ## Development
 
-### Contribute
-
-If you want to contribute to this project, you need to fork it and then send pull request.
-
-Here is a guide about how to fork: [link](https://help.github.com/articles/fork-a-repo)
-
-And how to create pull request: [link](https://help.github.com/articles/creating-a-pull-request)
-
 ### IDE
 
 Recommended IDE is [Eclipse IDE for Java Developers](http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/junosr1).
@@ -52,5 +44,3 @@ Import project into Eclipse:
 
 	File --> Import --> General --> Existing Projects into Workspace -->
 	Select root directory --> Browser --> select the folder you just cloned --> click finish
-
-You are ready to go.
