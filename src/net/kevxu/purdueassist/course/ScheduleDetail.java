@@ -47,8 +47,8 @@ import org.jsoup.select.Elements;
  * Input (optional): term
  * <p>
  * Output: <br />
- * name crn subject cnbr section term levels campus type credits seats waitlist
- * seats prerequisites restrictions
+ * name crn subject cnbr section term levels campus type credits seats
+ * waitlistSeats restrictions prerequisites generalRequirements corequisites;
  * 
  * @author Kaiwen Xu (kevin)
  * @see ScheduleDetailListener
@@ -355,12 +355,14 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		final int PREREQUISTES = 1;
 		final int RESTRICTIONS = 2;
 		final int GENERAL_REQUIREMENTS = 3;
+		final int COREQUISITES = 4;
 
 		int recordType = NOT_RECORD;
 
 		String prerequisitesString = null;
 		String restrictionsString = null;
 		String generalRequirementsString = null;
+		String corequisitesString = null;
 
 		String[] remainingInfoes = remainingInfoHtml.split("<br />");
 		for (String info : remainingInfoes) {
@@ -372,7 +374,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				}
 
 				if (!info.contains("Restrictions:")
-						&& !info.contains("General Requirements:")) {
+						&& !info.contains("General Requirements:")
+						&& !info.contains("Corequisites:")) {
 					prerequisitesString += " "
 							+ Utilities.removeHtmlTags(info).trim();
 				}
@@ -384,7 +387,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				}
 
 				if (!info.contains("Prerequisites:")
-						&& !info.contains("General Requirements:")) {
+						&& !info.contains("General Requirements:")
+						&& !info.contains("Corequisites:")) {
 					restrictionsString += " "
 							+ Utilities.removeHtmlTags(
 									info.replace("&nbsp;", "")).trim();
@@ -397,8 +401,23 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				}
 
 				if (!info.contains("Prerequisites:")
-						&& !info.contains("Restrictions:")) {
+						&& !info.contains("Restrictions:")
+						&& !info.contains("Corequisites:")) {
 					generalRequirementsString += " "
+							+ Utilities.removeHtmlTags(
+									info.replace("&nbsp;", "")).trim();
+				}
+			}
+
+			if (recordType == COREQUISITES) {
+				if (corequisitesString == null) {
+					corequisitesString = "";
+				}
+
+				if (!info.contains("Prerequisites:")
+						&& !info.contains("Restrictions:")
+						&& !info.contains("General Requirements:")) {
+					corequisitesString += " "
 							+ Utilities.removeHtmlTags(
 									info.replace("&nbsp;", "")).trim();
 				}
@@ -457,6 +476,9 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			} else if (info.contains("General Requirements:")) {
 				recordType = GENERAL_REQUIREMENTS;
 				continue;
+			} else if (info.contains("Corequisites:")) {
+				recordType = COREQUISITES;
+				continue;
 			}
 		}
 
@@ -471,6 +493,11 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		if (generalRequirementsString != null) {
 			entry.setGeneralRequirements(generalRequirementsString);
 		}
+
+		if (corequisitesString != null) {
+			entry.setCorequisites(corequisitesString);
+		}
+
 	}
 
 	/**
@@ -501,6 +528,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		private String restrictions;
 		private String prerequisites;
 		private String generalRequirements;
+		private String corequisites;
 
 		private int getSearchCrn() {
 			return searchCrn;
@@ -564,6 +592,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 		public String getGeneralRequirements() {
 			return generalRequirements;
+		}
+
+		public String getCorequisites() {
+			return corequisites;
 		}
 
 		private void setName(String name) {
@@ -630,6 +662,10 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 							generalRequirements).trim());
 		}
 
+		private void setCorequisites(String corequisites) {
+			this.corequisites = corequisites.trim();
+		}
+
 		@Override
 		public String toString() {
 			return "Course Name: " + name + "\n" + "CRN: " + crn + "\n"
@@ -640,7 +676,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					+ "Seats: " + seats + "\n" + "Waitlist Seats: "
 					+ waitlistSeats + "\n" + "Restrictions: " + restrictions
 					+ "\n" + "Prerequisites: " + prerequisites + "\n"
-					+ "General Requirements: " + generalRequirements + "\n";
+					+ "General Requirements: " + generalRequirements + "\n"
+					+ "Corequisites: " + corequisites + "\n";
 		}
 	}
 
