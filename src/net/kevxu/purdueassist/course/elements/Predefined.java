@@ -93,7 +93,7 @@ public class Predefined {
 				"Statistics"), TECH("Technology"), THTR("Theatre"), USP(
 				"Undergrad Studies Prog"), VCS("Veterinary Clinical Sci"), VM(
 				"Veterinary Medicine"), WOST("Women's Studies"), YDAE(
-				"Youth Develop & Ag Educ");
+				"Youth Develop & Ag Educ"), CIC("CIC");
 
 		private final String fullName;
 
