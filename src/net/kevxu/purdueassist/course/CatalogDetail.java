@@ -131,7 +131,6 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				"This table lists the course detail for the selected term.");
 		if (tableElements.isEmpty() != true) {
 			// get name
-			System.out.println("Parsing cnbr = " + cnbr);
 			try {
 				Element body = tableElements.first().select("tbody").first();
 				String nameBlock = body.select("tr td.nttitle").first().text();
@@ -154,14 +153,9 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				temp = levels.split("[ ,]");
 				List<String> lvs = new ArrayList<String>();
 				for (String s : temp)
-					if (!s.equals("")){
-
-
-						System.out.println("level: " + s);
+					if (!s.equals("")) {
 						lvs.add(s);
 					}
-
-				System.out.println();
 				entry.setLevels(lvs);
 
 				// get type and prerequisites
@@ -180,7 +174,11 @@ public class CatalogDetail implements OnRequestFinishedListener {
 						preq.add(e.text());
 					}
 				}
-				
+				if (types.size() > 0)
+					entry.setType(types);
+				if (preq.size() > 0)
+					entry.setPrerequisites(preq);
+
 				// get offered by
 				begin = text.indexOf("Offered By:");
 				end = text.indexOf("Department:");
@@ -222,10 +220,18 @@ public class CatalogDetail implements OnRequestFinishedListener {
 
 				}
 				entry.setCampuses(camps);
-				
+
 				// get restrictions
-				
-				
+				begin = text.indexOf("Restrictions:");
+				end = text.indexOf("Prerequisites:");
+				if (begin > 0 && end < 0) {
+					entry.setRestrictions(text.substring(begin + "Restrictions:".length())
+							.replace("            ", "\n"));
+				} else if (begin > 0) {
+					entry.setRestrictions(text.substring(begin + "Restrictions:".length(), end).replace("            ",
+							"\n"));
+				}
+
 			} catch (StringIndexOutOfBoundsException e) {
 				System.out.println("-----------");
 				System.out.println("Error for cnbr = " + cnbr);
@@ -245,6 +251,18 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public CatalogDetailEntry(Subject subject, int cnbr) {
 			this.searchSubject = subject;
 			this.searchCnbr = cnbr;
+			this.cnbr = cnbr;
+			this.subject = subject;
+			name = null;
+			description = null;
+			levels = null;
+			type = null;
+			offeredBy = null;
+			department = null;
+			campuses = null;
+			restrictions = null;
+			prerequisites = null;
+
 		}
 
 		private Subject subject;
@@ -258,7 +276,47 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private List<String> campuses;
 		private String restrictions;
 		private List<String> prerequisites;
-		private String generalRequirements;
+
+		public String toString() {
+			String myStr = "";
+			myStr += "Subject: " + subject.toString() + "\n";
+			myStr += "CNBR: " + cnbr + "\n";
+			if (name != null)
+				myStr += "Name: " + name + "\n";
+			if (description != null)
+				myStr += "Description: " + description + "\n";
+			if (levels != null) {
+				myStr += "Level: ";
+				for (String s : levels)
+					myStr += s + " ; ";
+				myStr += "\n";
+			}
+			if (type != null) {
+				myStr += "Type: ";
+				for (Type t : type)
+					myStr += t.toString() + " ; ";
+				myStr += "\n";
+			}
+			if (offeredBy != null)
+				myStr += "OfferedBy: " + offeredBy + "\n";
+			if (department != null)
+				myStr += "Department: " + department + "\n";
+			if (campuses != null) {
+				myStr += "Campuses: ";
+				for (String s : campuses)
+					myStr += s + " ; ";
+				myStr += "\n";
+			}
+			if (restrictions != null)
+				myStr += "Restrictions: " + restrictions + "\n";
+			if (prerequisites != null) {
+				myStr += "Prerequisites: ";
+				for (String s : prerequisites)
+					myStr += s + " ; ";
+				myStr += "\n";
+			}
+			return myStr;
+		}
 
 		private Subject getSearchSubject() {
 			return searchSubject;
@@ -346,14 +404,6 @@ public class CatalogDetail implements OnRequestFinishedListener {
 
 		public void setPrerequisites(List<String> prerequisites) {
 			this.prerequisites = prerequisites;
-		}
-
-		public String getGeneralRequirements() {
-			return generalRequirements;
-		}
-
-		public void setGeneralRequirements(String generalRequirements) {
-			this.generalRequirements = generalRequirements;
 		}
 
 	}
