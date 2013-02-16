@@ -93,7 +93,8 @@ public class Predefined {
 				"Sociology"), SPAN("Spanish"), STAT("Statistics"), TECH(
 				"Technology"), THTR("Theatre"), USP("Undergrad Studies Prog"), VCS(
 				"Veterinary Clinical Sci"), VM("Veterinary Medicine"), WOST(
-				"Women's Studies"), YDAE("Youth Develop & Ag Educ"), CIC("CIC");
+				"Women's Studies"), YDAE("Youth Develop & Ag Educ"), CIC("CIC"), CMCI(
+				"CMCI");
 
 		private final String fullName;
 
