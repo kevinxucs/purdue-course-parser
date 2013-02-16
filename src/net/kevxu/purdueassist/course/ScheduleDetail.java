@@ -288,7 +288,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			String[] subjectCnbr = basicInfoes[2].split(" ");
 			if (subjectCnbr.length == 2) {
 				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
-				entry.setCnbr(Integer.valueOf(subjectCnbr[1]));
+				entry.setCnbr(subjectCnbr[1]);
 			} else {
 				throw new HttpParseException();
 			}
@@ -487,7 +487,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		private String name;
 		private int crn;
 		private Subject subject;
-		private int cnbr;
+		private String cnbr;
 		private String section;
 		private Term term;
 		private List<String> levels;
@@ -516,7 +516,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			return subject;
 		}
 
-		public int getCnbr() {
+		public String getCnbr() {
 			return cnbr;
 		}
 
@@ -576,7 +576,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			this.subject = subject;
 		}
 
-		private void setCnbr(int cnbr) {
+		private void setCnbr(String cnbr) {
 			this.cnbr = cnbr;
 		}
 
