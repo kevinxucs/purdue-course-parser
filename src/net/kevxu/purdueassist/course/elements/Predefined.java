@@ -46,7 +46,7 @@ public class Predefined {
 				"Aviation Technology"), BAND("Bands"), BCHM("Biochemistry"), BCM(
 				"Bldg Construct Mgmt Tech"), BIOL("Biological Sciences"), BME(
 				"Biomedical Engineering"), BMS("Basic Medical Sciences"), BTNY(
-				"Botany & Plant Pathology"), CAND("Candidate"), CE(
+				"Botany & Plant Pathology"), BUS("Business"), CAND("Candidate"), CE(
 				"Civil Engineering"), CEM("Construction Engr & Mgmt"), CGT(
 				"Computer Graphics Tech"), CHE("Chemical Engineering"), CHM(
 				"Chemistry"), CHNS("Chinese"), CLCS("Classics"), CLPH(
@@ -96,7 +96,7 @@ public class Predefined {
 				"Veterinary Medicine"), WOST("Women's Studies"), YDAE(
 				"Youth Develop & Ag Educ"), CIC("CIC"), CMCI("CMCI"), AST("AST"), CHEM(
 				"CHEM"), CSCI("CSCI"), COMM("COMM"), ENG("ENG"), GEOL("GEOL"), LSTU(
-				"LSTU");
+				"LSTU"), FINA("FINA");
 
 		private final String fullName;
 
