@@ -184,8 +184,10 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				end = text.indexOf("Department:");
 				if (end < 0)
 					end = text.indexOf("Course Attributes:");
-				entry.setOfferedBy(text.substring(begin + 12, end - 1));
-
+				if(end>0){
+					entry.setOfferedBy(text.substring(begin + 12, end - 1));
+				}
+				
 				// get department
 				begin = text.indexOf("Department:");
 				if (begin > 0) {
@@ -223,7 +225,9 @@ public class CatalogDetail implements OnRequestFinishedListener {
 
 				// get restrictions
 				begin = text.indexOf("Restrictions:");
-				end = text.indexOf("Prerequisites:");
+				end=text.indexOf("Corequisites:");
+				if(end<0)
+					end = text.indexOf("Prerequisites:");
 				if (begin > 0 && end < 0) {
 					entry.setRestrictions(text.substring(begin + "Restrictions:".length())
 							.replace("            ", "\n"));
@@ -233,9 +237,10 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				}
 
 			} catch (StringIndexOutOfBoundsException e) {
-				System.out.println("-----------");
-				System.out.println("Error for cnbr = " + cnbr);
-				System.out.println("-----------");
+				//no type, not available
+//				System.out.println("-----------");
+//				System.out.println("Error for cnbr = " + cnbr);
+//				System.out.println("-----------");
 			}
 		} else {
 			throw new CourseNotFoundException();
