@@ -68,6 +68,8 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public void onCatalogDetailFinished(HttpParseException e);
 
 		public void onCatalogDetailFinished(CourseNotFoundException e);
+
+		public void onCatalogDetailFinished(Exception e);
 	}
 
 	public CatalogDetail(Subject subject, int cnbr,
@@ -125,7 +127,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		} catch (CourseNotFoundException e) {
 			mListener.onCatalogDetailFinished(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			mListener.onCatalogDetailFinished(e);
 		}
 	}
 
@@ -276,6 +278,11 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		return entry;
 	}
 
+	/**
+	 * This class contains information return by CatalogDetail.
+	 * 
+	 * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
+	 */
 	@SuppressWarnings("unused")
 	public class CatalogDetailEntry {
 		private Subject searchSubject;

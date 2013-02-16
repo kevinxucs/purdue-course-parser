@@ -30,37 +30,47 @@ public class CatalogDetailTest {
 		// final int cnbr=tmp_cnbr;
 		for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
 			final int cnbr = mcnbr;
-			CatalogDetail detail = new CatalogDetail(subject, cnbr, new CatalogDetailListener() {
-				@Override
-				public void onCatalogDetailFinished(CatalogDetailEntry entry) {
-					System.out.println(entry.toString());
-					System.out.println("Course Found");
-					System.out.println("----------------------");
-				}
+			CatalogDetail detail = new CatalogDetail(subject, cnbr,
+					new CatalogDetailListener() {
+						@Override
+						public void onCatalogDetailFinished(
+								CatalogDetailEntry entry) {
+							System.out.println(entry.toString());
+							System.out.println("Course Found");
+							System.out.println("----------------------");
+						}
 
-				@Override
-				public void onCatalogDetailFinished(IOException e) {
-					System.out.println("INPUT: " + cnbr + " " + subject.toString());
-					System.out.println("IO Error!");
-					System.out.println("----------------------");
-				}
+						@Override
+						public void onCatalogDetailFinished(IOException e) {
+							System.out.println("INPUT: " + cnbr + " "
+									+ subject.toString());
+							System.out.println("IO Error!");
+							System.out.println("----------------------");
+						}
 
-				@Override
-				public void onCatalogDetailFinished(HttpParseException e) {
-					System.out.println("INPUT: " + cnbr + " " + subject.toString());
-					System.out.println("Parse Error!");
-					System.out.println("----------------------");
-				}
+						@Override
+						public void onCatalogDetailFinished(HttpParseException e) {
+							System.out.println("INPUT: " + cnbr + " "
+									+ subject.toString());
+							System.out.println("Parse Error!");
+							System.out.println("----------------------");
+						}
 
-				@Override
-				public void onCatalogDetailFinished(CourseNotFoundException e) {
-					// System.out.println("INPUT: " + cnbr + " " +
-					// subject.toString());
-					// System.out.println("Course Not Found!");
-					// System.out.println("----------------------");
-				}
+						@Override
+						public void onCatalogDetailFinished(
+								CourseNotFoundException e) {
+							// System.out.println("INPUT: " + cnbr + " " +
+							// subject.toString());
+							// System.out.println("Course Not Found!");
+							// System.out.println("----------------------");
+						}
 
-			});
+						@Override
+						public void onCatalogDetailFinished(Exception e) {
+							e.printStackTrace();
+						}
+
+					});
 			try {
 				detail.getResult();
 			} catch (StringIndexOutOfBoundsException e) {
