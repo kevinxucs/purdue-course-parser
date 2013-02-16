@@ -246,6 +246,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		return entry;
 	}
 
+	@SuppressWarnings("unused")
 	public class CatalogDetailEntry {
 		private Subject searchSubject;
 		private int searchCnbr;
