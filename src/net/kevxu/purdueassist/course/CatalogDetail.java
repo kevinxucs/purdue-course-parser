@@ -310,6 +310,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		private String restrictions;
 		private List<String> prerequisites;
 
+		@Override
 		public String toString() {
 			String myStr = "";
 			myStr += "Subject: " + subject.toString() + "\n";
