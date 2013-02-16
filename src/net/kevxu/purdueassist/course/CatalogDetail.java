@@ -32,18 +32,35 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * This is the class implementing "Catalog Detail" search described in the
+ * document. It utilizes asynchronous function call for non-blocking calling
+ * style. You have to provide callback method by implementing
+ * CatalogDetailListener.
+ * <p>
+ * Input: subject cnbr <br />
+ * Input (optional): term
+ * <p>
+ * Output: <br />
+ * subject cnbr name description levels type offeredBy department campuses
+ * restrictions prerequisites
+ * 
+ * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
+ * @see CatalogDetailListener
+ */
 public class CatalogDetail implements OnRequestFinishedListener {
 
-	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/" + "bzwsrch.p_catalog_detail";
+	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
+			+ "bzwsrch.p_catalog_detail";
 
 	private Term term;
 	private Subject subject;
 	private int cnbr;
 
-	private OnCatalogDetailFinishedListener mListener;
+	private CatalogDetailListener mListener;
 	private BasicHttpClientAsync httpClient;
 
-	public interface OnCatalogDetailFinishedListener {
+	public interface CatalogDetailListener {
 		public void onCatalogDetailFinished(CatalogDetailEntry entry);
 
 		public void onCatalogDetailFinished(IOException e);
@@ -53,12 +70,13 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public void onCatalogDetailFinished(CourseNotFoundException e);
 	}
 
-	public CatalogDetail(Subject subject, int cnbr, OnCatalogDetailFinishedListener onCatalogDetailFinishedListener) {
-		this(Term.CURRENT, subject, cnbr, onCatalogDetailFinishedListener);
+	public CatalogDetail(Subject subject, int cnbr,
+			CatalogDetailListener catalogDetailListener) {
+		this(Term.CURRENT, subject, cnbr, catalogDetailListener);
 	}
 
 	public CatalogDetail(Term term, Subject subject, int cnbr,
-			OnCatalogDetailFinishedListener onCatalogDetailFinishedListener) {
+			CatalogDetailListener catalogDetailListener) {
 		if (term != null)
 			this.term = term;
 		else
@@ -66,7 +84,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 
 		this.subject = subject;
 		this.cnbr = cnbr;
-		this.mListener = onCatalogDetailFinishedListener;
+		this.mListener = catalogDetailListener;
 	}
 
 	public void getResult() {
@@ -121,17 +139,19 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		mListener.onCatalogDetailFinished(e);
 	}
 
-	private CatalogDetailEntry parseDocument(Document document) throws HttpParseException, CourseNotFoundException,
-			IOException {
+	private CatalogDetailEntry parseDocument(Document document)
+			throws HttpParseException, CourseNotFoundException, IOException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
-		Elements tableElements = document.getElementsByAttributeValue("summary",
+		Elements tableElements = document.getElementsByAttributeValue(
+				"summary",
 				"This table lists the course detail for the selected term.");
 		if (tableElements.isEmpty() != true) {
 			// get name
 			try {
 				Element body = tableElements.first().select("tbody").first();
 				String nameBlock = body.select("tr td.nttitle").first().text();
-				String[] temp = nameBlock.split(subject.name() + " " + String.valueOf(cnbr));
+				String[] temp = nameBlock.split(subject.name() + " "
+						+ String.valueOf(cnbr));
 				String name = temp[temp.length - 1].substring(3);
 				entry.setName(name);
 
@@ -160,7 +180,8 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				List<String> preq = new ArrayList<String>();
 				Elements parsing_A = body.select("a");
 				for (Element e : parsing_A) {
-					if (e.attr("href").contains("schd_in") && !(e.attr("href").contains("%"))) {
+					if (e.attr("href").contains("schd_in")
+							&& !(e.attr("href").contains("%"))) {
 
 						try {
 							types.add(Type.valueOf(e.text().replace(" ", "")));
@@ -181,10 +202,10 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				end = text.indexOf("Department:");
 				if (end < 0)
 					end = text.indexOf("Course Attributes:");
-				if(end>0){
+				if (end > 0) {
 					entry.setOfferedBy(text.substring(begin + 12, end - 1));
 				}
-				
+
 				// get department
 				begin = text.indexOf("Department:");
 				if (begin > 0) {
@@ -193,7 +214,8 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				}
 
 				// get campus
-				begin = text.indexOf("May be offered at any of the following campuses:");
+				begin = text
+						.indexOf("May be offered at any of the following campuses:");
 				String campuses;
 				end = text.indexOf("Repeatable for Additional Credit:");
 				if (end < 0)
@@ -205,10 +227,16 @@ public class CatalogDetail implements OnRequestFinishedListener {
 				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (end < 0) {
-					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5);
+					campuses = text
+							.substring(begin
+									+ "May be offered at any of the following campuses:"
+											.length() + 5);
 				} else {
-					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5,
-							end - 1);
+					campuses = text
+							.substring(
+									begin
+											+ "May be offered at any of the following campuses:"
+													.length() + 5, end - 1);
 				}
 				temp = campuses.replace("       ", "#").split("#");
 				List<String> camps = new ArrayList<String>();
@@ -222,22 +250,24 @@ public class CatalogDetail implements OnRequestFinishedListener {
 
 				// get restrictions
 				begin = text.indexOf("Restrictions:");
-				end=text.indexOf("Corequisites:");
-				if(end<0)
+				end = text.indexOf("Corequisites:");
+				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (begin > 0 && end < 0) {
-					entry.setRestrictions(text.substring(begin + "Restrictions:".length())
-							.replace("            ", "\n"));
+					entry.setRestrictions(text.substring(
+							begin + "Restrictions:".length()).replace(
+							"            ", "\n"));
 				} else if (begin > 0) {
-					entry.setRestrictions(text.substring(begin + "Restrictions:".length(), end).replace("            ",
-							"\n"));
+					entry.setRestrictions(text.substring(
+							begin + "Restrictions:".length(), end).replace(
+							"            ", "\n"));
 				}
 
 			} catch (StringIndexOutOfBoundsException e) {
-				//no type, not available
-//				System.out.println("-----------");
-//				System.out.println("Error for cnbr = " + cnbr);
-//				System.out.println("-----------");
+				// no type, not available
+				// System.out.println("-----------");
+				// System.out.println("Error for cnbr = " + cnbr);
+				// System.out.println("-----------");
 			}
 		} else {
 			throw new CourseNotFoundException();

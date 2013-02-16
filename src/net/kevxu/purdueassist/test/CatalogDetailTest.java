@@ -1,11 +1,11 @@
 package net.kevxu.purdueassist.test;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Scanner;
 
 import net.kevxu.purdueassist.course.CatalogDetail;
 import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailEntry;
-import net.kevxu.purdueassist.course.CatalogDetail.OnCatalogDetailFinishedListener;
+import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
@@ -30,7 +30,7 @@ public class CatalogDetailTest {
 		// final int cnbr=tmp_cnbr;
 		for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
 			final int cnbr = mcnbr;
-			CatalogDetail detail = new CatalogDetail(subject, cnbr, new OnCatalogDetailFinishedListener() {
+			CatalogDetail detail = new CatalogDetail(subject, cnbr, new CatalogDetailListener() {
 				@Override
 				public void onCatalogDetailFinished(CatalogDetailEntry entry) {
 					System.out.println(entry.toString());
