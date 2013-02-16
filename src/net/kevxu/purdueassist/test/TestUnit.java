@@ -1,4 +1,4 @@
-package net.kevxu.purdueassist.ui;
+package net.kevxu.purdueassist.test;
 
 import java.io.*;
 import java.util.Scanner;
