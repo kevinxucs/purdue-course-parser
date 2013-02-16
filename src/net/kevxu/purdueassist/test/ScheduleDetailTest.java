@@ -3,8 +3,8 @@ package net.kevxu.purdueassist.test;
 import java.io.IOException;
 
 import net.kevxu.purdueassist.course.ScheduleDetail;
-import net.kevxu.purdueassist.course.ScheduleDetail.OnScheduleDetailFinishedListener;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
+import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
@@ -54,7 +54,7 @@ public class ScheduleDetailTest {
 				for (final String crnString : crns) {
 					final int crn = Integer.valueOf(crnString);
 					ScheduleDetail detail = new ScheduleDetail(term, crn,
-							new OnScheduleDetailFinishedListener() {
+							new ScheduleDetailListener() {
 
 								@Override
 								public void onScheduleDetailFinished(

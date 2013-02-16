@@ -49,7 +49,7 @@ import org.jsoup.select.Elements;
  * waitlist seats prerequisites restrictions
  * 
  * @author Kaiwen Xu (kevin)
- * @see OnScheduleDetailFinishedListener
+ * @see ScheduleDetailListener
  */
 public class ScheduleDetail implements OnRequestFinishedListener {
 
@@ -59,7 +59,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	private Term term;
 	private int crn;
 
-	private OnScheduleDetailFinishedListener mListener;
+	private ScheduleDetailListener mListener;
 	private BasicHttpClientAsync mHttpClient;
 
 	// private static final Logger mLogger =
@@ -71,7 +71,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	 * 
 	 * @author Kaiwen Xu (kevin)
 	 */
-	public interface OnScheduleDetailFinishedListener {
+	public interface ScheduleDetailListener {
 		public void onScheduleDetailFinished(ScheduleDetailEntry entry);
 
 		public void onScheduleDetailFinished(IOException e);
@@ -90,19 +90,19 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	 *            callback you have to implement.
 	 */
 	public ScheduleDetail(int crn,
-			OnScheduleDetailFinishedListener onScheduleDetailFinishedListener) {
-		this(Term.CURRENT, crn, onScheduleDetailFinishedListener);
+			ScheduleDetailListener scheduleDetailListener) {
+		this(Term.CURRENT, crn, scheduleDetailListener);
 	}
 
 	public ScheduleDetail(Term term, int crn,
-			OnScheduleDetailFinishedListener onScheduleDetailFinishedListener) {
+			ScheduleDetailListener scheduleDetailListener) {
 		if (term != null)
 			this.term = term;
 		else
 			this.term = Term.CURRENT;
 
 		this.crn = crn;
-		this.mListener = onScheduleDetailFinishedListener;
+		this.mListener = scheduleDetailListener;
 	}
 
 	/**
