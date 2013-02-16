@@ -427,17 +427,23 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 					entry.setType(Type.valueOf(typeString.replace(" ", "")));
 					continue;
 				} else if (info.contains("Credits")) {
-					String creditsString;
-					if (!info.contains("TO"))
+					// TODO: require better handling of credit string with OR or
+					// TO contained
+					String creditsString = "0";
+					if (!info.contains("TO") && !info.contains("OR")) {
 						creditsString = info.substring(0,
 								info.indexOf("Credits")).trim();
-					else
+					} else if (info.contains("TO")) {
 						creditsString = info.substring(info.indexOf("TO") + 2,
 								info.indexOf("Credits")).trim();
+					} else if (info.contains("OR")) {
+						creditsString = info.substring(info.indexOf("OR") + 2,
+								info.indexOf("Credits")).trim();
+					}
 					entry.setCredits(Double.valueOf(creditsString));
 					continue;
 				}
-				
+
 			}
 
 			if (info.contains("Restrictions:")) {
