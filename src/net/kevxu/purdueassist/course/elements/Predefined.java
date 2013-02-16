@@ -99,7 +99,9 @@ public class Predefined {
 				"LSTU"), FINA("FINA"), SPCH("SPCH"), INFO("INFO"), MATH("MATH"), CMCL(
 				"CMCL"), GEOG("GEOG"), JOUR("JOUR"), COAS("COAS"), HPER("HPER"), HSRV(
 				"HSRV"), POLS("POLS"), SPEA("SPEA"), TEL("TEL"), CIT("CIT"), EALC(
-				"EALC");
+				"EALC"), SWK("SWK"), ANAT("ANAT"), CJUS("CJUS"), PHYT("PHYT"), PMTD(
+				"PMTD"), DRAF("DRAF"), PRDM("PRDM"), SUPV("SUPV"), ERTH("ERTH"), FOLK(
+				"FOLK");
 
 		private final String fullName;
 
