@@ -120,7 +120,8 @@ public class Predefined {
 				"Laboratory Preparation", ""), Experiential("Experiential", ""), Research(
 				"Research", ""), Studio("Studio", ""), Lab1("Lab1", ""), Clinic(
 				"Clinic", ""), Lecture1("Lecture1", ""), Presentatio(
-				"Presentation", ""), TravelTime("TravelTime", "");
+				"Presentation", ""), TravelTime("TravelTime", ""), Experiential1(
+				"Experiential1", "");
 
 		private final String name;
 		private final String linkName;
