@@ -122,7 +122,7 @@ public class Predefined {
 				"Clinic", ""), Lecture1("Lecture1", ""), Presentation(
 				"Presentation", ""), TravelTime("TravelTime", ""), Experiential1(
 				"Experiential1", ""), Clinic1("Clinic1", ""), Clinic2(
-				"Clinic2", "");
+				"Clinic2", ""), Clinic3("Clinic3", "");
 
 		private final String name;
 		private final String linkName;
