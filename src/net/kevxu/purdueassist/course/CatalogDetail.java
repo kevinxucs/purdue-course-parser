@@ -1,7 +1,7 @@
 /*
  * CatalogDetail.java
  * 
- * Written by Kaiwen Xu (kevin).
+ * Written by Kaiwen Xu (kevin) and Rendong Chen (ryan).
  * Released under Apache License 2.0.
  */
 
