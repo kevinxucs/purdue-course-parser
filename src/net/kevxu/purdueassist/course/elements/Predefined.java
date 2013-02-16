@@ -97,7 +97,9 @@ public class Predefined {
 				"Youth Develop & Ag Educ"), CIC("CIC"), CMCI("CMCI"), AST("AST"), CHEM(
 				"CHEM"), CSCI("CSCI"), COMM("COMM"), ENG("ENG"), GEOL("GEOL"), LSTU(
 				"LSTU"), FINA("FINA"), SPCH("SPCH"), INFO("INFO"), MATH("MATH"), CMCL(
-				"CMCL"), GEOG("GEOG"), JOUR("JOUR");
+				"CMCL"), GEOG("GEOG"), JOUR("JOUR"), COAS("COAS"), HPER("HPER"), HSRV(
+				"HSRV"), POLS("POLS"), SPEA("SPEA"), TEL("TEL"), CIT("CIT"), EALC(
+				"EALC");
 
 		private final String fullName;
 
