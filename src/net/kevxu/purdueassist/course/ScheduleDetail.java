@@ -69,7 +69,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 
 	/**
 	 * Callback methods you have to implement. Provide either
-	 * ScheduleDetailEntry object or other exceptions.
+	 * ScheduleDetailEntry object or exceptions.
 	 * 
 	 * @author Kaiwen Xu (kevin)
 	 */
@@ -81,6 +81,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 		public void onScheduleDetailFinished(HttpParseException e);
 
 		public void onScheduleDetailFinished(CourseNotFoundException e);
+
+		public void onScheduleDetailFinished(Exception e);
 	}
 
 	/**
@@ -187,7 +189,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 			mListener.onScheduleDetailFinished(new HttpParseException(e
 					.getMessage()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			mListener.onScheduleDetailFinished(e);
 		}
 	}
 

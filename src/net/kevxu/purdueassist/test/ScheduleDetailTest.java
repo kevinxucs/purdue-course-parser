@@ -99,6 +99,16 @@ public class ScheduleDetailTest {
 										System.out.println(entry);
 									}
 								}
+
+								@Override
+								public void onScheduleDetailFinished(Exception e) {
+									if (!silent) {
+										if (!smallSilent)
+											System.out.println("INPUT: "
+													+ crnString + " " + term);
+										e.printStackTrace();
+									}
+								}
 							});
 					detail.getResult();
 				}
