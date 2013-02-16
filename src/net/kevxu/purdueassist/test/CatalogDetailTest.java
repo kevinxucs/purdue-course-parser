@@ -10,7 +10,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
 
-public class TestUnit {
+public class CatalogDetailTest {
 	public static void main(String[] args) {
 		System.out.println("Subject:");
 		Scanner getInput = new Scanner(System.in);
