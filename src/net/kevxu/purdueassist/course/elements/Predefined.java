@@ -73,27 +73,27 @@ public class Predefined {
 				"Industrial Engineering"), IET("Industrial Engr Technology"), IPPH(
 				"Industrial & Phys Pharm"), IT("Industrial Technology"), ITAL(
 				"Italian"), JPNS("Japanese"), LA("Landscape Architecture"), LALS(
-				"Latina Am&Latino Studies"), LATN("Latin"), LCME(
-				"Lafayette Center Med Educ"), LING("Linguistics"), MA(
-				"Mathematics"), MARS("Medieval &Renaissance Std"), MCMP(
-				"Med Chem &Molecular Pharm"), ME("Mechanical Engineering"), MET(
-				"Mechanical Engr Tech"), MFET("Manufacturing Engr Tech"), MGMT(
-				"Management"), MSE("Materials Engineering"), MSL(
-				"Military Science & Ldrshp"), MUS("Music History & Theory"), NRES(
-				"Natural Res & Environ Sci"), NS("Naval Science"), NUCL(
-				"Nuclear Engineering"), NUPH("Nuclear Pharmacy"), NUR("Nursing"), NUTR(
-				"Nutrition Science"), OBHR("Orgnztnl Bhvr &Hum Resrce"), OLS(
-				"Organiz Ldrshp&Supervision"), PES("Physical Education Skills"), PHAD(
-				"Pharmacy Administration"), PHIL("Philosophy"), PHPR(
-				"Pharmacy Practice"), PHRM("Pharmacy"), PHYS("Physics"), POL(
-				"Political Science"), PSY("Psychology"), PTGS("Portuguese"), REG(
-				"Reg File Maintenance"), REL("Religious Studies"), RUSS(
-				"Russian"), SA("Study Abroad"), SCI("General Science"), SLHS(
-				"Speech, Lang&Hear Science"), SOC("Sociology"), SPAN("Spanish"), STAT(
-				"Statistics"), TECH("Technology"), THTR("Theatre"), USP(
-				"Undergrad Studies Prog"), VCS("Veterinary Clinical Sci"), VM(
-				"Veterinary Medicine"), WOST("Women's Studies"), YDAE(
-				"Youth Develop & Ag Educ"), CIC("CIC");
+				"Latina Am&Latino Studies"), LATN("Latin"), LC(
+				"Languages and Cultures"), LCME("Lafayette Center Med Educ"), LING(
+				"Linguistics"), MA("Mathematics"), MARS(
+				"Medieval &Renaissance Std"), MCMP("Med Chem &Molecular Pharm"), ME(
+				"Mechanical Engineering"), MET("Mechanical Engr Tech"), MFET(
+				"Manufacturing Engr Tech"), MGMT("Management"), MSE(
+				"Materials Engineering"), MSL("Military Science & Ldrshp"), MUS(
+				"Music History & Theory"), NRES("Natural Res & Environ Sci"), NS(
+				"Naval Science"), NUCL("Nuclear Engineering"), NUPH(
+				"Nuclear Pharmacy"), NUR("Nursing"), NUTR("Nutrition Science"), OBHR(
+				"Orgnztnl Bhvr &Hum Resrce"), OLS("Organiz Ldrshp&Supervision"), PES(
+				"Physical Education Skills"), PHAD("Pharmacy Administration"), PHIL(
+				"Philosophy"), PHPR("Pharmacy Practice"), PHRM("Pharmacy"), PHYS(
+				"Physics"), POL("Political Science"), PSY("Psychology"), PTGS(
+				"Portuguese"), REG("Reg File Maintenance"), REL(
+				"Religious Studies"), RUSS("Russian"), SA("Study Abroad"), SCI(
+				"General Science"), SLHS("Speech, Lang&Hear Science"), SOC(
+				"Sociology"), SPAN("Spanish"), STAT("Statistics"), TECH(
+				"Technology"), THTR("Theatre"), USP("Undergrad Studies Prog"), VCS(
+				"Veterinary Clinical Sci"), VM("Veterinary Medicine"), WOST(
+				"Women's Studies"), YDAE("Youth Develop & Ag Educ"), CIC("CIC");
 
 		private final String fullName;
 
