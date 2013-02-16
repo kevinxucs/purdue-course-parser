@@ -38,15 +38,17 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * This is the class implementing "Schedule Detail Search" described in
+ * This is the class implementing "Schedule Detail" search described in the
  * document. It utilizes asynchronous function call for non-blocking calling
  * style. You have to provide callback method by implementing
- * OnScheduleDetailFinishedListener.
+ * ScheduleDetailListener.
  * <p>
- * Input: crn term (optional)
+ * Input: crn <br />
+ * Input (optional): term
  * <p>
- * Output: name crn subject cnbr section term levels campus type credits seats
- * waitlist seats prerequisites restrictions
+ * Output: <br />
+ * name crn subject cnbr section term levels campus type credits seats waitlist
+ * seats prerequisites restrictions
  * 
  * @author Kaiwen Xu (kevin)
  * @see ScheduleDetailListener
@@ -89,8 +91,7 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 	 * @param onScheduleDetailFinishedListener
 	 *            callback you have to implement.
 	 */
-	public ScheduleDetail(int crn,
-			ScheduleDetailListener scheduleDetailListener) {
+	public ScheduleDetail(int crn, ScheduleDetailListener scheduleDetailListener) {
 		this(Term.CURRENT, crn, scheduleDetailListener);
 	}
 
