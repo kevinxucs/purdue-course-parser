@@ -117,7 +117,8 @@ public class Predefined {
 				"Lecture", "LEC"), Recitation("Recitation", "REC"), PracticeStudyObservation(
 				"Practice Study Observation", "PSO"), LaboratoryPreparation(
 				"Laboratory Preparation", ""), Experiential("Experiential", ""), Research(
-				"Research", ""), Studio("Studio", ""), Lab1("Lab1", "");
+				"Research", ""), Studio("Studio", ""), Lab1("Lab1", ""), Clinic(
+				"Clinic", "");
 
 		private final String name;
 		private final String linkName;
