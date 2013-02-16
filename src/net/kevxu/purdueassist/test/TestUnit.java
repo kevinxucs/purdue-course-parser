@@ -33,7 +33,6 @@ public class TestUnit {
 			CatalogDetail detail = new CatalogDetail(subject, cnbr, new OnCatalogDetailFinishedListener() {
 				@Override
 				public void onCatalogDetailFinished(CatalogDetailEntry entry) {
-					// TODO Auto-generated method stub
 					System.out.println(entry.toString());
 					System.out.println("Course Found");
 					System.out.println("----------------------");
@@ -41,7 +40,6 @@ public class TestUnit {
 
 				@Override
 				public void onCatalogDetailFinished(IOException e) {
-					// TODO Auto-generated method stub
 					System.out.println("INPUT: " + cnbr + " " + subject.toString());
 					System.out.println("IO Error!");
 					System.out.println("----------------------");
@@ -49,7 +47,6 @@ public class TestUnit {
 
 				@Override
 				public void onCatalogDetailFinished(HttpParseException e) {
-					// TODO Auto-generated method stub
 					System.out.println("INPUT: " + cnbr + " " + subject.toString());
 					System.out.println("Parse Error!");
 					System.out.println("----------------------");
@@ -57,7 +54,6 @@ public class TestUnit {
 
 				@Override
 				public void onCatalogDetailFinished(CourseNotFoundException e) {
-					// TODO Auto-generated method stub
 					// System.out.println("INPUT: " + cnbr + " " +
 					// subject.toString());
 					// System.out.println("Course Not Found!");
