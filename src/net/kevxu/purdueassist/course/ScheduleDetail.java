@@ -386,7 +386,8 @@ public class ScheduleDetail implements OnRequestFinishedListener {
 				if (!info.contains("Prerequisites:")
 						&& !info.contains("General Requirements:")) {
 					restrictionsString += " "
-							+ info.replace("&nbsp;", "").trim();
+							+ Utilities.removeHtmlTags(
+									info.replace("&nbsp;", "")).trim();
 				}
 			}
 
