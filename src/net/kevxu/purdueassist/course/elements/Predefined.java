@@ -96,7 +96,8 @@ public class Predefined {
 				"Veterinary Medicine"), WOST("Women's Studies"), YDAE(
 				"Youth Develop & Ag Educ"), CIC("CIC"), CMCI("CMCI"), AST("AST"), CHEM(
 				"CHEM"), CSCI("CSCI"), COMM("COMM"), ENG("ENG"), GEOL("GEOL"), LSTU(
-				"LSTU"), FINA("FINA");
+				"LSTU"), FINA("FINA"), SPCH("SPCH"), INFO("INFO"), MATH("MATH"), CMCL(
+				"CMCL"), GEOG("GEOG"), JOUR("JOUR");
 
 		private final String fullName;
 
