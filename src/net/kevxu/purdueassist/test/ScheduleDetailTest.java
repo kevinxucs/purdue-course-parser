@@ -15,7 +15,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class CommandLine {
+public class ScheduleDetailTest {
 
 	public static final String VERSION = "0.1.2-SNAPSHOT";
 
