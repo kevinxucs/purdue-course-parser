@@ -7,6 +7,8 @@
 
 package net.kevxu.purdueassist.course;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,8 +37,7 @@ import org.jsoup.select.Elements;
 
 public class CatalogDetail implements OnRequestFinishedListener {
 
-	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
-			+ "bzwsrch.p_catalog_detail";
+	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/" + "bzwsrch.p_catalog_detail";
 
 	private Term term;
 	private Subject subject;
@@ -55,8 +56,7 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		public void onCatalogDetailFinished(CourseNotFoundException e);
 	}
 
-	public CatalogDetail(Subject subject, int cnbr,
-			OnCatalogDetailFinishedListener onCatalogDetailFinishedListener) {
+	public CatalogDetail(Subject subject, int cnbr, OnCatalogDetailFinishedListener onCatalogDetailFinishedListener) {
 		this(Term.CURRENT, subject, cnbr, onCatalogDetailFinishedListener);
 	}
 
@@ -124,59 +124,113 @@ public class CatalogDetail implements OnRequestFinishedListener {
 		mListener.onCatalogDetailFinished(e);
 	}
 
-	private CatalogDetailEntry parseDocument(Document document)
-			throws HttpParseException, CourseNotFoundException {
+	private CatalogDetailEntry parseDocument(Document document) throws HttpParseException, CourseNotFoundException,
+			IOException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
-		Elements tableElements = document.getElementsByAttributeValue(
-				"summary",
+		Elements tableElements = document.getElementsByAttributeValue("summary",
 				"This table lists the course detail for the selected term.");
 		if (tableElements.isEmpty() != true) {
 			// get name
-			Element body = tableElements.first().select("tbody").first();
-			String nameBlock = body.select("tr td.nttitle").first().text();
-			String[] temp = nameBlock.split(subject.name() + " "
-					+ String.valueOf(cnbr));
-			String name = temp[temp.length - 1].substring(3);
-			entry.setName(name);
+			System.out.println("Parsing cnbr = " + cnbr);
+			try {
+				Element body = tableElements.first().select("tbody").first();
+				String nameBlock = body.select("tr td.nttitle").first().text();
+				String[] temp = nameBlock.split(subject.name() + " " + String.valueOf(cnbr));
+				String name = temp[temp.length - 1].substring(3);
+				entry.setName(name);
 
-			// get description
-			body = body.select(".ntdefault").first();
-			String text = body.text();
-			int split = text.indexOf("Levels:");
-			String description = text.substring(0, split);
-			description = description.substring(20);
-			entry.setDescription(description);
+				// get description
+				body = body.select(".ntdefault").first();
+				String text = body.text();
+				int split = text.indexOf("Levels:");
+				String description = text.substring(0, split);
+				description = description.substring(20);
+				entry.setDescription(description);
 
-			// get levels
-			int begin = split;
-			int end = text.indexOf("Schedule Types:");
-			String levels = text.substring(begin + 8, end);
-			temp = levels.split("[ ,]");
-			List<String> lvs = new ArrayList<String>();
-			for (String s : temp)
-				if (!s.equals(""))
-					lvs.add(s);
-			entry.setLevels(lvs);
+				// get levels
+				int begin = split;
+				int end = text.indexOf("Schedule Types:");
+				String levels = text.substring(begin + 8, end);
+				temp = levels.split("[ ,]");
+				List<String> lvs = new ArrayList<String>();
+				for (String s : temp)
+					if (!s.equals("")){
 
-			// get type and prerequisites
-			List<Type> types = new ArrayList<Type>();
-			List<String> preq = new ArrayList<String>();
-			Elements parsing_A = body.select("a");
-			for (Element e : parsing_A) {
-				if (e.attr("href").contains("schd_in")
-						&& !(e.attr("href").contains("%"))) {
-					try {
-						types.add(Type.valueOf(e.text()));
-					} catch (Exception exception) {
-						throw new HttpParseException();
+
+						System.out.println("level: " + s);
+						lvs.add(s);
 					}
-				}else if(e.attr("href").contains("sel_attr=")){
-					preq.add(e.text());
-				}
-			}
-			
-			// TODO
 
+				System.out.println();
+				entry.setLevels(lvs);
+
+				// get type and prerequisites
+				List<Type> types = new ArrayList<Type>();
+				List<String> preq = new ArrayList<String>();
+				Elements parsing_A = body.select("a");
+				for (Element e : parsing_A) {
+					if (e.attr("href").contains("schd_in") && !(e.attr("href").contains("%"))) {
+
+						try {
+							types.add(Type.valueOf(e.text().replace(" ", "")));
+						} catch (Exception exception) {
+							throw new HttpParseException();
+						}
+					} else if (e.attr("href").contains("sel_attr=")) {
+						preq.add(e.text());
+					}
+				}
+				
+				// get offered by
+				begin = text.indexOf("Offered By:");
+				end = text.indexOf("Department:");
+				if (end < 0)
+					end = text.indexOf("Course Attributes:");
+				entry.setOfferedBy(text.substring(begin + 12, end - 1));
+
+				// get department
+				begin = text.indexOf("Department:");
+				if (begin > 0) {
+					end = text.indexOf("Course Attributes:");
+					entry.setDepartment((text.substring(begin + 12, end - 1)));
+				}
+
+				// get campus
+				begin = text.indexOf("May be offered at any of the following campuses:");
+				String campuses;
+				end = text.indexOf("Repeatable for Additional Credit:");
+				if (end < 0)
+					end = text.indexOf("Learning Objectives:");
+				if (end < 0)
+					end = text.indexOf("Restrictions:");
+				if (end < 0)
+					end = text.indexOf("Corequisites:");
+				if (end < 0)
+					end = text.indexOf("Prerequisites:");
+				if (end < 0) {
+					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5);
+				} else {
+					campuses = text.substring(begin + "May be offered at any of the following campuses:".length() + 5,
+							end - 1);
+				}
+				temp = campuses.replace("       ", "#").split("#");
+				List<String> camps = new ArrayList<String>();
+				for (String s : temp) {
+					if (s.length() > 1) {
+						camps.add(s);
+					}
+
+				}
+				entry.setCampuses(camps);
+				
+				// get restrictions
+				
+				
+			} catch (StringIndexOutOfBoundsException e) {
+				System.out.println("-----------");
+				System.out.println("Error for cnbr = " + cnbr);
+				System.out.println("-----------");
+			}
 		} else {
 			throw new CourseNotFoundException();
 		}
