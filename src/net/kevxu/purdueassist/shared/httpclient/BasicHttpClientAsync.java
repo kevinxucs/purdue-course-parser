@@ -25,13 +25,13 @@ public class BasicHttpClientAsync implements HttpClientAsync {
 
 	private String mUrl;
 	private HttpMethod mMethod;
-	private OnRequestFinishedListener mListener;
+	private HttpRequestListener mListener;
 	private FutureTask<?> mFutureTask;
 	private ExecutorService mExecutor;
 
 	private List<NameValuePair> mParameters = null;
 
-	public interface OnRequestFinishedListener {
+	public interface HttpRequestListener {
 		public void onRequestFinished(HttpResponse httpResponse);
 
 		public void onRequestFinished(ClientProtocolException e);
@@ -40,10 +40,10 @@ public class BasicHttpClientAsync implements HttpClientAsync {
 	}
 
 	public BasicHttpClientAsync(String url, HttpMethod httpMethod,
-			OnRequestFinishedListener onRequestFinishedListener) {
+			HttpRequestListener httpRequestListener) {
 		this.mUrl = url;
 		this.mMethod = httpMethod;
-		this.mListener = onRequestFinishedListener;
+		this.mListener = httpRequestListener;
 		this.mFutureTask = new FutureTask<Object>(httpTask, null);
 		this.mExecutor = Executors.newSingleThreadExecutor();
 	}

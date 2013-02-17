@@ -22,7 +22,7 @@ import net.kevxu.purdueassist.course.shared.HttpParseException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.course.shared.Utilities;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.OnRequestFinishedListener;
+import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
 import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
@@ -53,7 +53,7 @@ import org.jsoup.select.Elements;
  * @author Kaiwen Xu (kevin)
  * @see ScheduleDetailListener
  */
-public class ScheduleDetail implements OnRequestFinishedListener {
+public class ScheduleDetail implements HttpRequestListener {
 
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
