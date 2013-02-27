@@ -9,4 +9,5 @@
 *.war
 *.ear
 
-/wiki/
+# Wiki folder
+/wiki
