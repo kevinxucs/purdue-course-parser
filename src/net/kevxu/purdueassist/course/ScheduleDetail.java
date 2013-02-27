@@ -205,7 +205,7 @@ public class ScheduleDetail implements HttpRequestListener {
 				.getElementsByAttributeValue("summary",
 						"This table is used to present the detailed class information.");
 
-		if (tableElements.isEmpty() != true) {
+		if (!tableElements.isEmpty()) {
 			for (Element tableElement : tableElements) {
 				// get basic info for selected course
 				Element tableBasicInfoElement = tableElement
@@ -285,15 +285,15 @@ public class ScheduleDetail implements HttpRequestListener {
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
 			throws HttpParseException, ResultNotMatchException {
 		String[] basicInfoes = basicInfo.split(" - ");
-		if (basicInfoes.length == 4) {
-			entry.setName(basicInfoes[0]);
-			entry.setCrn(Integer.valueOf(basicInfoes[1]));
+		if (basicInfoes.length >= 4) {
+			entry.setCrn(Integer.valueOf(basicInfoes[basicInfoes.length - 3]));
 			if (entry.getCrn() != entry.getSearchCrn())
 				throw new ResultNotMatchException(
 						"Result not match with search option.");
-			entry.setSection(basicInfoes[3]);
+			entry.setSection(basicInfoes[basicInfoes.length - 1]);
 
-			String[] subjectCnbr = basicInfoes[2].split(" ");
+			String[] subjectCnbr = basicInfoes[basicInfoes.length - 2]
+					.split(" ");
 			if (subjectCnbr.length == 2) {
 				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
 				entry.setCnbr(subjectCnbr[1]);
@@ -302,9 +302,15 @@ public class ScheduleDetail implements HttpRequestListener {
 						"Subject and CNBR cannot be split to 2. We have "
 								+ subjectCnbr.length + ".");
 			}
+
+			StringBuffer name = new StringBuffer(basicInfoes[0]);
+			for (int i = 1; i <= basicInfoes.length - 4; i++) {
+				name.append(" - " + basicInfoes[i]);
+			}
+			entry.setName(name.toString());
 		} else {
 			throw new HttpParseException(
-					"Basic info cannot be split to 4. We have "
+					"Basic info cannot be split to equal or more than 4. We have "
 							+ basicInfoes.length + ".");
 		}
 	}
