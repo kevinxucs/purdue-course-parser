@@ -19,6 +19,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.course.shared.Utilities;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
@@ -58,14 +59,10 @@ public class ScheduleDetail implements HttpRequestListener {
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
 
-	private Term term;
-	private int crn;
-
 	private ScheduleDetailListener mListener;
 	private BasicHttpClientAsync mHttpClient;
 
-	// private static final Logger mLogger =
-	// Logger.getLogger(ScheduleDetail.class.getName());
+	private boolean requestFinished;
 
 	/**
 	 * Callback methods you have to implement. Provide either
@@ -86,70 +83,51 @@ public class ScheduleDetail implements HttpRequestListener {
 	}
 
 	/**
-	 * Constructor for specific crn. Term will be set to CURRENT.
+	 * Constructor.
 	 * 
-	 * @param crn
-	 *            CRN number for course.
 	 * @param onScheduleDetailFinishedListener
 	 *            callback you have to implement.
 	 */
-	public ScheduleDetail(int crn, ScheduleDetailListener scheduleDetailListener) {
-		this(Term.CURRENT, crn, scheduleDetailListener);
-	}
-
-	public ScheduleDetail(Term term, int crn,
-			ScheduleDetailListener scheduleDetailListener) {
-		if (term != null)
-			this.term = term;
-		else
-			this.term = Term.CURRENT;
-
-		this.crn = crn;
+	public ScheduleDetail(ScheduleDetailListener scheduleDetailListener) {
 		this.mListener = scheduleDetailListener;
-	}
-
-	/**
-	 * Get school term used for search.
-	 * 
-	 * @return
-	 */
-	public Term getTerm() {
-		return term;
-	}
-
-	/**
-	 * Get crn number used for search.
-	 * 
-	 * @return
-	 */
-	public int getCrn() {
-		return crn;
-	}
-
-	/**
-	 * Set term for search. Search term remain unchanged if the term passed to
-	 * this method is null.
-	 * 
-	 * @param term
-	 */
-	public void setTerm(Term term) {
-		if (term != null)
-			this.term = term;
-	}
-
-	/**
-	 * Set crn number for search.
-	 * 
-	 * @param crn
-	 */
-	public void setCrn(int crn) {
-		this.crn = crn;
+		this.requestFinished = true;
 	}
 
 	/**
 	 * Call this method to start retrieving and parsing data.
+	 * 
+	 * @param crn
+	 *            CRN number of course.
+	 * @throws RequestNotFinishedException
+	 *             If calling this method before previous request is finished,
+	 *             then will throw this exception.
 	 */
-	public void getResult() {
+	public void getResult(int crn) throws RequestNotFinishedException {
+		getResult(Term.CURRENT, crn);
+	}
+
+	/**
+	 * Call this method to start retrieving and parsing data.
+	 * 
+	 * @param term
+	 *            School term. If it's null, current school term will be used.
+	 * @param crn
+	 *            CRN number of course.
+	 * @throws RequestNotFinishedException
+	 *             If calling this method before previous request is finished,
+	 *             then will throw this exception.
+	 */
+	public void getResult(Term term, int crn)
+			throws RequestNotFinishedException {
+		if (!requestFinished) {
+			throw new RequestNotFinishedException();
+		}
+
+		this.requestFinished = false;
+
+		if (term == null)
+			term = Term.CURRENT;
+
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
 		parameters.add(new BasicNameValuePair("crn", Integer.toString(crn)));
@@ -161,6 +139,15 @@ public class ScheduleDetail implements HttpRequestListener {
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Check whether previous request has been finished.
+	 * 
+	 * @return Return true if previous request has already finished.
+	 */
+	public boolean isRequestFinished() {
+		return this.requestFinished;
 	}
 
 	@Override
@@ -185,11 +172,10 @@ public class ScheduleDetail implements HttpRequestListener {
 			mListener.onScheduleDetailFinished(e);
 		} catch (CourseNotFoundException e) {
 			mListener.onScheduleDetailFinished(e);
-		} catch (ResultNotMatchException e) {
-			mListener.onScheduleDetailFinished(new HttpParseException(e
-					.getMessage()));
 		} catch (Exception e) {
 			mListener.onScheduleDetailFinished(e);
+		} finally {
+			this.requestFinished = true;
 		}
 	}
 
@@ -206,7 +192,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	private ScheduleDetailEntry parseDocument(Document document)
 			throws HttpParseException, CourseNotFoundException,
 			ResultNotMatchException {
-		ScheduleDetailEntry entry = new ScheduleDetailEntry(crn);
+		ScheduleDetailEntry entry = new ScheduleDetailEntry();
 		Elements tableElements = document
 				.getElementsByAttributeValue("summary",
 						"This table is used to present the detailed class information.");
@@ -278,14 +264,11 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @throws ResultNotMatchException
 	 */
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
-			throws HttpParseException, ResultNotMatchException {
+			throws HttpParseException {
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length == 4) {
 			entry.setName(basicInfoes[0]);
 			entry.setCrn(Integer.valueOf(basicInfoes[1]));
-			if (entry.getCrn() != entry.getSearchCrn())
-				throw new ResultNotMatchException(
-						"Result not match with search option.");
 			entry.setSection(basicInfoes[3]);
 
 			String[] subjectCnbr = basicInfoes[2].split(" ");
@@ -509,12 +492,6 @@ public class ScheduleDetail implements HttpRequestListener {
 	 */
 	public class ScheduleDetailEntry {
 
-		private int searchCrn;
-
-		public ScheduleDetailEntry(int crn) {
-			this.searchCrn = crn;
-		}
-
 		private String name;
 		private int crn;
 		private Subject subject;
@@ -531,10 +508,6 @@ public class ScheduleDetail implements HttpRequestListener {
 		private String prerequisites;
 		private String generalRequirements;
 		private String corequisites;
-
-		private int getSearchCrn() {
-			return searchCrn;
-		}
 
 		public String getName() {
 			return name;
