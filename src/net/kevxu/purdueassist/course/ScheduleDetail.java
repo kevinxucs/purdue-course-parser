@@ -59,6 +59,9 @@ public class ScheduleDetail implements HttpRequestListener {
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
 
+	private Term term;
+	private int crn;
+
 	private ScheduleDetailListener mListener;
 	private BasicHttpClientAsync mHttpClient;
 
@@ -127,6 +130,9 @@ public class ScheduleDetail implements HttpRequestListener {
 		if (term == null)
 			term = Term.CURRENT;
 
+		this.term = term;
+		this.crn = crn;
+
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
 		parameters.add(new BasicNameValuePair("crn", Integer.toString(crn)));
@@ -171,6 +177,9 @@ public class ScheduleDetail implements HttpRequestListener {
 			mListener.onScheduleDetailFinished(e);
 		} catch (CourseNotFoundException e) {
 			mListener.onScheduleDetailFinished(e);
+		} catch (ResultNotMatchException e) {
+			mListener.onScheduleDetailFinished(new HttpParseException(e
+					.getMessage()));
 		} catch (Exception e) {
 			mListener.onScheduleDetailFinished(e);
 		} finally {
@@ -191,7 +200,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	private ScheduleDetailEntry parseDocument(Document document)
 			throws HttpParseException, CourseNotFoundException,
 			ResultNotMatchException {
-		ScheduleDetailEntry entry = new ScheduleDetailEntry();
+		ScheduleDetailEntry entry = new ScheduleDetailEntry(crn);
 		Elements tableElements = document
 				.getElementsByAttributeValue("summary",
 						"This table is used to present the detailed class information.");
@@ -265,11 +274,14 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @throws ResultNotMatchException
 	 */
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
-			throws HttpParseException {
+			throws HttpParseException, ResultNotMatchException {
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length == 4) {
 			entry.setName(basicInfoes[0]);
 			entry.setCrn(Integer.valueOf(basicInfoes[1]));
+			if (entry.getCrn() != entry.getSearchCrn())
+				throw new ResultNotMatchException(
+						"Result not match with search option.");
 			entry.setSection(basicInfoes[3]);
 
 			String[] subjectCnbr = basicInfoes[2].split(" ");
@@ -322,7 +334,8 @@ public class ScheduleDetail implements HttpRequestListener {
 					.valueOf(waitlistSeatsInfoes[3]), Integer
 					.valueOf(waitlistSeatsInfoes[4])));
 		} else {
-			throw new HttpParseException("Waitlist seats info cannot be split to five.");
+			throw new HttpParseException(
+					"Waitlist seats info cannot be split to five.");
 		}
 	}
 
@@ -510,6 +523,18 @@ public class ScheduleDetail implements HttpRequestListener {
 		private String prerequisites;
 		private String generalRequirements;
 		private String corequisites;
+
+		private int searchCrn;
+
+		public ScheduleDetailEntry(int crn) {
+
+			this.searchCrn = crn;
+
+		}
+
+		private int getSearchCrn() {
+			return searchCrn;
+		}
 
 		public String getName() {
 			return name;
