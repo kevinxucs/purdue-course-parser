@@ -80,7 +80,8 @@ public class ScheduleDetail implements HttpRequestListener {
 
 		public void onScheduleDetailFinished(HttpParseException e);
 
-		public void onScheduleDetailFinished(CourseNotFoundException e);
+		public void onScheduleDetailFinished(CourseNotFoundException e,
+				Term term, int crn);
 
 		public void onScheduleDetailFinished(Exception e);
 	}
@@ -176,7 +177,7 @@ public class ScheduleDetail implements HttpRequestListener {
 		} catch (HttpParseException e) {
 			mListener.onScheduleDetailFinished(e);
 		} catch (CourseNotFoundException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, term, crn);
 		} catch (ResultNotMatchException e) {
 			mListener.onScheduleDetailFinished(new HttpParseException(e
 					.getMessage()));
@@ -200,7 +201,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	private ScheduleDetailEntry parseDocument(Document document)
 			throws HttpParseException, CourseNotFoundException,
 			ResultNotMatchException {
-		ScheduleDetailEntry entry = new ScheduleDetailEntry(crn);
+		ScheduleDetailEntry entry = new ScheduleDetailEntry(term, crn);
 		Elements tableElements = document
 				.getElementsByAttributeValue("summary",
 						"This table is used to present the detailed class information.");
@@ -574,14 +575,19 @@ public class ScheduleDetail implements HttpRequestListener {
 		private String corequisites;
 
 		private int searchCrn;
+		private Term searchTerm;
 
-		public ScheduleDetailEntry(int crn) {
-
+		public ScheduleDetailEntry(Term term, int crn) {
+			this.searchTerm = term;
 			this.searchCrn = crn;
 
 		}
 
-		private int getSearchCrn() {
+		public Term getSearchTerm() {
+			return searchTerm;
+		}
+
+		public int getSearchCrn() {
 			return searchCrn;
 		}
 

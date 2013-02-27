@@ -63,16 +63,17 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											CourseNotFoundException e) {
+											CourseNotFoundException e,
+											Term term, int crn) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
-											System.err
-													.println("Course Not Found: "
-															+ e.getMessage()
-															+ "\n");
+											System.out.println("CRN: " + crn + " "
+													+ "Term: " + term
+													+ " Not Found: "
+													+ e.getMessage() + "\n");
 										}
 									}
 
@@ -136,9 +137,12 @@ public class ScheduleDetailTest {
 
 								@Override
 								public void onScheduleDetailFinished(
-										CourseNotFoundException e) {
+										CourseNotFoundException e, Term term,
+										int crn) {
 									if (!silent) {
-										System.err.println("Course Not Found: "
+										System.out.println("CRN: " + crn + " "
+												+ "Term: " + term
+												+ " Not Found: "
 												+ e.getMessage() + "\n");
 									}
 								}
