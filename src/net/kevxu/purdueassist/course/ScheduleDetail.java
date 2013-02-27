@@ -264,7 +264,18 @@ public class ScheduleDetail implements HttpRequestListener {
 
 			}
 		} else {
-			throw new CourseNotFoundException();
+			// test empty
+			Elements informationElements = document
+					.getElementsByAttributeValue("summary",
+							"This layout table holds message information");
+			if (!informationElements.isEmpty()
+					&& informationElements.text().contains(
+							"No detailed class information found")) {
+				throw new CourseNotFoundException(informationElements.text());
+			} else {
+				throw new HttpParseException(
+						"Course table not found, but page does not contain message stating no course found.");
+			}
 		}
 
 		return entry;
