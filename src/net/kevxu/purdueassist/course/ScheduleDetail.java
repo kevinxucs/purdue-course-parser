@@ -144,6 +144,8 @@ public class ScheduleDetail implements HttpRequestListener {
 			mHttpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
+		} finally {
+			this.requestFinished = true;
 		}
 	}
 

@@ -110,6 +110,8 @@ public class CatalogDetail implements HttpRequestListener {
 			httpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
+		} finally {
+			this.requestFinished = true;
 		}
 	}
 
@@ -154,11 +156,13 @@ public class CatalogDetail implements HttpRequestListener {
 	@Override
 	public void onRequestFinished(ClientProtocolException e) {
 		e.printStackTrace();
+		this.requestFinished = true;
 	}
 
 	@Override
 	public void onRequestFinished(IOException e) {
 		mListener.onCatalogDetailFinished(e);
+		this.requestFinished = true;
 	}
 
 	private CatalogDetailEntry parseDocument(Document document)

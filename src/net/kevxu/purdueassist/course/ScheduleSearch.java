@@ -91,6 +91,8 @@ public class ScheduleSearch implements HttpRequestListener {
 			mHttpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
+		} finally {
+			this.requestFinished = true;
 		}
 	}
 
@@ -114,13 +116,13 @@ public class ScheduleSearch implements HttpRequestListener {
 
 	@Override
 	public void onRequestFinished(ClientProtocolException e) {
-		// TODO Auto-generated method stub
-
+		this.requestFinished = true;
 	}
 
 	@Override
 	public void onRequestFinished(IOException e) {
 		mListener.onScheduleSearchFinished(e);
+		this.requestFinished = true;
 	}
 
 	public class ScheduleSearchEntry {
