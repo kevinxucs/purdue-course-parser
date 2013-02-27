@@ -119,9 +119,8 @@ public class ScheduleDetail implements HttpRequestListener {
 	 */
 	public void getResult(Term term, int crn)
 			throws RequestNotFinishedException {
-		if (!requestFinished) {
+		if (!this.requestFinished)
 			throw new RequestNotFinishedException();
-		}
 
 		this.requestFinished = false;
 

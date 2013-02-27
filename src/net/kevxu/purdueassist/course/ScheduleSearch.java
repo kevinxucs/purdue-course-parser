@@ -9,6 +9,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
@@ -26,6 +27,8 @@ public class ScheduleSearch implements HttpRequestListener {
 
 	private ScheduleSearchListener mListener;
 	private BasicHttpClientAsync mHttpClient;
+
+	private boolean requestFinished;
 
 	public class ScheduleSearchConfig {
 		public Term term = null;
@@ -72,9 +75,16 @@ public class ScheduleSearch implements HttpRequestListener {
 
 	public ScheduleSearch(ScheduleSearchListener listener) {
 		this.mListener = listener;
+		this.requestFinished = true;
 	}
 
-	public void getResult(ScheduleSearchConfig config) {
+	public void getResult(ScheduleSearchConfig config)
+			throws RequestNotFinishedException {
+		if (!this.requestFinished)
+			throw new RequestNotFinishedException();
+
+		this.requestFinished = false;
+
 		mHttpClient = new BasicHttpClientAsync(URL_HEAD, HttpMethod.POST, this);
 		try {
 			mHttpClient.setParameters(config.getParameters());
@@ -84,10 +94,22 @@ public class ScheduleSearch implements HttpRequestListener {
 		}
 	}
 
+	/**
+	 * Check whether previous request has been finished.
+	 * 
+	 * @return Return true if previous request has already finished.
+	 */
+	public boolean isRequestFinished() {
+		return this.requestFinished;
+	}
+
 	@Override
 	public void onRequestFinished(HttpResponse httpResponse) {
-		// TODO Auto-generated method stub
+		try {
 
+		} finally {
+			this.requestFinished = true;
+		}
 	}
 
 	@Override
