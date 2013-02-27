@@ -219,7 +219,7 @@ public class ScheduleDetail implements HttpRequestListener {
 				if (tableBasicInfoElement != null) {
 					setBasicInfo(entry, tableBasicInfoElement.text());
 				} else {
-					throw new HttpParseException();
+					throw new HttpParseException("Basic info element empty.");
 				}
 
 				// get detailed course info
@@ -242,10 +242,12 @@ public class ScheduleDetail implements HttpRequestListener {
 							setWaitlistSeats(entry,
 									tableSeatDetailEntryElements.get(2).text());
 						} else {
-							throw new HttpParseException();
+							throw new HttpParseException(
+									"Seat detail entry elements size not 3.");
 						}
 					} else {
-						throw new HttpParseException();
+						throw new HttpParseException(
+								"Seat detail elements size not 1.");
 					}
 					// remove the seat info from detailed info
 					tableSeatDetailElements.remove();
@@ -254,7 +256,7 @@ public class ScheduleDetail implements HttpRequestListener {
 					setRemainingInfo(entry, tableDetailedInfoElement.html());
 
 				} else {
-					throw new HttpParseException();
+					throw new HttpParseException("Detailed info element empty.");
 				}
 
 			}
@@ -293,10 +295,11 @@ public class ScheduleDetail implements HttpRequestListener {
 				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
 				entry.setCnbr(subjectCnbr[1]);
 			} else {
-				throw new HttpParseException();
+				throw new HttpParseException(
+						"Subject and CNBR cannot be split to two.");
 			}
 		} else {
-			throw new HttpParseException();
+			throw new HttpParseException("Basic info cannot be split to four.");
 		}
 	}
 
@@ -316,7 +319,7 @@ public class ScheduleDetail implements HttpRequestListener {
 			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer
 					.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
 		} else {
-			throw new HttpParseException();
+			throw new HttpParseException("Seats info cannot be split to four.");
 		}
 	}
 
@@ -337,7 +340,7 @@ public class ScheduleDetail implements HttpRequestListener {
 					.valueOf(waitlistSeatsInfoes[3]), Integer
 					.valueOf(waitlistSeatsInfoes[4])));
 		} else {
-			throw new HttpParseException();
+			throw new HttpParseException("Waitlist seats info cannot be split to five.");
 		}
 	}
 
