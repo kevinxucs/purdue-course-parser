@@ -8,7 +8,7 @@ import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailEntry;
 import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
-import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 
 public class CatalogDetailTest {
@@ -50,7 +50,7 @@ public class CatalogDetailTest {
 						}
 
 						@Override
-						public void onCatalogDetailFinished(HttpParseException e) {
+						public void onCatalogDetailFinished(HtmlParseException e) {
 							System.out.println("INPUT: " + cnbr + " "
 									+ subject.toString());
 							System.out.println("Parse Error!");

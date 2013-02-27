@@ -8,7 +8,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
-import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
@@ -66,7 +66,7 @@ public class ScheduleSearch implements HttpRequestListener {
 
 		public void onScheduleSearchFinished(IOException e);
 
-		public void onScheduleSearchFinished(HttpParseException e);
+		public void onScheduleSearchFinished(HtmlParseException e);
 
 		public void onScheduleSearchFinished(CourseNotFoundException e);
 

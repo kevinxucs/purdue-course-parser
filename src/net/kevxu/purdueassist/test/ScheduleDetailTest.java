@@ -7,7 +7,7 @@ import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
-import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 
 import org.apache.commons.cli.CommandLineParser;
@@ -79,7 +79,7 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											HttpParseException e) {
+											HtmlParseException e) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
@@ -149,7 +149,7 @@ public class ScheduleDetailTest {
 
 								@Override
 								public void onScheduleDetailFinished(
-										HttpParseException e) {
+										HtmlParseException e) {
 									if (!silent) {
 										System.err.println("Parse Error: "
 												+ e.getMessage() + "\n");

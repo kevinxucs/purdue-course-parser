@@ -16,7 +16,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
-import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
@@ -68,7 +68,7 @@ public class CatalogDetail implements HttpRequestListener {
 
 		public void onCatalogDetailFinished(IOException e);
 
-		public void onCatalogDetailFinished(HttpParseException e);
+		public void onCatalogDetailFinished(HtmlParseException e);
 
 		public void onCatalogDetailFinished(CourseNotFoundException e);
 
@@ -140,7 +140,7 @@ public class CatalogDetail implements HttpRequestListener {
 			e.printStackTrace();
 		} catch (IOException e) {
 			mListener.onCatalogDetailFinished(e);
-		} catch (HttpParseException e) {
+		} catch (HtmlParseException e) {
 			mListener.onCatalogDetailFinished(e);
 		} catch (CourseNotFoundException e) {
 			mListener.onCatalogDetailFinished(e);
@@ -162,7 +162,7 @@ public class CatalogDetail implements HttpRequestListener {
 	}
 
 	private CatalogDetailEntry parseDocument(Document document)
-			throws HttpParseException, CourseNotFoundException, IOException {
+			throws HtmlParseException, CourseNotFoundException, IOException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
 		Elements tableElements = document.getElementsByAttributeValue(
 				"summary",
@@ -208,7 +208,7 @@ public class CatalogDetail implements HttpRequestListener {
 						try {
 							types.add(Type.valueOf(e.text().replace(" ", "")));
 						} catch (Exception exception) {
-							throw new HttpParseException();
+							throw new HtmlParseException();
 						}
 					} else if (e.attr("href").contains("sel_attr=")) {
 						preq.add(e.text());

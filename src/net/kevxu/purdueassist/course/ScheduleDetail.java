@@ -18,7 +18,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.elements.Seats;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
-import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.course.shared.Utilities;
@@ -78,7 +78,7 @@ public class ScheduleDetail implements HttpRequestListener {
 
 		public void onScheduleDetailFinished(IOException e);
 
-		public void onScheduleDetailFinished(HttpParseException e);
+		public void onScheduleDetailFinished(HtmlParseException e);
 
 		public void onScheduleDetailFinished(CourseNotFoundException e,
 				Term term, int crn);
@@ -174,12 +174,12 @@ public class ScheduleDetail implements HttpRequestListener {
 			e.printStackTrace();
 		} catch (IOException e) {
 			mListener.onScheduleDetailFinished(e);
-		} catch (HttpParseException e) {
+		} catch (HtmlParseException e) {
 			mListener.onScheduleDetailFinished(e);
 		} catch (CourseNotFoundException e) {
 			mListener.onScheduleDetailFinished(e, term, crn);
 		} catch (ResultNotMatchException e) {
-			mListener.onScheduleDetailFinished(new HttpParseException(e
+			mListener.onScheduleDetailFinished(new HtmlParseException(e
 					.getMessage()));
 		} catch (Exception e) {
 			mListener.onScheduleDetailFinished(e);
@@ -191,15 +191,17 @@ public class ScheduleDetail implements HttpRequestListener {
 	@Override
 	public void onRequestFinished(ClientProtocolException e) {
 		e.printStackTrace();
+		this.requestFinished = true;
 	}
 
 	@Override
 	public void onRequestFinished(IOException e) {
 		mListener.onScheduleDetailFinished(e);
+		this.requestFinished = true;
 	}
 
 	private ScheduleDetailEntry parseDocument(Document document)
-			throws HttpParseException, CourseNotFoundException,
+			throws HtmlParseException, CourseNotFoundException,
 			ResultNotMatchException {
 		ScheduleDetailEntry entry = new ScheduleDetailEntry(term, crn);
 		Elements tableElements = document
@@ -214,7 +216,7 @@ public class ScheduleDetail implements HttpRequestListener {
 				if (tableBasicInfoElement != null) {
 					setBasicInfo(entry, tableBasicInfoElement.text());
 				} else {
-					throw new HttpParseException("Basic info element empty.");
+					throw new HtmlParseException("Basic info element empty.");
 				}
 
 				// get detailed course info
@@ -243,13 +245,13 @@ public class ScheduleDetail implements HttpRequestListener {
 												.text());
 							}
 						} else {
-							throw new HttpParseException(
+							throw new HtmlParseException(
 									"Seat detail entry elements size not 3. We have "
 											+ tableSeatDetailEntryElements
 													.size() + ".");
 						}
 					} else {
-						throw new HttpParseException(
+						throw new HtmlParseException(
 								"Seat detail elements size not 1. We have "
 										+ tableSeatDetailElements.size() + ".");
 					}
@@ -260,7 +262,7 @@ public class ScheduleDetail implements HttpRequestListener {
 					setRemainingInfo(entry, tableDetailedInfoElement.html());
 
 				} else {
-					throw new HttpParseException("Detailed info element empty.");
+					throw new HtmlParseException("Detailed info element empty.");
 				}
 
 			}
@@ -274,7 +276,7 @@ public class ScheduleDetail implements HttpRequestListener {
 							"No detailed class information found")) {
 				throw new CourseNotFoundException(informationElements.text());
 			} else {
-				throw new HttpParseException(
+				throw new HtmlParseException(
 						"Course table not found, but page does not contain message stating no course found.");
 			}
 		}
@@ -291,11 +293,11 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @param basicInfo
 	 *            String contains course name, crn, subject - cnbr and section
 	 *            number.
-	 * @throws HttpParseException
+	 * @throws HtmlParseException
 	 * @throws ResultNotMatchException
 	 */
 	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
-			throws HttpParseException, ResultNotMatchException {
+			throws HtmlParseException, ResultNotMatchException {
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length >= 4) {
 			entry.setCrn(Integer.valueOf(basicInfoes[basicInfoes.length - 3]));
@@ -310,7 +312,7 @@ public class ScheduleDetail implements HttpRequestListener {
 				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
 				entry.setCnbr(subjectCnbr[1]);
 			} else {
-				throw new HttpParseException(
+				throw new HtmlParseException(
 						"Subject and CNBR cannot be split to 2. We have "
 								+ subjectCnbr.length + ".");
 			}
@@ -321,7 +323,7 @@ public class ScheduleDetail implements HttpRequestListener {
 			}
 			entry.setName(name.toString());
 		} else {
-			throw new HttpParseException(
+			throw new HtmlParseException(
 					"Basic info cannot be split to equal or more than 4. We have "
 							+ basicInfoes.length + ".");
 		}
@@ -334,16 +336,16 @@ public class ScheduleDetail implements HttpRequestListener {
 	 *            ScheduleDetailEntry to be set.
 	 * @param seatsInfo
 	 *            String contains capacity, actual and remaining.
-	 * @throws HttpParseException
+	 * @throws HtmlParseException
 	 */
 	private void setSeats(ScheduleDetailEntry entry, String seatsInfo)
-			throws HttpParseException {
+			throws HtmlParseException {
 		String[] seatsInfoes = seatsInfo.split(" ");
 		if (seatsInfoes.length == 4) {
 			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer
 					.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
 		} else {
-			throw new HttpParseException(
+			throw new HtmlParseException(
 					"Seats info cannot be split to 4. We have "
 							+ seatsInfoes.length + ".");
 		}
@@ -355,10 +357,10 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @param entry
 	 *            ScheduleDetailEntry to be set.
 	 * @param waitlistSeatsInfo
-	 * @throws HttpParseException
+	 * @throws HtmlParseException
 	 */
 	private void setWaitlistSeats(ScheduleDetailEntry entry,
-			String waitlistSeatsInfo) throws HttpParseException {
+			String waitlistSeatsInfo) throws HtmlParseException {
 		String[] waitlistSeatsInfoes = waitlistSeatsInfo.split(" ");
 		if (waitlistSeatsInfoes.length == 5) {
 			entry.setWaitlistSeats(new Seats(Integer
@@ -366,14 +368,14 @@ public class ScheduleDetail implements HttpRequestListener {
 					.valueOf(waitlistSeatsInfoes[3]), Integer
 					.valueOf(waitlistSeatsInfoes[4])));
 		} else {
-			throw new HttpParseException(
+			throw new HtmlParseException(
 					"Waitlist seats info cannot be split to 5. We have "
 							+ waitlistSeatsInfoes.length + ".");
 		}
 	}
 
 	private void setCrosslistSeats(ScheduleDetailEntry entry,
-			String crosslistSeatsInfo) throws HttpParseException {
+			String crosslistSeatsInfo) throws HtmlParseException {
 		String[] crosslistSeatsInfoes = crosslistSeatsInfo.split(" ");
 		if (crosslistSeatsInfoes.length == 6) {
 			entry.setCrosslistSeats(new Seats(Integer
@@ -381,7 +383,7 @@ public class ScheduleDetail implements HttpRequestListener {
 					.valueOf(crosslistSeatsInfoes[4]), Integer
 					.valueOf(crosslistSeatsInfoes[5])));
 		} else {
-			throw new HttpParseException(
+			throw new HtmlParseException(
 					"Crosslist seats info cannot be split to 6. We have "
 							+ crosslistSeatsInfoes.length + ".");
 		}
