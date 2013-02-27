@@ -120,8 +120,7 @@ public class ScheduleSearch implements HttpRequestListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		// TODO Auto-generated method stub
-
+		mListener.onScheduleSearchFinished(e);
 	}
 
 	public class ScheduleSearchEntry {
