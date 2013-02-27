@@ -230,11 +230,17 @@ public class ScheduleDetail implements HttpRequestListener {
 								.first();
 						Elements tableSeatDetailEntryElements = tableSeatDetailElement
 								.getElementsByTag("tbody").first().children();
-						if (tableSeatDetailEntryElements.size() == 3) {
+						if (tableSeatDetailEntryElements.size() == 3
+								|| tableSeatDetailEntryElements.size() == 4) {
 							setSeats(entry, tableSeatDetailEntryElements.get(1)
 									.text());
 							setWaitlistSeats(entry,
 									tableSeatDetailEntryElements.get(2).text());
+							if (tableSeatDetailEntryElements.size() == 4) {
+								setCrosslistSeats(entry,
+										tableSeatDetailEntryElements.get(3)
+												.text());
+							}
 						} else {
 							throw new HttpParseException(
 									"Seat detail entry elements size not 3. We have "
@@ -348,6 +354,21 @@ public class ScheduleDetail implements HttpRequestListener {
 		}
 	}
 
+	private void setCrosslistSeats(ScheduleDetailEntry entry,
+			String crosslistSeatsInfo) throws HttpParseException {
+		String[] crosslistSeatsInfoes = crosslistSeatsInfo.split(" ");
+		if (crosslistSeatsInfoes.length == 6) {
+			entry.setCrosslistSeats(new Seats(Integer
+					.valueOf(crosslistSeatsInfoes[3]), Integer
+					.valueOf(crosslistSeatsInfoes[4]), Integer
+					.valueOf(crosslistSeatsInfoes[5])));
+		} else {
+			throw new HttpParseException(
+					"Crosslist seats info cannot be split to 6. We have "
+							+ crosslistSeatsInfoes.length + ".");
+		}
+	}
+
 	/**
 	 * Set term, levels, campus and etc. based on the html passed to this
 	 * method.
@@ -360,6 +381,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	 */
 	private void setRemainingInfo(ScheduleDetailEntry entry,
 			String remainingInfoHtml) {
+		// TODO: handle cross list courses. i.e. crn 10248
 		final int NOT_RECORD = 0;
 		final int PREREQUISTES = 1;
 		final int RESTRICTIONS = 2;
@@ -694,9 +716,9 @@ public class ScheduleDetail implements HttpRequestListener {
 					+ "Levels: " + levels + "\n" + "Campus: " + campus + "\n"
 					+ "Type: " + type + "\n" + "Credits: " + credits + "\n"
 					+ "Seats: " + seats + "\n" + "Waitlist Seats: "
-					+ waitlistSeats + "\n" + "crosslistSeats: " + crossistSeats
-					+ "\n" + "Restrictions: " + restrictions + "\n"
-					+ "Prerequisites: " + prerequisites + "\n"
+					+ waitlistSeats + "\n" + "Crosslist Seats: "
+					+ crossistSeats + "\n" + "Restrictions: " + restrictions
+					+ "\n" + "Prerequisites: " + prerequisites + "\n"
 					+ "General Requirements: " + generalRequirements + "\n"
 					+ "Corequisites: " + corequisites + "\n";
 		}
