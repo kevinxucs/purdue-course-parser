@@ -66,10 +66,10 @@ public class ScheduleDetailTest {
 											CourseNotFoundException e) {
 										if (!silent) {
 											if (!smallSilent)
-												System.out.println("INPUT: "
+												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
-											System.out
+											System.err
 													.println("Course Not Found: "
 															+ e.getMessage());
 										}
@@ -80,10 +80,10 @@ public class ScheduleDetailTest {
 											HttpParseException e) {
 										if (!silent) {
 											if (!smallSilent)
-												System.out.println("INPUT: "
+												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
-											System.out.println("Parse Error: "
+											System.err.println("Parse Error: "
 													+ e.getMessage());
 										}
 									}
@@ -93,10 +93,10 @@ public class ScheduleDetailTest {
 											IOException e) {
 										if (!silent) {
 											if (!smallSilent)
-												System.out.println("INPUT: "
+												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
-											System.out.println("IO Error: "
+											System.err.println("IO Error: "
 													+ e.getMessage());
 										}
 									}
@@ -106,7 +106,7 @@ public class ScheduleDetailTest {
 											ScheduleDetailEntry entry) {
 										if (!silent) {
 											if (!smallSilent)
-												System.out.println("INPUT: "
+												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
 											System.out.println(entry);
@@ -118,7 +118,7 @@ public class ScheduleDetailTest {
 											Exception e) {
 										if (!silent) {
 											if (!smallSilent)
-												System.out.println("INPUT: "
+												System.err.println("INPUT: "
 														+ crnString + " "
 														+ term);
 											e.printStackTrace();
@@ -136,7 +136,7 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										CourseNotFoundException e) {
 									if (!silent) {
-										System.out.println("Course Not Found: "
+										System.err.println("Course Not Found: "
 												+ e.getMessage());
 									}
 								}
@@ -145,7 +145,7 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										HttpParseException e) {
 									if (!silent) {
-										System.out.println("Parse Error: "
+										System.err.println("Parse Error: "
 												+ e.getMessage());
 									}
 								}
@@ -154,7 +154,7 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										IOException e) {
 									if (!silent) {
-										System.out.println("IO Error: "
+										System.err.println("IO Error: "
 												+ e.getMessage());
 									}
 								}
@@ -182,7 +182,7 @@ public class ScheduleDetailTest {
 						final int crn = Integer.valueOf(crnString);
 
 						if (!smallSilent)
-							System.out.println("INPUT: " + crnString + " "
+							System.err.println("INPUT: " + crnString + " "
 									+ term);
 
 						detail.getResult(term, crn);
