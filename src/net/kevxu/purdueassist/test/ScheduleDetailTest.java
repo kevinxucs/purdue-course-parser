@@ -25,7 +25,7 @@ public class ScheduleDetailTest {
 
 	public static void main(String[] args) throws InterruptedException {
 		options.addOption("t", "term", true,
-				"full name (without space) for school term. i.e. fall2012 (required)");
+				"full name (without space) for school term. i.e. fall2012 (optional)");
 		options.addOption("s", "small-silent", false,
 				"Do not print input information.");
 		options.addOption("S", "slient", false, "Do not print anything.");
@@ -42,13 +42,12 @@ public class ScheduleDetailTest {
 			} else {
 				cmd = parser.parse(options, args);
 
+				String termString;
 				if (!cmd.hasOption("t")) {
-					System.err.println("Please specify school term.");
-					printHelp(formatter, options);
-					System.exit(-1);
+					termString = "CURRENT";
+				} else {
+					termString = cmd.getOptionValue("t");
 				}
-
-				String termString = cmd.getOptionValue("t");
 				final Term term = parseTerm(termString);
 				final boolean silent = cmd.hasOption("S");
 				final boolean smallSilent = cmd.hasOption("s");
