@@ -8,6 +8,7 @@ import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -22,12 +23,14 @@ public class ScheduleDetailTest {
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		options.addOption("t", "term", true,
 				"full name (without space) for school term. i.e. fall2012 (required)");
 		options.addOption("s", "small-silent", false,
 				"Do not print input information.");
 		options.addOption("S", "slient", false, "Do not print anything.");
+		options.addOption("p", "parallel", false,
+				"Process all the search requests parallely.");
 
 		CommandLineParser parser = new GnuParser();
 		org.apache.commons.cli.CommandLine cmd;
@@ -50,20 +53,92 @@ public class ScheduleDetailTest {
 				final boolean silent = cmd.hasOption("S");
 				final boolean smallSilent = cmd.hasOption("s");
 				final String[] crns = cmd.getArgs();
+				final boolean parallel = cmd.hasOption("p");
 
-				for (final String crnString : crns) {
-					final int crn = Integer.valueOf(crnString);
-					ScheduleDetail detail = new ScheduleDetail(term, crn,
+				if (parallel) {
+					// parallel
+					for (final String crnString : crns) {
+						final int crn = Integer.valueOf(crnString);
+						ScheduleDetail detail = new ScheduleDetail(
+								new ScheduleDetailListener() {
+
+									@Override
+									public void onScheduleDetailFinished(
+											CourseNotFoundException e) {
+										if (!silent) {
+											if (!smallSilent)
+												System.out.println("INPUT: "
+														+ crnString + " "
+														+ term);
+											System.out
+													.println("Course Not Found: "
+															+ e.getMessage());
+										}
+									}
+
+									@Override
+									public void onScheduleDetailFinished(
+											HttpParseException e) {
+										if (!silent) {
+											if (!smallSilent)
+												System.out.println("INPUT: "
+														+ crnString + " "
+														+ term);
+											System.out.println("Parse Error: "
+													+ e.getMessage());
+										}
+									}
+
+									@Override
+									public void onScheduleDetailFinished(
+											IOException e) {
+										if (!silent) {
+											if (!smallSilent)
+												System.out.println("INPUT: "
+														+ crnString + " "
+														+ term);
+											System.out.println("IO Error: "
+													+ e.getMessage());
+										}
+									}
+
+									@Override
+									public void onScheduleDetailFinished(
+											ScheduleDetailEntry entry) {
+										if (!silent) {
+											if (!smallSilent)
+												System.out.println("INPUT: "
+														+ crnString + " "
+														+ term);
+											System.out.println(entry);
+										}
+									}
+
+									@Override
+									public void onScheduleDetailFinished(
+											Exception e) {
+										if (!silent) {
+											if (!smallSilent)
+												System.out.println("INPUT: "
+														+ crnString + " "
+														+ term);
+											e.printStackTrace();
+										}
+									}
+								});
+						detail.getResult(term, crn);
+					}
+				} else {
+					// Not parallel
+					ScheduleDetail detail = new ScheduleDetail(
 							new ScheduleDetailListener() {
 
 								@Override
 								public void onScheduleDetailFinished(
 										CourseNotFoundException e) {
 									if (!silent) {
-										if (!smallSilent)
-											System.out.println("INPUT: "
-													+ crnString + " " + term);
-										System.out.println("Course Not Found: " + e.getMessage());
+										System.out.println("Course Not Found: "
+												+ e.getMessage());
 									}
 								}
 
@@ -71,10 +146,8 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										HttpParseException e) {
 									if (!silent) {
-										if (!smallSilent)
-											System.out.println("INPUT: "
-													+ crnString + " " + term);
-										System.out.println("Parse Error: "+ e.getMessage());
+										System.out.println("Parse Error: "
+												+ e.getMessage());
 									}
 								}
 
@@ -82,10 +155,8 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										IOException e) {
 									if (!silent) {
-										if (!smallSilent)
-											System.out.println("INPUT: "
-													+ crnString + " " + term);
-										System.out.println("IO Error: " + e.getMessage());
+										System.out.println("IO Error: "
+												+ e.getMessage());
 									}
 								}
 
@@ -93,9 +164,6 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(
 										ScheduleDetailEntry entry) {
 									if (!silent) {
-										if (!smallSilent)
-											System.out.println("INPUT: "
-													+ crnString + " " + term);
 										System.out.println(entry);
 									}
 								}
@@ -103,14 +171,23 @@ public class ScheduleDetailTest {
 								@Override
 								public void onScheduleDetailFinished(Exception e) {
 									if (!silent) {
-										if (!smallSilent)
-											System.out.println("INPUT: "
-													+ crnString + " " + term);
 										e.printStackTrace();
 									}
 								}
 							});
-					detail.getResult();
+					for (final String crnString : crns) {
+						while (!detail.isRequestFinished()) {
+							Thread.sleep(100);
+						}
+
+						final int crn = Integer.valueOf(crnString);
+
+						if (!smallSilent)
+							System.out.println("INPUT: " + crnString + " "
+									+ term);
+
+						detail.getResult(term, crn);
+					}
 				}
 			}
 
@@ -122,6 +199,8 @@ public class ScheduleDetailTest {
 		} catch (IllegalArgumentException e) {
 			System.err.println("No such school term.");
 			printHelp(formatter, options);
+		} catch (RequestNotFinishedException e1) {
+			e1.printStackTrace();
 		}
 	}
 
