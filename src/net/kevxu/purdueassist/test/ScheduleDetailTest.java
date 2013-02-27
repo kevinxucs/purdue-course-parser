@@ -71,7 +71,8 @@ public class ScheduleDetailTest {
 														+ term);
 											System.err
 													.println("Course Not Found: "
-															+ e.getMessage());
+															+ e.getMessage()
+															+ "\n");
 										}
 									}
 
@@ -84,7 +85,7 @@ public class ScheduleDetailTest {
 														+ crnString + " "
 														+ term);
 											System.err.println("Parse Error: "
-													+ e.getMessage());
+													+ e.getMessage() + "\n");
 										}
 									}
 
@@ -97,7 +98,7 @@ public class ScheduleDetailTest {
 														+ crnString + " "
 														+ term);
 											System.err.println("IO Error: "
-													+ e.getMessage());
+													+ e.getMessage() + "\n");
 										}
 									}
 
@@ -122,6 +123,7 @@ public class ScheduleDetailTest {
 														+ crnString + " "
 														+ term);
 											e.printStackTrace();
+											System.err.println();
 										}
 									}
 								});
@@ -137,7 +139,7 @@ public class ScheduleDetailTest {
 										CourseNotFoundException e) {
 									if (!silent) {
 										System.err.println("Course Not Found: "
-												+ e.getMessage());
+												+ e.getMessage() + "\n");
 									}
 								}
 
@@ -146,7 +148,7 @@ public class ScheduleDetailTest {
 										HttpParseException e) {
 									if (!silent) {
 										System.err.println("Parse Error: "
-												+ e.getMessage());
+												+ e.getMessage() + "\n");
 									}
 								}
 
@@ -155,7 +157,7 @@ public class ScheduleDetailTest {
 										IOException e) {
 									if (!silent) {
 										System.err.println("IO Error: "
-												+ e.getMessage());
+												+ e.getMessage() + "\n");
 									}
 								}
 
@@ -171,6 +173,7 @@ public class ScheduleDetailTest {
 								public void onScheduleDetailFinished(Exception e) {
 									if (!silent) {
 										e.printStackTrace();
+										System.err.println();
 									}
 								}
 							});
