@@ -63,7 +63,7 @@ public class ScheduleDetailTest {
 										if (!smallSilent)
 											System.out.println("INPUT: "
 													+ crnString + " " + term);
-										System.out.println("Course Not Found!");
+										System.out.println("Course Not Found: " + e.getMessage());
 									}
 								}
 
@@ -74,7 +74,7 @@ public class ScheduleDetailTest {
 										if (!smallSilent)
 											System.out.println("INPUT: "
 													+ crnString + " " + term);
-										System.out.println("Parse Error!");
+										System.out.println("Parse Error: "+ e.getMessage());
 									}
 								}
 
@@ -85,7 +85,7 @@ public class ScheduleDetailTest {
 										if (!smallSilent)
 											System.out.println("INPUT: "
 													+ crnString + " " + term);
-										System.out.println("IO Error!");
+										System.out.println("IO Error: " + e.getMessage());
 									}
 								}
 
