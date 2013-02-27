@@ -237,11 +237,14 @@ public class ScheduleDetail implements HttpRequestListener {
 									tableSeatDetailEntryElements.get(2).text());
 						} else {
 							throw new HttpParseException(
-									"Seat detail entry elements size not 3.");
+									"Seat detail entry elements size not 3. We have "
+											+ tableSeatDetailEntryElements
+													.size() + ".");
 						}
 					} else {
 						throw new HttpParseException(
-								"Seat detail elements size not 1.");
+								"Seat detail elements size not 1. We have "
+										+ tableSeatDetailElements.size() + ".");
 					}
 					// remove the seat info from detailed info
 					tableSeatDetailElements.remove();
@@ -290,10 +293,13 @@ public class ScheduleDetail implements HttpRequestListener {
 				entry.setCnbr(subjectCnbr[1]);
 			} else {
 				throw new HttpParseException(
-						"Subject and CNBR cannot be split to two.");
+						"Subject and CNBR cannot be split to 2. We have "
+								+ subjectCnbr.length + ".");
 			}
 		} else {
-			throw new HttpParseException("Basic info cannot be split to four.");
+			throw new HttpParseException(
+					"Basic info cannot be split to 4. We have "
+							+ basicInfoes.length + ".");
 		}
 	}
 
@@ -313,7 +319,9 @@ public class ScheduleDetail implements HttpRequestListener {
 			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer
 					.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
 		} else {
-			throw new HttpParseException("Seats info cannot be split to four.");
+			throw new HttpParseException(
+					"Seats info cannot be split to 4. We have "
+							+ seatsInfoes.length + ".");
 		}
 	}
 
@@ -335,7 +343,8 @@ public class ScheduleDetail implements HttpRequestListener {
 					.valueOf(waitlistSeatsInfoes[4])));
 		} else {
 			throw new HttpParseException(
-					"Waitlist seats info cannot be split to five.");
+					"Waitlist seats info cannot be split to 5. We have "
+							+ waitlistSeatsInfoes.length + ".");
 		}
 	}
 
@@ -519,6 +528,7 @@ public class ScheduleDetail implements HttpRequestListener {
 		private double credits;
 		private Seats seats;
 		private Seats waitlistSeats;
+		private Seats crossistSeats;
 		private String restrictions;
 		private String prerequisites;
 		private String generalRequirements;
@@ -582,6 +592,10 @@ public class ScheduleDetail implements HttpRequestListener {
 
 		public Seats getWaitlistSeats() {
 			return waitlistSeats;
+		}
+
+		public Seats getCrosslistSeats() {
+			return crossistSeats;
 		}
 
 		public String getPrerequisites() {
@@ -648,6 +662,10 @@ public class ScheduleDetail implements HttpRequestListener {
 			this.waitlistSeats = waitlistSeats;
 		}
 
+		private void setCrosslistSeats(Seats crosslistSeats) {
+			this.crossistSeats = crosslistSeats;
+		}
+
 		private void setPrerequisites(String prerequisites) {
 			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites)
 					.trim();
@@ -676,8 +694,9 @@ public class ScheduleDetail implements HttpRequestListener {
 					+ "Levels: " + levels + "\n" + "Campus: " + campus + "\n"
 					+ "Type: " + type + "\n" + "Credits: " + credits + "\n"
 					+ "Seats: " + seats + "\n" + "Waitlist Seats: "
-					+ waitlistSeats + "\n" + "Restrictions: " + restrictions
-					+ "\n" + "Prerequisites: " + prerequisites + "\n"
+					+ waitlistSeats + "\n" + "crosslistSeats: " + crossistSeats
+					+ "\n" + "Restrictions: " + restrictions + "\n"
+					+ "Prerequisites: " + prerequisites + "\n"
 					+ "General Requirements: " + generalRequirements + "\n"
 					+ "Corequisites: " + corequisites + "\n";
 		}
