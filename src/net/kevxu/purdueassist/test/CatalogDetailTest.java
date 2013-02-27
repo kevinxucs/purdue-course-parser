@@ -9,6 +9,7 @@ import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 
 public class CatalogDetailTest {
 	public static void main(String[] args) {
@@ -30,7 +31,7 @@ public class CatalogDetailTest {
 		// final int cnbr=tmp_cnbr;
 		for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
 			final int cnbr = mcnbr;
-			CatalogDetail detail = new CatalogDetail(subject, cnbr,
+			CatalogDetail detail = new CatalogDetail(
 					new CatalogDetailListener() {
 						@Override
 						public void onCatalogDetailFinished(
@@ -72,9 +73,11 @@ public class CatalogDetailTest {
 
 					});
 			try {
-				detail.getResult();
+				detail.getResult(subject, cnbr);
 			} catch (StringIndexOutOfBoundsException e) {
 
+			} catch (RequestNotFinishedException e1) {
+				e1.printStackTrace();
 			}
 		}
 	}

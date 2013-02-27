@@ -17,6 +17,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HttpParseException;
+import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
@@ -60,6 +61,8 @@ public class CatalogDetail implements HttpRequestListener {
 	private CatalogDetailListener mListener;
 	private BasicHttpClientAsync httpClient;
 
+	private boolean requestFinished;
+
 	public interface CatalogDetailListener {
 		public void onCatalogDetailFinished(CatalogDetailEntry entry);
 
@@ -72,24 +75,30 @@ public class CatalogDetail implements HttpRequestListener {
 		public void onCatalogDetailFinished(Exception e);
 	}
 
-	public CatalogDetail(Subject subject, int cnbr,
-			CatalogDetailListener catalogDetailListener) {
-		this(Term.CURRENT, subject, cnbr, catalogDetailListener);
+	public CatalogDetail(CatalogDetailListener catalogDetailListener) {
+		this.mListener = catalogDetailListener;
+		this.requestFinished = true;
 	}
 
-	public CatalogDetail(Term term, Subject subject, int cnbr,
-			CatalogDetailListener catalogDetailListener) {
-		if (term != null)
-			this.term = term;
-		else
-			this.term = Term.CURRENT;
+	public void getResult(Subject subject, int cnbr)
+			throws RequestNotFinishedException {
+		getResult(Term.CURRENT, subject, cnbr);
+	}
 
+	public void getResult(Term term, Subject subject, int cnbr)
+			throws RequestNotFinishedException {
+		if (!this.requestFinished)
+			throw new RequestNotFinishedException();
+
+		this.requestFinished = false;
+
+		if (term == null)
+			term = Term.CURRENT;
+
+		this.term = term;
 		this.subject = subject;
 		this.cnbr = cnbr;
-		this.mListener = catalogDetailListener;
-	}
 
-	public void getResult() {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
 		parameters.add(new BasicNameValuePair("subject", subject.name()));
@@ -102,6 +111,15 @@ public class CatalogDetail implements HttpRequestListener {
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Check whether previous request has been finished.
+	 * 
+	 * @return Return true if previous request has already finished.
+	 */
+	public boolean isRequestFinished() {
+		return this.requestFinished;
 	}
 
 	@Override
@@ -128,6 +146,8 @@ public class CatalogDetail implements HttpRequestListener {
 			mListener.onCatalogDetailFinished(e);
 		} catch (Exception e) {
 			mListener.onCatalogDetailFinished(e);
+		} finally {
+			this.requestFinished = true;
 		}
 	}
 
@@ -319,44 +339,44 @@ public class CatalogDetail implements HttpRequestListener {
 
 		@Override
 		public String toString() {
-			String myStr = "";
-			myStr += "Subject: " + subject.toString() + "\n";
-			myStr += "CNBR: " + cnbr + "\n";
+			StringBuffer myStr = new StringBuffer();
+			myStr.append("Subject: " + subject.toString() + "\n");
+			myStr.append("CNBR: " + cnbr + "\n");
 			if (name != null)
-				myStr += "Name: " + name + "\n";
+				myStr.append("Name: " + name + "\n");
 			if (description != null)
-				myStr += "Description: " + description + "\n";
+				myStr.append("Description: " + description + "\n");
 			if (levels != null) {
-				myStr += "Level: ";
+				myStr.append("Level: ");
 				for (String s : levels)
-					myStr += s + " ; ";
-				myStr += "\n";
+					myStr.append(s + " ; ");
+				myStr.append("\n");
 			}
 			if (type != null) {
-				myStr += "Type: ";
+				myStr.append("Type: ");
 				for (Type t : type)
-					myStr += t.toString() + " ; ";
-				myStr += "\n";
+					myStr.append(t.toString() + " ; ");
+				myStr.append("\n");
 			}
 			if (offeredBy != null)
-				myStr += "OfferedBy: " + offeredBy + "\n";
+				myStr.append("OfferedBy: " + offeredBy + "\n");
 			if (department != null)
-				myStr += "Department: " + department + "\n";
+				myStr.append("Department: " + department + "\n");
 			if (campuses != null) {
-				myStr += "Campuses: ";
+				myStr.append("Campuses: ");
 				for (String s : campuses)
-					myStr += s + " ; ";
-				myStr += "\n";
+					myStr.append(s + " ; ");
+				myStr.append("\n");
 			}
 			if (restrictions != null)
-				myStr += "Restrictions: " + restrictions + "\n";
+				myStr.append("Restrictions: " + restrictions + "\n");
 			if (prerequisites != null) {
-				myStr += "Prerequisites: ";
+				myStr.append("Prerequisites: ");
 				for (String s : prerequisites)
-					myStr += s + " ; ";
-				myStr += "\n";
+					myStr.append(s + " ; ");
+				myStr.append("\n");
 			}
-			return myStr;
+			return myStr.toString();
 		}
 
 		private Subject getSearchSubject() {
