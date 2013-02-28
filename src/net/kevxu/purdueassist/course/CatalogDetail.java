@@ -343,7 +343,7 @@ public class CatalogDetail implements HttpRequestListener {
 
 		@Override
 		public String toString() {
-			StringBuffer myStr = new StringBuffer();
+			StringBuilder myStr = new StringBuilder();
 			myStr.append("Subject: " + subject.toString() + "\n");
 			myStr.append("CNBR: " + cnbr + "\n");
 			if (name != null)

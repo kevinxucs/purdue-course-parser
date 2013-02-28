@@ -319,7 +319,7 @@ public class ScheduleDetail implements HttpRequestListener {
 								+ subjectCnbr.length + ".");
 			}
 
-			StringBuffer name = new StringBuffer(basicInfoes[0]);
+			StringBuilder name = new StringBuilder(basicInfoes[0]);
 			for (int i = 1; i <= basicInfoes.length - 4; i++) {
 				name.append(" - " + basicInfoes[i]);
 			}
