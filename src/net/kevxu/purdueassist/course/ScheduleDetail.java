@@ -603,7 +603,6 @@ public class ScheduleDetail implements HttpRequestListener {
 		public ScheduleDetailEntry(Term term, int crn) {
 			this.searchTerm = term;
 			this.searchCrn = crn;
-
 		}
 
 		public Term getSearchTerm() {
