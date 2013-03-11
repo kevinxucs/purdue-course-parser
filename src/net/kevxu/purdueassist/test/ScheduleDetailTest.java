@@ -42,12 +42,15 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class ScheduleDetailTest {
+public class ScheduleDetailTest implements ScheduleDetailListener {
 
 	public static final String VERSION = "0.1.2";
 
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
+	
+	private boolean silent;
+	private boolean smallSilent;
 
 	public static void main(String[] args) throws InterruptedException {
 		options.addOption("t", "term", true,
@@ -79,144 +82,25 @@ public class ScheduleDetailTest {
 				final boolean smallSilent = cmd.hasOption("s");
 				final String[] crns = cmd.getArgs();
 				final boolean parallel = cmd.hasOption("p");
-
+				
+				ScheduleDetailTest test = new ScheduleDetailTest(silent, smallSilent);
+				
 				if (parallel) {
 					// parallel
 					for (final String crnString : crns) {
 						final int crn = Integer.valueOf(crnString);
-						ScheduleDetail detail = new ScheduleDetail(
-								new ScheduleDetailListener() {
-
-									@Override
-									public void onScheduleDetailFinished(
-											CourseNotFoundException e,
-											Term term, int crn) {
-										if (!silent) {
-											if (!smallSilent)
-												System.err.println("INPUT: "
-														+ crnString + " "
-														+ term);
-											System.out.println("CRN: " + crn + " "
-													+ "Term: " + term
-													+ " Not Found: "
-													+ e.getMessage() + "\n");
-										}
-									}
-
-									@Override
-									public void onScheduleDetailFinished(
-											HtmlParseException e, Term term, int crn) {
-										if (!silent) {
-											if (!smallSilent)
-												System.err.println("INPUT: "
-														+ crnString + " "
-														+ term);
-											System.err.println("Parse Error: "
-													+ e.getMessage() + "\n");
-										}
-									}
-
-									@Override
-									public void onScheduleDetailFinished(
-											IOException e, Term term, int crn) {
-										if (!silent) {
-											if (!smallSilent)
-												System.err.println("INPUT: "
-														+ crnString + " "
-														+ term);
-											System.err.println("IO Error: "
-													+ e.getMessage() + "\n");
-										}
-									}
-
-									@Override
-									public void onScheduleDetailFinished(
-											ScheduleDetailEntry entry, Term term, int crn) {
-										if (!silent) {
-											if (!smallSilent)
-												System.err.println("INPUT: "
-														+ crnString + " "
-														+ term);
-											System.out.println(entry);
-										}
-									}
-
-									@Override
-									public void onScheduleDetailFinished(
-											Exception e, Term term, int crn) {
-										if (!silent) {
-											if (!smallSilent)
-												System.err.println("INPUT: "
-														+ crnString + " "
-														+ term);
-											e.printStackTrace();
-											System.err.println();
-										}
-									}
-								});
+						ScheduleDetail detail = new ScheduleDetail(test);
 						detail.getResult(term, crn);
 					}
 				} else {
 					// Not parallel
-					ScheduleDetail detail = new ScheduleDetail(
-							new ScheduleDetailListener() {
-
-								@Override
-								public void onScheduleDetailFinished(
-										CourseNotFoundException e, Term term,
-										int crn) {
-									if (!silent) {
-										System.out.println("CRN: " + crn + " "
-												+ "Term: " + term
-												+ " Not Found: "
-												+ e.getMessage() + "\n");
-									}
-								}
-
-								@Override
-								public void onScheduleDetailFinished(
-										HtmlParseException e, Term term, int crn) {
-									if (!silent) {
-										System.err.println("Parse Error: "
-												+ e.getMessage() + "\n");
-									}
-								}
-
-								@Override
-								public void onScheduleDetailFinished(
-										IOException e, Term term, int crn) {
-									if (!silent) {
-										System.err.println("IO Error: "
-												+ e.getMessage() + "\n");
-									}
-								}
-
-								@Override
-								public void onScheduleDetailFinished(
-										ScheduleDetailEntry entry, Term term, int crn) {
-									if (!silent) {
-										System.out.println(entry);
-									}
-								}
-
-								@Override
-								public void onScheduleDetailFinished(Exception e, Term term, int crn) {
-									if (!silent) {
-										e.printStackTrace();
-										System.err.println();
-									}
-								}
-							});
+					ScheduleDetail detail = new ScheduleDetail(test);
 					for (final String crnString : crns) {
 						while (!detail.isRequestFinished()) {
-							Thread.sleep(100);
+							Thread.sleep(1000);
 						}
 
 						final int crn = Integer.valueOf(crnString);
-
-						if (!smallSilent)
-							System.err.println("INPUT: " + crnString + " "
-									+ term);
 
 						detail.getResult(term, crn);
 					}
@@ -224,9 +108,7 @@ public class ScheduleDetailTest {
 			}
 
 		} catch (ParseException e) {
-			System.err
-					.println("Command line arguments parsing failed. Reason: "
-							+ e.getMessage());
+			System.err.println("Command line arguments parsing failed. Reason: " + e.getMessage());
 			printHelp(formatter, options);
 		} catch (IllegalArgumentException e) {
 			System.err.println("No such school term.");
@@ -237,12 +119,61 @@ public class ScheduleDetailTest {
 	}
 
 	private static void printHelp(HelpFormatter formatter, Options options) {
-		formatter.printHelp(
-				"java -jar RemainSeats.jar [options] [crn1 [crn2 [crn3] ...]]",
-				options);
+		formatter.printHelp("java -jar RemainSeats.jar [options] [crn1 [crn2 [crn3] ...]]",	options);
 	}
 
 	private static Term parseTerm(String termString) {
 		return Term.valueOf(termString.toUpperCase());
+	}
+	
+	public ScheduleDetailTest(boolean silent, boolean smallSilent) {
+		this.silent = silent;
+		this.smallSilent = smallSilent;
+	}
+
+	@Override
+	public void onScheduleDetailFinished(CourseNotFoundException e, Term term, int crn) {
+		if (!silent) {
+			if (!smallSilent)
+				System.err.println("INPUT: " + crn + " " + term);
+			System.out.println("CRN: " + crn + " " + "Term: " + term + " Not Found: " + e.getMessage() + "\n");
+		}
+	}
+
+	@Override
+	public void onScheduleDetailFinished(HtmlParseException e, Term term, int crn) {
+		if (!silent) {
+			if (!smallSilent)
+				System.err.println("INPUT: " + crn + " " + term);
+			System.err.println("Parse Error: " + e.getMessage() + "\n");
+		}
+	}
+
+	@Override
+	public void onScheduleDetailFinished(IOException e, Term term, int crn) {
+		if (!silent) {
+			if (!smallSilent)
+				System.err.println("INPUT: " + crn + " " + term);
+			System.err.println("IO Error: " + e.getMessage() + "\n");
+		}
+	}
+
+	@Override
+	public void onScheduleDetailFinished(ScheduleDetailEntry entry, Term term, int crn) {
+		if (!silent) {
+			if (!smallSilent)
+				System.err.println("INPUT: " + crn + " " + term);
+			System.out.println(entry);
+		}
+	}
+
+	@Override
+	public void onScheduleDetailFinished(Exception e, Term term, int crn) {
+		if (!silent) {
+			if (!smallSilent)
+				System.err.println("INPUT: " + crn + " " + term);
+			e.printStackTrace();
+			System.err.println();
+		}
 	}
 }
