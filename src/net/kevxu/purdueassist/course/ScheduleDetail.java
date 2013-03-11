@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
@@ -41,16 +42,13 @@ import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.course.shared.Utilities;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
-import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
-import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,9 +57,7 @@ import org.jsoup.select.Elements;
 
 /**
  * This is the class implementing "Schedule Detail" search described in the
- * document. It utilizes asynchronous function call for non-blocking calling
- * style. You have to provide callback method by implementing
- * ScheduleDetailListener.
+ * document.
  * <p>
  * Input: crn <br />
  * Input (optional): term
@@ -73,7 +69,7 @@ import org.jsoup.select.Elements;
  * @author Kaiwen Xu (kevin)
  * @see ScheduleDetailListener
  */
-public class ScheduleDetail implements HttpRequestListener {
+public class ScheduleDetail {
 
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
@@ -81,37 +77,15 @@ public class ScheduleDetail implements HttpRequestListener {
 	private Term term;
 	private int crn;
 
-	private ScheduleDetailListener mListener;
-	private BasicHttpClientAsync mHttpClient;
+	private HttpClient mHttpClient;
 
-	private boolean requestFinished = true;
-
-	/**
-	 * Callback methods you have to implement. Provide either
-	 * ScheduleDetailEntry object or exceptions.
-	 * 
-	 * @author Kaiwen Xu (kevin)
-	 */
-	public interface ScheduleDetailListener {
-		public void onScheduleDetailFinished(ScheduleDetailEntry entry, Term term, int crn);
-
-		public void onScheduleDetailFinished(IOException e, Term term, int crn);
-
-		public void onScheduleDetailFinished(HtmlParseException e, Term term, int crn);
-
-		public void onScheduleDetailFinished(CourseNotFoundException e, Term term, int crn);
-
-		public void onScheduleDetailFinished(Exception e, Term term, int crn);
-	}
+	private AtomicBoolean requestFinished;
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param onScheduleDetailFinishedListener
-	 *            callback you have to implement.
 	 */
-	public ScheduleDetail(ScheduleDetailListener scheduleDetailListener) {
-		this.mListener = scheduleDetailListener;
+	public ScheduleDetail() {
+		this.requestFinished.set(true);
 	}
 
 	/**

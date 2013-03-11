@@ -28,6 +28,7 @@ package net.kevxu.purdueassist.course;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,7 +44,11 @@ import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,9 +57,7 @@ import org.jsoup.select.Elements;
 
 /**
  * This is the class implementing "Catalog Detail" search described in the
- * document. It utilizes asynchronous function call for non-blocking calling
- * style. You have to provide callback method by implementing
- * CatalogDetailListener.
+ * document.
  * <p>
  * Input: subject cnbr <br />
  * Input (optional): term
@@ -64,91 +67,55 @@ import org.jsoup.select.Elements;
  * restrictions prerequisites
  * 
  * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
- * @see CatalogDetailListener
  */
 public class CatalogDetail {
 
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_catalog_detail";
 
-	private Term term;
-	private Subject subject;
-	private int cnbr;
+	private Term mTerm;
+	private Subject mSubject;
+	private int mCnbr;
 
-	private CatalogDetailListener mListener;
-	private HttpClient httpClient;
+	private HttpClient mHttpClient;
 
-	private AtomicBoolean requestFinished;
+	private AtomicBoolean mRequestFinished;
 
-	public interface CatalogDetailListener {
-		public void onCatalogDetailFinished(CatalogDetailEntry entry, Term term, Subject subject, int cnbr);
-
-		public void onCatalogDetailFinished(IOException e, Term term, Subject subject, int cnbr);
-
-		public void onCatalogDetailFinished(HtmlParseException e, Term term, Subject subject, int cnbr);
-
-		public void onCatalogDetailFinished(CourseNotFoundException e, Term term, Subject subject, int cnbr);
-
-		public void onCatalogDetailFinished(Exception e, Term term, Subject subject, int cnbr);
+	public CatalogDetail() {
+		mHttpClient = new DefaultHttpClient();
+		this.mRequestFinished.set(true);
 	}
 
-	public CatalogDetail(CatalogDetailListener catalogDetailListener) {
-		this.mListener = catalogDetailListener;
-		this.requestFinished.set(true);
-	}
-
-	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException {
+	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
 		getResult(Term.CURRENT, subject, cnbr);
 	}
 
-	public void getResult(Term term, Subject subject, int cnbr) throws RequestNotFinishedException {
+	public CatalogDetailEntry getResult(Term term, Subject subject, int cnbr) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
 		if (!isRequestFinished())
 			throw new RequestNotFinishedException();
 
 		requestStart();
 
 		if (term == null)
-			term = Term.CURRENT;
+			mTerm = Term.CURRENT;
+		else
+			mTerm = term;
 
-		this.term = term;
-		this.subject = subject;
-		this.cnbr = cnbr;
+		mSubject = subject;
+		mCnbr = cnbr;
 
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
-		parameters.add(new BasicNameValuePair("subject", subject.name()));
-		parameters.add(new BasicNameValuePair("cnbr", Integer.toString(cnbr)));
+		CatalogDetailEntry entry = null;
 
-		httpClient = new BasicHttpClientAsync(URL_HEAD, HttpMethod.POST, this);
 		try {
-			httpClient.setParameters(parameters);
-			httpClient.getResponse();
-		} catch (MethodNotPostException e) {
-			e.printStackTrace();
-			requestEnd();
-		}
-	}
+			List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+			parameters.add(new BasicNameValuePair("term", mTerm.getLinkName()));
+			parameters.add(new BasicNameValuePair("subject", mSubject.name()));
+			parameters.add(new BasicNameValuePair("cnbr", Integer.toString(mCnbr)));
 
-	private synchronized void requestStart() {
-		this.requestFinished.set(false);
-	}
+			HttpPost httpPost = new HttpPost(URL_HEAD);
+			httpPost.setEntity(new UrlEncodedFormEntity(parameters));
 
-	private synchronized void requestEnd() {
-		this.requestFinished.set(false);
-	}
-
-	/**
-	 * Check whether previous request has been finished.
-	 * 
-	 * @return Return true if previous request has already finished.
-	 */
-	public boolean isRequestFinished() {
-		return requestFinished.get();
-	}
-
-	@Override
-	public void onRequestFinished(HttpResponse httpResponse) {
-		try {
+			HttpResponse httpResponse = mHttpClient.execute(httpPost);
 			InputStream stream = httpResponse.getEntity().getContent();
 			Header encoding = httpResponse.getEntity().getContentEncoding();
 			Document document;
@@ -158,25 +125,37 @@ public class CatalogDetail {
 				document = Jsoup.parse(stream, encoding.getValue(), URL_HEAD);
 			}
 			stream.close();
-			CatalogDetailEntry entry = parseDocument(document);
-			mListener.onCatalogDetailFinished(entry, this.term, this.subject, this.cnbr);
-		} catch (IllegalStateException e) {
+			entry = parseDocument(document);
+
+			return entry;
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
-		} catch (HtmlParseException e) {
-			mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
-		} catch (CourseNotFoundException e) {
-			mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
-		} catch (Exception e) {
-			mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
 		} finally {
 			requestEnd();
 		}
 	}
 
+	private void requestStart() {
+		this.mRequestFinished.set(false);
+	}
+
+	private void requestEnd() {
+		this.mRequestFinished.set(false);
+	}
+
+	/**
+	 * Check whether previous request has been finished.
+	 * 
+	 * @return Return true if previous request has already finished.
+	 */
+	public boolean isRequestFinished() {
+		return mRequestFinished.get();
+	}
+
 	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, IOException, ResultNotMatchException {
-		CatalogDetailEntry entry = new CatalogDetailEntry(this.term, this.subject, this.cnbr);
+		CatalogDetailEntry entry = new CatalogDetailEntry(this.mTerm, this.mSubject, this.mCnbr);
 		Elements tableElements = document.getElementsByAttributeValue("summary", "This table lists the course detail for the selected term.");
 		if (!tableElements.isEmpty()) {
 			String[] temp;
