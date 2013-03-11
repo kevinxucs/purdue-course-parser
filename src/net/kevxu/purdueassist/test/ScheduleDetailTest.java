@@ -56,15 +56,12 @@ public class ScheduleDetailTest {
 		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (optional)");
 		options.addOption("s", "small-silent", false, "Do not print input information.");
 		options.addOption("S", "slient", false, "Do not print anything.");
-		options.addOption("p", "parallel", false, "Process all the search requests parallely.");
 
 		CommandLineParser parser = new GnuParser();
 		org.apache.commons.cli.CommandLine cmd;
 
 		Term term = null;
-		String[] crns;
-		boolean parallel = false;
-		int crn = 0;
+		String[] crns = {};
 
 		try {
 			if (args.length <= 0) {
@@ -84,41 +81,7 @@ public class ScheduleDetailTest {
 				silent = cmd.hasOption("S");
 				smallSilent = cmd.hasOption("s");
 				crns = cmd.getArgs();
-				parallel = cmd.hasOption("p");
-
-				if (parallel) {
-					// parallel
-					for (final String crnString : crns) {
-						crn = Integer.valueOf(crnString);
-						ScheduleDetail detail = new ScheduleDetail();
-						ScheduleDetailEntry entry = detail.getResult(term, crn);
-
-						if (!silent) {
-							if (!smallSilent)
-								System.err.println("INPUT: " + crn + " " + term);
-							System.out.println(entry);
-						}
-					}
-				} else {
-					// Not parallel
-					ScheduleDetail detail = new ScheduleDetail();
-					for (final String crnString : crns) {
-						while (!detail.isRequestFinished()) {
-							Thread.sleep(10);
-						}
-
-						crn = Integer.valueOf(crnString);
-
-						ScheduleDetailEntry entry = detail.getResult(term, crn);
-						if (!silent) {
-							if (!smallSilent)
-								System.err.println("INPUT: " + crn + " " + term);
-							System.out.println(entry);
-						}
-					}
-				}
 			}
-
 		} catch (ParseException e) {
 			System.err.println("Command line arguments parsing failed. Reason: "
 					+ e.getMessage());
@@ -126,33 +89,49 @@ public class ScheduleDetailTest {
 		} catch (IllegalArgumentException e) {
 			System.err.println("No such school term.");
 			printHelp(formatter, options);
-		} catch (RequestNotFinishedException e1) {
-			e1.printStackTrace();
-		} catch (IOException e) {
-			if (!silent) {
-				if (!smallSilent)
-					System.err.println("INPUT: " + crn + " " + term);
-				System.err.println("IO Error: " + e.getMessage() + "\n");
-			}
-		} catch (HtmlParseException e) {
-			if (!silent) {
-				if (!smallSilent)
-					System.err.println("INPUT: " + crn + " " + term);
-				System.err.println("Parse Error: " + e.getMessage() + "\n");
-			}
-		} catch (CourseNotFoundException e) {
-			if (!silent) {
-				if (!smallSilent)
-					System.err.println("INPUT: " + crn + " " + term);
-				System.out.println("CRN: " + crn + " " + "Term: " + term
-						+ " Not Found: " + e.getMessage() + "\n");
-			}
-		} catch (ResultNotMatchException e) {
-			if (!silent) {
-				if (!smallSilent)
-					System.err.println("INPUT: " + crn + " " + term);
-				e.printStackTrace();
-				System.err.println();
+		}
+
+		// Not parallel
+		ScheduleDetail detail = new ScheduleDetail();
+		for (final String crnString : crns) {
+			int crn = Integer.valueOf(crnString);
+
+			try {
+				ScheduleDetailEntry entry;
+				entry = detail.getResult(term, crn);
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					System.out.println(entry);
+				}
+			} catch (RequestNotFinishedException e1) {
+				e1.printStackTrace();
+			} catch (IOException e) {
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					System.err.println("IO Error: " + e.getMessage() + "\n");
+				}
+			} catch (HtmlParseException e) {
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					System.err.println("Parse Error: " + e.getMessage() + "\n");
+				}
+			} catch (CourseNotFoundException e) {
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					System.out.println("CRN: " + crn + " " + "Term: " + term
+							+ " Not Found: " + e.getMessage() + "\n");
+				}
+			} catch (ResultNotMatchException e) {
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					e.printStackTrace();
+					System.err.println();
+				}
 			}
 		}
 	}
