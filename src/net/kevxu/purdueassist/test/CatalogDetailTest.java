@@ -33,14 +33,18 @@ import net.kevxu.purdueassist.course.CatalogDetail;
 import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailEntry;
 import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
+import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 
-public class CatalogDetailTest {
+public class CatalogDetailTest implements CatalogDetailListener {
 	public static void main(String[] args) {
-		System.out.println("Subject:");
+		CatalogDetailTest test = new CatalogDetailTest();
+
 		Scanner getInput = new Scanner(System.in);
+
+		System.out.println("Subject:");
 		Subject tem_subject = null;
 		try {
 			tem_subject = Subject.valueOf(getInput.nextLine().toUpperCase());
@@ -55,60 +59,81 @@ public class CatalogDetailTest {
 		// tmp_cnbr*=100;
 		// }
 		// final int cnbr=tmp_cnbr;
-		for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
-			final int cnbr = mcnbr;
-			CatalogDetail detail = new CatalogDetail(
-					new CatalogDetailListener() {
-						@Override
-						public void onCatalogDetailFinished(
-								CatalogDetailEntry entry) {
-							System.out.println(entry);
-							System.out.println("Course Found");
-							System.out.println("----------------------");
-						}
 
-						@Override
-						public void onCatalogDetailFinished(IOException e) {
-							System.err
-									.println("INPUT: " + cnbr + " " + subject);
-							System.err.println("IO Error!");
-							System.err.println("----------------------");
-						}
+		System.out.println("CNBR: ");
+		int cnbr = 0;
+		boolean all = false;
+		try {
+			String strcnbr = getInput.nextLine();
+			if (strcnbr.equals("ALL") || strcnbr.equals("")) {
+				all = true;
+			} else {
+				cnbr = Integer.valueOf(strcnbr);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 
-						@Override
-						public void onCatalogDetailFinished(HtmlParseException e) {
-							System.err
-									.println("INPUT: " + cnbr + " " + subject);
-							System.err.println("Parse Error!");
-							System.err.println("----------------------");
-						}
-
-						@Override
-						public void onCatalogDetailFinished(
-								CourseNotFoundException e) {
-							System.err
-									.println("INPUT: " + cnbr + " " + subject);
-							System.err.println("Course Not Found!");
-							System.err.println("----------------------");
-						}
-
-						@Override
-						public void onCatalogDetailFinished(Exception e) {
-							System.err
-									.println("INPUT: " + cnbr + " " + subject);
-							e.printStackTrace();
-							System.err.println("----------------------");
-
-						}
-
-					});
+		if (all) {
+			for (int mcnbr = 10000; mcnbr < 50000; mcnbr += 100) {
+				CatalogDetail detail = new CatalogDetail(test);
+				try {
+					detail.getResult(subject, mcnbr);
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				} catch (RequestNotFinishedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} else {
+			CatalogDetail detail = new CatalogDetail(test);
 			try {
-				detail.getResult(subject, cnbr);
-			} catch (StringIndexOutOfBoundsException e) {
-
-			} catch (RequestNotFinishedException e1) {
-				e1.printStackTrace();
+				detail.getResult(tem_subject, cnbr);
+			} catch (RequestNotFinishedException e) {
+				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void onCatalogDetailFinished(CatalogDetailEntry entry, Term term,
+			Subject subject, int cnbr) {
+		System.out.println(entry);
+		System.out.println("Course Found");
+		System.out.println("----------------------");
+	}
+
+	@Override
+	public void onCatalogDetailFinished(IOException e, Term term,
+			Subject subject, int cnbr) {
+		System.err.println("INPUT: " + cnbr + " " + subject);
+		System.err.println("IO Error!");
+		System.err.println("----------------------");
+	}
+
+	@Override
+	public void onCatalogDetailFinished(HtmlParseException e, Term term,
+			Subject subject, int cnbr) {
+		System.err.println("INPUT: " + cnbr + " " + subject);
+		System.err.println("Parse Error!");
+		System.err.println(e.getMessage());
+		System.err.println("----------------------");
+	}
+
+	@Override
+	public void onCatalogDetailFinished(CourseNotFoundException e, Term term,
+			Subject subject, int cnbr) {
+		System.err.println("INPUT: " + cnbr + " " + subject);
+		System.err.println("Course Not Found!");
+		System.err.println("----------------------");
+	}
+
+	@Override
+	public void onCatalogDetailFinished(Exception e, Term term,
+			Subject subject, int cnbr) {
+		System.err.println("INPUT: " + cnbr + " " + subject);
+		e.printStackTrace();
+		System.err.println("----------------------");
+
 	}
 }

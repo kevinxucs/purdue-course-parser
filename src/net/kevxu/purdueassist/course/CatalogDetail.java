@@ -83,15 +83,20 @@ public class CatalogDetail implements HttpRequestListener {
 	private boolean requestFinished;
 
 	public interface CatalogDetailListener {
-		public void onCatalogDetailFinished(CatalogDetailEntry entry);
+		public void onCatalogDetailFinished(CatalogDetailEntry entry,
+				Term term, Subject subject, int cnbr);
 
-		public void onCatalogDetailFinished(IOException e);
+		public void onCatalogDetailFinished(IOException e, Term term,
+				Subject subject, int cnbr);
 
-		public void onCatalogDetailFinished(HtmlParseException e);
+		public void onCatalogDetailFinished(HtmlParseException e, Term term,
+				Subject subject, int cnbr);
 
-		public void onCatalogDetailFinished(CourseNotFoundException e);
+		public void onCatalogDetailFinished(CourseNotFoundException e,
+				Term term, Subject subject, int cnbr);
 
-		public void onCatalogDetailFinished(Exception e);
+		public void onCatalogDetailFinished(Exception e, Term term,
+				Subject subject, int cnbr);
 	}
 
 	public CatalogDetail(CatalogDetailListener catalogDetailListener) {
@@ -156,17 +161,22 @@ public class CatalogDetail implements HttpRequestListener {
 			}
 			stream.close();
 			CatalogDetailEntry entry = parseDocument(document);
-			mListener.onCatalogDetailFinished(entry);
+			mListener.onCatalogDetailFinished(entry, this.term, this.subject,
+					this.cnbr);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			mListener.onCatalogDetailFinished(e);
+			mListener.onCatalogDetailFinished(e, this.term, this.subject,
+					this.cnbr);
 		} catch (HtmlParseException e) {
-			mListener.onCatalogDetailFinished(e);
+			mListener.onCatalogDetailFinished(e, this.term, this.subject,
+					this.cnbr);
 		} catch (CourseNotFoundException e) {
-			mListener.onCatalogDetailFinished(e);
+			mListener.onCatalogDetailFinished(e, this.term, this.subject,
+					this.cnbr);
 		} catch (Exception e) {
-			mListener.onCatalogDetailFinished(e);
+			mListener.onCatalogDetailFinished(e, this.term, this.subject,
+					this.cnbr);
 		} finally {
 			this.requestFinished = true;
 		}
@@ -180,7 +190,8 @@ public class CatalogDetail implements HttpRequestListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		mListener.onCatalogDetailFinished(e);
+		mListener
+				.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
 		this.requestFinished = true;
 	}
 
@@ -190,9 +201,9 @@ public class CatalogDetail implements HttpRequestListener {
 		Elements tableElements = document.getElementsByAttributeValue(
 				"summary",
 				"This table lists the course detail for the selected term.");
-		if (tableElements.isEmpty() != true) {
-			// get name
+		if (!tableElements.isEmpty()) {
 			try {
+				// get name
 				Element body = tableElements.first().select("tbody").first();
 				String nameBlock = body.select("tr td.nttitle").first().text();
 				String[] temp = nameBlock.split(subject.name() + " "
