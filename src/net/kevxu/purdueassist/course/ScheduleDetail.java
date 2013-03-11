@@ -49,6 +49,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -85,6 +86,7 @@ public class ScheduleDetail {
 	 * Constructor.
 	 */
 	public ScheduleDetail() {
+		mHttpClient = new DefaultHttpClient();
 		mRequestFinished = new AtomicBoolean(true);
 	}
 
@@ -113,7 +115,7 @@ public class ScheduleDetail {
 	 *             then will throw this exception.
 	 */
 	public void getResult(Term term, int crn) throws RequestNotFinishedException {
-		if (!this.requestFinished)
+		if (!isRequestFinished())
 			throw new RequestNotFinishedException();
 
 		requestStart();
@@ -138,12 +140,12 @@ public class ScheduleDetail {
 		}
 	}
 
-	private synchronized void requestStart() {
-		this.requestFinished = false;
+	private void requestStart() {
+		this.mRequestFinished.set(false);
 	}
 
-	private synchronized void requestEnd() {
-		this.requestFinished = true;
+	private void requestEnd() {
+		this.mRequestFinished.set(false);
 	}
 
 	/**
@@ -152,7 +154,7 @@ public class ScheduleDetail {
 	 * @return Return true if previous request has already finished.
 	 */
 	public boolean isRequestFinished() {
-		return this.requestFinished;
+		return mRequestFinished.get();
 	}
 
 	@Override
