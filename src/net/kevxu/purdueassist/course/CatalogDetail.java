@@ -80,7 +80,7 @@ public class CatalogDetail implements HttpRequestListener {
 	private CatalogDetailListener mListener;
 	private BasicHttpClientAsync httpClient;
 
-	private boolean requestFinished;
+	private boolean requestFinished = true;
 
 	public interface CatalogDetailListener {
 		public void onCatalogDetailFinished(CatalogDetailEntry entry, Term term, Subject subject, int cnbr);
@@ -96,7 +96,6 @@ public class CatalogDetail implements HttpRequestListener {
 
 	public CatalogDetail(CatalogDetailListener catalogDetailListener) {
 		this.mListener = catalogDetailListener;
-		this.requestFinished = true;
 	}
 
 	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException {
@@ -107,7 +106,7 @@ public class CatalogDetail implements HttpRequestListener {
 		if (!this.requestFinished)
 			throw new RequestNotFinishedException();
 
-		this.requestFinished = false;
+		requestStart();
 
 		if (term == null)
 			term = Term.CURRENT;
@@ -127,9 +126,16 @@ public class CatalogDetail implements HttpRequestListener {
 			httpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
-		} finally {
-			this.requestFinished = true;
+			requestEnd();
 		}
+	}
+
+	private synchronized void requestStart() {
+		this.requestFinished = false;
+	}
+
+	private synchronized void requestEnd() {
+		this.requestFinished = true;
 	}
 
 	/**
@@ -166,24 +172,24 @@ public class CatalogDetail implements HttpRequestListener {
 		} catch (Exception e) {
 			mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
 		} finally {
-			this.requestFinished = true;
+			requestEnd();
 		}
 	}
 
 	@Override
 	public void onRequestFinished(ClientProtocolException e) {
 		e.printStackTrace();
-		this.requestFinished = true;
+		requestEnd();
 	}
 
 	@Override
 	public void onRequestFinished(IOException e) {
 		mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
-		this.requestFinished = true;
+		requestEnd();
 	}
 
 	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, IOException {
-		CatalogDetailEntry entry = new CatalogDetailEntry(subject, cnbr);
+		CatalogDetailEntry entry = new CatalogDetailEntry(this.term, this.subject, this.cnbr);
 		Elements tableElements = document.getElementsByAttributeValue("summary", "This table lists the course detail for the selected term.");
 		if (!tableElements.isEmpty()) {
 			try {
