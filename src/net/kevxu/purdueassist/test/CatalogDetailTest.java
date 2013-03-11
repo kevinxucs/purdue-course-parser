@@ -32,7 +32,6 @@ import java.util.Scanner;
 import net.kevxu.purdueassist.course.CatalogDetail;
 import net.kevxu.purdueassist.course.CatalogDetail.CatalogDetailEntry;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
-import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
@@ -40,8 +39,6 @@ import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 
 public class CatalogDetailTest {
 	public static void main(String[] args) {
-		CatalogDetailTest test = new CatalogDetailTest();
-
 		Scanner getInput = new Scanner(System.in);
 
 		System.out.println("Subject:");

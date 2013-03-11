@@ -30,11 +30,11 @@ import java.io.IOException;
 
 import net.kevxu.purdueassist.course.ScheduleDetail;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
-import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailListener;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
+import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -42,9 +42,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class ScheduleDetailTest implements ScheduleDetailListener {
+public class ScheduleDetailTest {
 
-	public static final String VERSION = "0.1.2";
+	public static final String VERSION = "0.2.0-SNAPSHOT";
 
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
@@ -60,6 +60,14 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 
 		CommandLineParser parser = new GnuParser();
 		org.apache.commons.cli.CommandLine cmd;
+
+		Term term = null;
+		boolean silent = false;
+		boolean smallSilent = false;
+		String[] crns;
+		boolean parallel = false;
+		int crn = 0;
+
 		try {
 			if (args.length <= 0) {
 				printHelp(formatter, options);
@@ -74,32 +82,41 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 				} else {
 					termString = cmd.getOptionValue("t");
 				}
-				final Term term = parseTerm(termString);
-				final boolean silent = cmd.hasOption("S");
-				final boolean smallSilent = cmd.hasOption("s");
-				final String[] crns = cmd.getArgs();
-				final boolean parallel = cmd.hasOption("p");
-
-				ScheduleDetailTest test = new ScheduleDetailTest(silent, smallSilent);
+				term = parseTerm(termString);
+				silent = cmd.hasOption("S");
+				smallSilent = cmd.hasOption("s");
+				crns = cmd.getArgs();
+				parallel = cmd.hasOption("p");
 
 				if (parallel) {
 					// parallel
 					for (final String crnString : crns) {
-						final int crn = Integer.valueOf(crnString);
-						ScheduleDetail detail = new ScheduleDetail(test);
-						detail.getResult(term, crn);
+						crn = Integer.valueOf(crnString);
+						ScheduleDetail detail = new ScheduleDetail();
+						ScheduleDetailEntry entry = detail.getResult(term, crn);
+
+						if (!silent) {
+							if (!smallSilent)
+								System.err.println("INPUT: " + crn + " " + term);
+							System.out.println(entry);
+						}
 					}
 				} else {
 					// Not parallel
-					ScheduleDetail detail = new ScheduleDetail(test);
+					ScheduleDetail detail = new ScheduleDetail();
 					for (final String crnString : crns) {
 						while (!detail.isRequestFinished()) {
 							Thread.sleep(10);
 						}
 
-						final int crn = Integer.valueOf(crnString);
+						crn = Integer.valueOf(crnString);
 
-						detail.getResult(term, crn);
+						ScheduleDetailEntry entry = detail.getResult(term, crn);
+						if (!silent) {
+							if (!smallSilent)
+								System.err.println("INPUT: " + crn + " " + term);
+							System.out.println(entry);
+						}
 					}
 				}
 			}
@@ -113,6 +130,32 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 			printHelp(formatter, options);
 		} catch (RequestNotFinishedException e1) {
 			e1.printStackTrace();
+		} catch (IOException e) {
+			if (!silent) {
+				if (!smallSilent)
+					System.err.println("INPUT: " + crn + " " + term);
+				System.err.println("IO Error: " + e.getMessage() + "\n");
+			}
+		} catch (HtmlParseException e) {
+			if (!silent) {
+				if (!smallSilent)
+					System.err.println("INPUT: " + crn + " " + term);
+				System.err.println("Parse Error: " + e.getMessage() + "\n");
+			}
+		} catch (CourseNotFoundException e) {
+			if (!silent) {
+				if (!smallSilent)
+					System.err.println("INPUT: " + crn + " " + term);
+				System.out.println("CRN: " + crn + " " + "Term: " + term
+						+ " Not Found: " + e.getMessage() + "\n");
+			}
+		} catch (ResultNotMatchException e) {
+			if (!silent) {
+				if (!smallSilent)
+					System.err.println("INPUT: " + crn + " " + term);
+				e.printStackTrace();
+				System.err.println();
+			}
 		}
 	}
 
@@ -127,52 +170,5 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 	public ScheduleDetailTest(boolean silent, boolean smallSilent) {
 		this.silent = silent;
 		this.smallSilent = smallSilent;
-	}
-
-	@Override
-	public void onScheduleDetailFinished(CourseNotFoundException e, Term term, int crn) {
-		if (!silent) {
-			if (!smallSilent)
-				System.err.println("INPUT: " + crn + " " + term);
-			System.out.println("CRN: " + crn + " " + "Term: " + term
-					+ " Not Found: " + e.getMessage() + "\n");
-		}
-	}
-
-	@Override
-	public void onScheduleDetailFinished(HtmlParseException e, Term term, int crn) {
-		if (!silent) {
-			if (!smallSilent)
-				System.err.println("INPUT: " + crn + " " + term);
-			System.err.println("Parse Error: " + e.getMessage() + "\n");
-		}
-	}
-
-	@Override
-	public void onScheduleDetailFinished(IOException e, Term term, int crn) {
-		if (!silent) {
-			if (!smallSilent)
-				System.err.println("INPUT: " + crn + " " + term);
-			System.err.println("IO Error: " + e.getMessage() + "\n");
-		}
-	}
-
-	@Override
-	public void onScheduleDetailFinished(ScheduleDetailEntry entry, Term term, int crn) {
-		if (!silent) {
-			if (!smallSilent)
-				System.err.println("INPUT: " + crn + " " + term);
-			System.out.println(entry);
-		}
-	}
-
-	@Override
-	public void onScheduleDetailFinished(Exception e, Term term, int crn) {
-		if (!silent) {
-			if (!smallSilent)
-				System.err.println("INPUT: " + crn + " " + term);
-			e.printStackTrace();
-			System.err.println();
-		}
 	}
 }
