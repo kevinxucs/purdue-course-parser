@@ -97,7 +97,7 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 					ScheduleDetail detail = new ScheduleDetail(test);
 					for (final String crnString : crns) {
 						while (!detail.isRequestFinished()) {
-							Thread.sleep(1000);
+							Thread.sleep(10);
 						}
 
 						final int crn = Integer.valueOf(crnString);

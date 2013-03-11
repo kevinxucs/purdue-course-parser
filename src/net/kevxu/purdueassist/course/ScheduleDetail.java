@@ -84,7 +84,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	private ScheduleDetailListener mListener;
 	private BasicHttpClientAsync mHttpClient;
 
-	private boolean requestFinished;
+	private boolean requestFinished = true;
 
 	/**
 	 * Callback methods you have to implement. Provide either
@@ -112,7 +112,6 @@ public class ScheduleDetail implements HttpRequestListener {
 	 */
 	public ScheduleDetail(ScheduleDetailListener scheduleDetailListener) {
 		this.mListener = scheduleDetailListener;
-		this.requestFinished = true;
 	}
 
 	/**
@@ -139,8 +138,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	 *             If calling this method before previous request is finished,
 	 *             then will throw this exception.
 	 */
-	public void getResult(Term term, int crn)
-			throws RequestNotFinishedException {
+	public void getResult(Term term, int crn) throws RequestNotFinishedException {
 		if (!this.requestFinished)
 			throw new RequestNotFinishedException();
 
@@ -165,11 +163,11 @@ public class ScheduleDetail implements HttpRequestListener {
 			requestEnd();
 		}
 	}
-	
+
 	private synchronized void requestStart() {
 		this.requestFinished = false;
 	}
-	
+
 	private synchronized void requestEnd() {
 		this.requestFinished = true;
 	}
@@ -228,19 +226,14 @@ public class ScheduleDetail implements HttpRequestListener {
 		requestEnd();
 	}
 
-	private ScheduleDetailEntry parseDocument(Document document)
-			throws HtmlParseException, CourseNotFoundException,
-			ResultNotMatchException {
+	private ScheduleDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, ResultNotMatchException {
 		ScheduleDetailEntry entry = new ScheduleDetailEntry(term, crn);
-		Elements tableElements = document
-				.getElementsByAttributeValue("summary",
-						"This table is used to present the detailed class information.");
+		Elements tableElements = document.getElementsByAttributeValue("summary", "This table is used to present the detailed class information.");
 
 		if (!tableElements.isEmpty()) {
 			for (Element tableElement : tableElements) {
 				// get basic info for selected course
-				Element tableBasicInfoElement = tableElement
-						.getElementsByClass("ddlabel").first();
+				Element tableBasicInfoElement = tableElement.getElementsByClass("ddlabel").first();
 				if (tableBasicInfoElement != null) {
 					setBasicInfo(entry, tableBasicInfoElement.text());
 				} else {
@@ -248,40 +241,28 @@ public class ScheduleDetail implements HttpRequestListener {
 				}
 
 				// get detailed course info
-				Element tableDetailedInfoElement = tableElement
-						.getElementsByClass("dddefault").first();
+				Element tableDetailedInfoElement = tableElement.getElementsByClass("dddefault").first();
 
 				if (tableDetailedInfoElement != null) {
 					// process seat info
-					Elements tableSeatDetailElements = tableDetailedInfoElement
-							.getElementsByAttributeValue("summary",
-									"This layout table is used to present the seating numbers.");
+					Elements tableSeatDetailElements = tableDetailedInfoElement.getElementsByAttributeValue("summary", "This layout table is used to present the seating numbers.");
 					if (tableSeatDetailElements.size() == 1) {
-						Element tableSeatDetailElement = tableSeatDetailElements
-								.first();
-						Elements tableSeatDetailEntryElements = tableSeatDetailElement
-								.getElementsByTag("tbody").first().children();
+						Element tableSeatDetailElement = tableSeatDetailElements.first();
+						Elements tableSeatDetailEntryElements = tableSeatDetailElement.getElementsByTag("tbody").first().children();
 						if (tableSeatDetailEntryElements.size() == 3
 								|| tableSeatDetailEntryElements.size() == 4) {
-							setSeats(entry, tableSeatDetailEntryElements.get(1)
-									.text());
-							setWaitlistSeats(entry,
-									tableSeatDetailEntryElements.get(2).text());
+							setSeats(entry, tableSeatDetailEntryElements.get(1).text());
+							setWaitlistSeats(entry, tableSeatDetailEntryElements.get(2).text());
 							if (tableSeatDetailEntryElements.size() == 4) {
-								setCrosslistSeats(entry,
-										tableSeatDetailEntryElements.get(3)
-												.text());
+								setCrosslistSeats(entry, tableSeatDetailEntryElements.get(3).text());
 							}
 						} else {
-							throw new HtmlParseException(
-									"Seat detail entry elements size not 3. We have "
-											+ tableSeatDetailEntryElements
-													.size() + ".");
+							throw new HtmlParseException("Seat detail entry elements size not 3. We have "
+									+ tableSeatDetailEntryElements.size() + ".");
 						}
 					} else {
-						throw new HtmlParseException(
-								"Seat detail elements size not 1. We have "
-										+ tableSeatDetailElements.size() + ".");
+						throw new HtmlParseException("Seat detail elements size not 1. We have "
+								+ tableSeatDetailElements.size() + ".");
 					}
 					// remove the seat info from detailed info
 					tableSeatDetailElements.remove();
@@ -296,16 +277,12 @@ public class ScheduleDetail implements HttpRequestListener {
 			}
 		} else {
 			// test empty
-			Elements informationElements = document
-					.getElementsByAttributeValue("summary",
-							"This layout table holds message information");
+			Elements informationElements = document.getElementsByAttributeValue("summary", "This layout table holds message information");
 			if (!informationElements.isEmpty()
-					&& informationElements.text().contains(
-							"No detailed class information found")) {
+					&& informationElements.text().contains("No detailed class information found")) {
 				throw new CourseNotFoundException(informationElements.text());
 			} else {
-				throw new HtmlParseException(
-						"Course table not found, but page does not contain message stating no course found.");
+				throw new HtmlParseException("Course table not found, but page does not contain message stating no course found.");
 			}
 		}
 
@@ -324,25 +301,21 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @throws HtmlParseException
 	 * @throws ResultNotMatchException
 	 */
-	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo)
-			throws HtmlParseException, ResultNotMatchException {
+	private void setBasicInfo(ScheduleDetailEntry entry, String basicInfo) throws HtmlParseException, ResultNotMatchException {
 		String[] basicInfoes = basicInfo.split(" - ");
 		if (basicInfoes.length >= 4) {
 			entry.setCrn(Integer.valueOf(basicInfoes[basicInfoes.length - 3]));
 			if (entry.getCrn() != entry.getSearchCrn())
-				throw new ResultNotMatchException(
-						"Result not match with search option.");
+				throw new ResultNotMatchException("Result not match with search option.");
 			entry.setSection(basicInfoes[basicInfoes.length - 1]);
 
-			String[] subjectCnbr = basicInfoes[basicInfoes.length - 2]
-					.split(" ");
+			String[] subjectCnbr = basicInfoes[basicInfoes.length - 2].split(" ");
 			if (subjectCnbr.length == 2) {
 				entry.setSubject(Subject.valueOf(subjectCnbr[0]));
 				entry.setCnbr(subjectCnbr[1]);
 			} else {
-				throw new HtmlParseException(
-						"Subject and CNBR cannot be split to 2. We have "
-								+ subjectCnbr.length + ".");
+				throw new HtmlParseException("Subject and CNBR cannot be split to 2. We have "
+						+ subjectCnbr.length + ".");
 			}
 
 			StringBuilder name = new StringBuilder(basicInfoes[0]);
@@ -351,9 +324,8 @@ public class ScheduleDetail implements HttpRequestListener {
 			}
 			entry.setName(name.toString());
 		} else {
-			throw new HtmlParseException(
-					"Basic info cannot be split to equal or more than 4. We have "
-							+ basicInfoes.length + ".");
+			throw new HtmlParseException("Basic info cannot be split to equal or more than 4. We have "
+					+ basicInfoes.length + ".");
 		}
 	}
 
@@ -366,16 +338,13 @@ public class ScheduleDetail implements HttpRequestListener {
 	 *            String contains capacity, actual and remaining.
 	 * @throws HtmlParseException
 	 */
-	private void setSeats(ScheduleDetailEntry entry, String seatsInfo)
-			throws HtmlParseException {
+	private void setSeats(ScheduleDetailEntry entry, String seatsInfo) throws HtmlParseException {
 		String[] seatsInfoes = seatsInfo.split(" ");
 		if (seatsInfoes.length == 4) {
-			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer
-					.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
+			entry.setSeats(new Seats(Integer.valueOf(seatsInfoes[1]), Integer.valueOf(seatsInfoes[2]), Integer.valueOf(seatsInfoes[3])));
 		} else {
-			throw new HtmlParseException(
-					"Seats info cannot be split to 4. We have "
-							+ seatsInfoes.length + ".");
+			throw new HtmlParseException("Seats info cannot be split to 4. We have "
+					+ seatsInfoes.length + ".");
 		}
 	}
 
@@ -387,33 +356,23 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @param waitlistSeatsInfo
 	 * @throws HtmlParseException
 	 */
-	private void setWaitlistSeats(ScheduleDetailEntry entry,
-			String waitlistSeatsInfo) throws HtmlParseException {
+	private void setWaitlistSeats(ScheduleDetailEntry entry, String waitlistSeatsInfo) throws HtmlParseException {
 		String[] waitlistSeatsInfoes = waitlistSeatsInfo.split(" ");
 		if (waitlistSeatsInfoes.length == 5) {
-			entry.setWaitlistSeats(new Seats(Integer
-					.valueOf(waitlistSeatsInfoes[2]), Integer
-					.valueOf(waitlistSeatsInfoes[3]), Integer
-					.valueOf(waitlistSeatsInfoes[4])));
+			entry.setWaitlistSeats(new Seats(Integer.valueOf(waitlistSeatsInfoes[2]), Integer.valueOf(waitlistSeatsInfoes[3]), Integer.valueOf(waitlistSeatsInfoes[4])));
 		} else {
-			throw new HtmlParseException(
-					"Waitlist seats info cannot be split to 5. We have "
-							+ waitlistSeatsInfoes.length + ".");
+			throw new HtmlParseException("Waitlist seats info cannot be split to 5. We have "
+					+ waitlistSeatsInfoes.length + ".");
 		}
 	}
 
-	private void setCrosslistSeats(ScheduleDetailEntry entry,
-			String crosslistSeatsInfo) throws HtmlParseException {
+	private void setCrosslistSeats(ScheduleDetailEntry entry, String crosslistSeatsInfo) throws HtmlParseException {
 		String[] crosslistSeatsInfoes = crosslistSeatsInfo.split(" ");
 		if (crosslistSeatsInfoes.length == 6) {
-			entry.setCrosslistSeats(new Seats(Integer
-					.valueOf(crosslistSeatsInfoes[3]), Integer
-					.valueOf(crosslistSeatsInfoes[4]), Integer
-					.valueOf(crosslistSeatsInfoes[5])));
+			entry.setCrosslistSeats(new Seats(Integer.valueOf(crosslistSeatsInfoes[3]), Integer.valueOf(crosslistSeatsInfoes[4]), Integer.valueOf(crosslistSeatsInfoes[5])));
 		} else {
-			throw new HtmlParseException(
-					"Crosslist seats info cannot be split to 6. We have "
-							+ crosslistSeatsInfoes.length + ".");
+			throw new HtmlParseException("Crosslist seats info cannot be split to 6. We have "
+					+ crosslistSeatsInfoes.length + ".");
 		}
 	}
 
@@ -427,8 +386,7 @@ public class ScheduleDetail implements HttpRequestListener {
 	 *            Html String contains information about the term, levels,
 	 *            campus.
 	 */
-	private void setRemainingInfo(ScheduleDetailEntry entry,
-			String remainingInfoHtml) {
+	private void setRemainingInfo(ScheduleDetailEntry entry, String remainingInfoHtml) {
 		// TODO: handle cross list courses. i.e. crn 10248
 		final int NOT_RECORD = 0;
 		final int PREREQUISTES = 1;
@@ -469,8 +427,7 @@ public class ScheduleDetail implements HttpRequestListener {
 						&& !info.contains("General Requirements:")
 						&& !info.contains("Corequisites:")) {
 					restrictionsString += " "
-							+ Utilities.removeHtmlTags(
-									info.replace("&nbsp;", "")).trim();
+							+ Utilities.removeHtmlTags(info.replace("&nbsp;", "")).trim();
 				}
 			}
 
@@ -483,8 +440,7 @@ public class ScheduleDetail implements HttpRequestListener {
 						&& !info.contains("Restrictions:")
 						&& !info.contains("Corequisites:")) {
 					generalRequirementsString += " "
-							+ Utilities.removeHtmlTags(
-									info.replace("&nbsp;", "")).trim();
+							+ Utilities.removeHtmlTags(info.replace("&nbsp;", "")).trim();
 				}
 			}
 
@@ -497,8 +453,7 @@ public class ScheduleDetail implements HttpRequestListener {
 						&& !info.contains("Restrictions:")
 						&& !info.contains("General Requirements:")) {
 					corequisitesString += " "
-							+ Utilities.removeHtmlTags(
-									info.replace("&nbsp;", "")).trim();
+							+ Utilities.removeHtmlTags(info.replace("&nbsp;", "")).trim();
 				}
 			}
 
@@ -507,23 +462,19 @@ public class ScheduleDetail implements HttpRequestListener {
 				if (info.contains("Associated Term: ")) {
 					String termString = info.substring(info.indexOf("</span>")
 							+ "</span>".length());
-					entry.setTerm(Term.valueOf(termString.replace(" ", "")
-							.toUpperCase()));
+					entry.setTerm(Term.valueOf(termString.replace(" ", "").toUpperCase()));
 					continue;
 				} else if (info.contains("Levels: ")) {
-					String levelsString = info.substring(info
-							.indexOf("</span>") + "</span>".length());
-					entry.setLevels(new ArrayList<String>(Arrays
-							.asList(levelsString.split(", "))));
+					String levelsString = info.substring(info.indexOf("</span>")
+							+ "</span>".length());
+					entry.setLevels(new ArrayList<String>(Arrays.asList(levelsString.split(", "))));
 					continue;
 				} else if (info.contains("Campus")) {
-					String campusString = info.substring(0,
-							info.indexOf("Campus")).trim();
+					String campusString = info.substring(0, info.indexOf("Campus")).trim();
 					entry.setCampus(campusString);
 					continue;
 				} else if (info.contains("Schedule Type")) {
-					String typeString = info.substring(0,
-							info.indexOf("Schedule Type")).trim();
+					String typeString = info.substring(0, info.indexOf("Schedule Type")).trim();
 					entry.setType(Type.valueOf(typeString.replace(" ", "")));
 					continue;
 				} else if (info.contains("Credits")) {
@@ -531,14 +482,11 @@ public class ScheduleDetail implements HttpRequestListener {
 					// TO contained
 					String creditsString = "0";
 					if (!info.contains("TO") && !info.contains("OR")) {
-						creditsString = info.substring(0,
-								info.indexOf("Credits")).trim();
+						creditsString = info.substring(0, info.indexOf("Credits")).trim();
 					} else if (info.contains("TO")) {
-						creditsString = info.substring(info.indexOf("TO") + 2,
-								info.indexOf("Credits")).trim();
+						creditsString = info.substring(info.indexOf("TO") + 2, info.indexOf("Credits")).trim();
 					} else if (info.contains("OR")) {
-						creditsString = info.substring(info.indexOf("OR") + 2,
-								info.indexOf("Credits")).trim();
+						creditsString = info.substring(info.indexOf("OR") + 2, info.indexOf("Credits")).trim();
 					}
 					entry.setCredits(Double.valueOf(creditsString));
 					continue;
@@ -741,19 +689,15 @@ public class ScheduleDetail implements HttpRequestListener {
 		}
 
 		private void setPrerequisites(String prerequisites) {
-			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites)
-					.trim();
+			this.prerequisites = StringEscapeUtils.unescapeHtml(prerequisites).trim();
 		}
 
 		private void setRestrictions(String restrictions) {
-			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions)
-					.trim();
+			this.restrictions = StringEscapeUtils.unescapeHtml(restrictions).trim();
 		}
 
 		private void setGeneralRequirements(String generalRequirements) {
-			this.generalRequirements = Utilities
-					.shrinkContentInParentheses(StringEscapeUtils.unescapeHtml(
-							generalRequirements).trim());
+			this.generalRequirements = Utilities.shrinkContentInParentheses(StringEscapeUtils.unescapeHtml(generalRequirements).trim());
 		}
 
 		private void setCorequisites(String corequisites) {
