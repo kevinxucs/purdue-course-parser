@@ -306,7 +306,7 @@ public class ScheduleDetail implements HttpRequestListener {
 		if (basicInfoes.length >= 4) {
 			entry.setCrn(Integer.valueOf(basicInfoes[basicInfoes.length - 3]));
 			if (entry.getCrn() != entry.getSearchCrn())
-				throw new ResultNotMatchException("Result not match with search option.");
+				throw new ResultNotMatchException("Result not match with search crn.");
 			entry.setSection(basicInfoes[basicInfoes.length - 1]);
 
 			String[] subjectCnbr = basicInfoes[basicInfoes.length - 2].split(" ");
@@ -385,8 +385,9 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @param remainingInfoHtml
 	 *            Html String contains information about the term, levels,
 	 *            campus.
+	 * @throws ResultNotMatchException
 	 */
-	private void setRemainingInfo(ScheduleDetailEntry entry, String remainingInfoHtml) {
+	private void setRemainingInfo(ScheduleDetailEntry entry, String remainingInfoHtml) throws ResultNotMatchException {
 		// TODO: handle cross list courses. i.e. crn 10248
 		final int NOT_RECORD = 0;
 		final int PREREQUISTES = 1;
@@ -463,6 +464,9 @@ public class ScheduleDetail implements HttpRequestListener {
 					String termString = info.substring(info.indexOf("</span>")
 							+ "</span>".length());
 					entry.setTerm(Term.valueOf(termString.replace(" ", "").toUpperCase()));
+					if (entry.getTerm() != entry.getSearchTerm()) {
+						throw new ResultNotMatchException("Result not match with search term.");
+					}
 					continue;
 				} else if (info.contains("Levels: ")) {
 					String levelsString = info.substring(info.indexOf("</span>")
