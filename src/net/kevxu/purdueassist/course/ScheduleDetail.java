@@ -144,7 +144,7 @@ public class ScheduleDetail implements HttpRequestListener {
 		if (!this.requestFinished)
 			throw new RequestNotFinishedException();
 
-		this.requestFinished = false;
+		requestStart();
 
 		if (term == null)
 			term = Term.CURRENT;
@@ -162,9 +162,16 @@ public class ScheduleDetail implements HttpRequestListener {
 			mHttpClient.getResponse();
 		} catch (MethodNotPostException e) {
 			e.printStackTrace();
-		} finally {
-			this.requestFinished = true;
+			requestEnd();
 		}
+	}
+	
+	private synchronized void requestStart() {
+		this.requestFinished = false;
+	}
+	
+	private synchronized void requestEnd() {
+		this.requestFinished = true;
 	}
 
 	/**
@@ -205,20 +212,20 @@ public class ScheduleDetail implements HttpRequestListener {
 		} catch (Exception e) {
 			mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		} finally {
-			this.requestFinished = true;
+			requestEnd();
 		}
 	}
 
 	@Override
 	public void onRequestFinished(ClientProtocolException e) {
 		e.printStackTrace();
-		this.requestFinished = true;
+		requestEnd();
 	}
 
 	@Override
 	public void onRequestFinished(IOException e) {
 		mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		this.requestFinished = true;
+		requestEnd();
 	}
 
 	private ScheduleDetailEntry parseDocument(Document document)
