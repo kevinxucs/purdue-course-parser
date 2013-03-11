@@ -326,6 +326,7 @@ public class CatalogDetail implements HttpRequestListener {
 	@SuppressWarnings("unused")
 	public class CatalogDetailEntry {
 
+		private Term term;
 		private Subject subject;
 		private int cnbr;
 		private String name;
@@ -338,24 +339,18 @@ public class CatalogDetail implements HttpRequestListener {
 		private String restrictions;
 		private List<String> prerequisites;
 
+		private Term searchTerm;
 		private Subject searchSubject;
 		private int searchCnbr;
 
-		public CatalogDetailEntry(Subject subject, int cnbr) {
-			this.cnbr = cnbr;
-			this.subject = subject;
-			this.name = null;
-			this.description = null;
-			this.levels = null;
-			this.type = null;
-			this.offeredBy = null;
-			this.department = null;
-			this.campuses = null;
-			this.restrictions = null;
-			this.prerequisites = null;
-
+		public CatalogDetailEntry(Term term, Subject subject, int cnbr) {
+			this.searchTerm = term;
 			this.searchSubject = subject;
 			this.searchCnbr = cnbr;
+		}
+
+		private Term getSearchTerm() {
+		    return this.searchTerm;
 		}
 
 		private Subject getSearchSubject() {
@@ -366,84 +361,100 @@ public class CatalogDetail implements HttpRequestListener {
 			return searchCnbr;
 		}
 
+		public Term getTerm() {
+		    return this.term;
+		}
+
 		public Subject getSubject() {
-			return subject;
+		    return this.subject;
 		}
 
 		public int getCnbr() {
-			return cnbr;
+		    return this.cnbr;
 		}
 
 		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
+		    return this.name;
 		}
 
 		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
+		    return this.description;
 		}
 
 		public List<String> getLevels() {
-			return levels;
-		}
-
-		public void setLevels(List<String> levels) {
-			this.levels = levels;
+		    return this.levels;
 		}
 
 		public List<Type> getType() {
-			return type;
-		}
-
-		public void setType(List<Type> type) {
-			this.type = type;
+		    return this.type;
 		}
 
 		public String getOfferedBy() {
-			return offeredBy;
-		}
-
-		public void setOfferedBy(String offeredBy) {
-			this.offeredBy = offeredBy;
+		    return this.offeredBy;
 		}
 
 		public String getDepartment() {
-			return department;
-		}
-
-		public void setDepartment(String department) {
-			this.department = department;
+		    return this.department;
 		}
 
 		public List<String> getCampuses() {
-			return campuses;
-		}
-
-		public void setCampuses(List<String> campuses) {
-			this.campuses = campuses;
+		    return this.campuses;
 		}
 
 		public String getRestrictions() {
-			return restrictions;
-		}
-
-		public void setRestrictions(String restrictions) {
-			this.restrictions = restrictions;
+		    return this.restrictions;
 		}
 
 		public List<String> getPrerequisites() {
-			return prerequisites;
+		    return this.prerequisites;
 		}
 
-		public void setPrerequisites(List<String> prerequisites) {
-			this.prerequisites = prerequisites;
+		private void setTerm(Term term) {
+		    this.term = term;
+		}
+
+		private void setSubject(Subject subject) {
+		    this.subject = subject;
+		}
+
+		private void setCnbr(int cnbr) {
+		    this.cnbr = cnbr;
+		}
+
+		private void setName(String name) {
+		    this.name = name;
+		}
+
+		private void setDescription(String description) {
+		    this.description = description;
+		}
+
+		private void setLevels(List<String> levels) {
+		    this.levels = levels;
+		}
+
+		private void setType(List<Type> type) {
+		    this.type = type;
+		}
+
+		private void setOfferedBy(String offeredBy) {
+		    this.offeredBy = offeredBy;
+		}
+
+		private void setDepartment(String department) {
+		    this.department = department;
+		}
+
+		private void setCampuses(List<String> campuses) {
+		    this.campuses = campuses;
+		}
+
+		private void setRestrictions(String restrictions) {
+		    this.restrictions = restrictions;
+		}
+
+		private void setPrerequisites(List<String> prerequisites) {
+		    this.prerequisites = prerequisites;
 		}
 
 		@Override
