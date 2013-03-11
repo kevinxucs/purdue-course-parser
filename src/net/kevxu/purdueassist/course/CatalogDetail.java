@@ -83,11 +83,11 @@ public class CatalogDetail {
 
 	public CatalogDetail() {
 		mHttpClient = new DefaultHttpClient();
-		this.mRequestFinished.set(true);
+		mRequestFinished = new AtomicBoolean(true);
 	}
 
-	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
-		getResult(Term.CURRENT, subject, cnbr);
+	public CatalogDetailEntry getResult(Subject subject, int cnbr) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
+		return getResult(Term.CURRENT, subject, cnbr);
 	}
 
 	public CatalogDetailEntry getResult(Term term, Subject subject, int cnbr) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
@@ -126,8 +126,6 @@ public class CatalogDetail {
 			}
 			stream.close();
 			entry = parseDocument(document);
-
-			return entry;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
@@ -135,6 +133,8 @@ public class CatalogDetail {
 		} finally {
 			requestEnd();
 		}
+		
+		return entry;
 	}
 
 	private void requestStart() {

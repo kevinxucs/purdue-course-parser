@@ -79,13 +79,13 @@ public class ScheduleDetail {
 
 	private HttpClient mHttpClient;
 
-	private AtomicBoolean requestFinished;
+	private AtomicBoolean mRequestFinished;
 
 	/**
 	 * Constructor.
 	 */
 	public ScheduleDetail() {
-		this.requestFinished.set(true);
+		mRequestFinished = new AtomicBoolean(true);
 	}
 
 	/**
