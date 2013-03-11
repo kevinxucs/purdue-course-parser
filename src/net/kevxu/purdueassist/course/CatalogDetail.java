@@ -99,8 +99,7 @@ public class CatalogDetail implements HttpRequestListener {
 		this.requestFinished = true;
 	}
 
-	public void getResult(Subject subject, int cnbr)
-			throws RequestNotFinishedException {
+	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException {
 		getResult(Term.CURRENT, subject, cnbr);
 	}
 
@@ -179,8 +178,7 @@ public class CatalogDetail implements HttpRequestListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		mListener
-				.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
+		mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
 		this.requestFinished = true;
 	}
 
@@ -256,8 +254,7 @@ public class CatalogDetail implements HttpRequestListener {
 				}
 
 				// get campus
-				begin = text
-						.indexOf("May be offered at any of the following campuses:");
+				begin = text.indexOf("May be offered at any of the following campuses:");
 				String campuses;
 				end = text.indexOf("Repeatable for Additional Credit:");
 				if (end < 0)
@@ -269,16 +266,13 @@ public class CatalogDetail implements HttpRequestListener {
 				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (end < 0) {
-					campuses = text
-							.substring(begin
-									+ "May be offered at any of the following campuses:"
-											.length() + 5);
+					campuses = text.substring(begin
+							+ "May be offered at any of the following campuses:".length()
+							+ 5);
 				} else {
-					campuses = text
-							.substring(
-									begin
-											+ "May be offered at any of the following campuses:"
-													.length() + 5, end - 1);
+					campuses = text.substring(begin
+							+ "May be offered at any of the following campuses:".length()
+							+ 5, end - 1);
 				}
 				temp = campuses.replace("       ", "#").split("#");
 				List<String> camps = new ArrayList<String>();
@@ -296,13 +290,11 @@ public class CatalogDetail implements HttpRequestListener {
 				if (end < 0)
 					end = text.indexOf("Prerequisites:");
 				if (begin > 0 && end < 0) {
-					entry.setRestrictions(text.substring(
-							begin + "Restrictions:".length()).replace(
-							"            ", "\n"));
+					entry.setRestrictions(text.substring(begin
+							+ "Restrictions:".length()).replace("            ", "\n"));
 				} else if (begin > 0) {
-					entry.setRestrictions(text.substring(
-							begin + "Restrictions:".length(), end).replace(
-							"            ", "\n"));
+					entry.setRestrictions(text.substring(begin
+							+ "Restrictions:".length(), end).replace("            ", "\n"));
 				}
 
 			} catch (StringIndexOutOfBoundsException e) {
@@ -350,7 +342,7 @@ public class CatalogDetail implements HttpRequestListener {
 		}
 
 		private Term getSearchTerm() {
-		    return this.searchTerm;
+			return this.searchTerm;
 		}
 
 		private Subject getSearchSubject() {
@@ -362,99 +354,99 @@ public class CatalogDetail implements HttpRequestListener {
 		}
 
 		public Term getTerm() {
-		    return this.term;
+			return this.term;
 		}
 
 		public Subject getSubject() {
-		    return this.subject;
+			return this.subject;
 		}
 
 		public int getCnbr() {
-		    return this.cnbr;
+			return this.cnbr;
 		}
 
 		public String getName() {
-		    return this.name;
+			return this.name;
 		}
 
 		public String getDescription() {
-		    return this.description;
+			return this.description;
 		}
 
 		public List<String> getLevels() {
-		    return this.levels;
+			return this.levels;
 		}
 
 		public List<Type> getType() {
-		    return this.type;
+			return this.type;
 		}
 
 		public String getOfferedBy() {
-		    return this.offeredBy;
+			return this.offeredBy;
 		}
 
 		public String getDepartment() {
-		    return this.department;
+			return this.department;
 		}
 
 		public List<String> getCampuses() {
-		    return this.campuses;
+			return this.campuses;
 		}
 
 		public String getRestrictions() {
-		    return this.restrictions;
+			return this.restrictions;
 		}
 
 		public List<String> getPrerequisites() {
-		    return this.prerequisites;
+			return this.prerequisites;
 		}
 
 		private void setTerm(Term term) {
-		    this.term = term;
+			this.term = term;
 		}
 
 		private void setSubject(Subject subject) {
-		    this.subject = subject;
+			this.subject = subject;
 		}
 
 		private void setCnbr(int cnbr) {
-		    this.cnbr = cnbr;
+			this.cnbr = cnbr;
 		}
 
 		private void setName(String name) {
-		    this.name = name;
+			this.name = name;
 		}
 
 		private void setDescription(String description) {
-		    this.description = description;
+			this.description = description;
 		}
 
 		private void setLevels(List<String> levels) {
-		    this.levels = levels;
+			this.levels = levels;
 		}
 
 		private void setType(List<Type> type) {
-		    this.type = type;
+			this.type = type;
 		}
 
 		private void setOfferedBy(String offeredBy) {
-		    this.offeredBy = offeredBy;
+			this.offeredBy = offeredBy;
 		}
 
 		private void setDepartment(String department) {
-		    this.department = department;
+			this.department = department;
 		}
 
 		private void setCampuses(List<String> campuses) {
-		    this.campuses = campuses;
+			this.campuses = campuses;
 		}
 
 		private void setRestrictions(String restrictions) {
-		    this.restrictions = restrictions;
+			this.restrictions = restrictions;
 		}
 
 		private void setPrerequisites(List<String> prerequisites) {
-		    this.prerequisites = prerequisites;
+			this.prerequisites = prerequisites;
 		}
 
 		@Override

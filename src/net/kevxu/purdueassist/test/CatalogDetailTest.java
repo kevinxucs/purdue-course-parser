@@ -129,8 +129,7 @@ public class CatalogDetailTest implements CatalogDetailListener {
 	}
 
 	@Override
-	public void onCatalogDetailFinished(Exception e, Term term,
-			Subject subject, int cnbr) {
+	public void onCatalogDetailFinished(Exception e, Term term, Subject subject, int cnbr) {
 		System.err.println("INPUT: " + cnbr + " " + subject);
 		e.printStackTrace();
 		System.err.println("----------------------");

@@ -48,18 +48,15 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
-	
+
 	private boolean silent;
 	private boolean smallSilent;
 
 	public static void main(String[] args) throws InterruptedException {
-		options.addOption("t", "term", true,
-				"full name (without space) for school term. i.e. fall2012 (optional)");
-		options.addOption("s", "small-silent", false,
-				"Do not print input information.");
+		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (optional)");
+		options.addOption("s", "small-silent", false, "Do not print input information.");
 		options.addOption("S", "slient", false, "Do not print anything.");
-		options.addOption("p", "parallel", false,
-				"Process all the search requests parallely.");
+		options.addOption("p", "parallel", false, "Process all the search requests parallely.");
 
 		CommandLineParser parser = new GnuParser();
 		org.apache.commons.cli.CommandLine cmd;
@@ -82,9 +79,9 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 				final boolean smallSilent = cmd.hasOption("s");
 				final String[] crns = cmd.getArgs();
 				final boolean parallel = cmd.hasOption("p");
-				
+
 				ScheduleDetailTest test = new ScheduleDetailTest(silent, smallSilent);
-				
+
 				if (parallel) {
 					// parallel
 					for (final String crnString : crns) {
@@ -108,7 +105,8 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 			}
 
 		} catch (ParseException e) {
-			System.err.println("Command line arguments parsing failed. Reason: " + e.getMessage());
+			System.err.println("Command line arguments parsing failed. Reason: "
+					+ e.getMessage());
 			printHelp(formatter, options);
 		} catch (IllegalArgumentException e) {
 			System.err.println("No such school term.");
@@ -119,13 +117,13 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 	}
 
 	private static void printHelp(HelpFormatter formatter, Options options) {
-		formatter.printHelp("java -jar RemainSeats.jar [options] [crn1 [crn2 [crn3] ...]]",	options);
+		formatter.printHelp("java -jar RemainSeats.jar [options] [crn1 [crn2 [crn3] ...]]", options);
 	}
 
 	private static Term parseTerm(String termString) {
 		return Term.valueOf(termString.toUpperCase());
 	}
-	
+
 	public ScheduleDetailTest(boolean silent, boolean smallSilent) {
 		this.silent = silent;
 		this.smallSilent = smallSilent;
@@ -136,7 +134,8 @@ public class ScheduleDetailTest implements ScheduleDetailListener {
 		if (!silent) {
 			if (!smallSilent)
 				System.err.println("INPUT: " + crn + " " + term);
-			System.out.println("CRN: " + crn + " " + "Term: " + term + " Not Found: " + e.getMessage() + "\n");
+			System.out.println("CRN: " + crn + " " + "Term: " + term
+					+ " Not Found: " + e.getMessage() + "\n");
 		}
 	}
 
