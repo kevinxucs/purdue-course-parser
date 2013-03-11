@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
@@ -38,15 +39,11 @@ import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
-import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
-import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
-import net.kevxu.purdueassist.shared.httpclient.MethodNotPostException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -69,7 +66,7 @@ import org.jsoup.select.Elements;
  * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
  * @see CatalogDetailListener
  */
-public class CatalogDetail implements HttpRequestListener {
+public class CatalogDetail {
 
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_catalog_detail";
@@ -79,9 +76,9 @@ public class CatalogDetail implements HttpRequestListener {
 	private int cnbr;
 
 	private CatalogDetailListener mListener;
-	private BasicHttpClientAsync httpClient;
+	private HttpClient httpClient;
 
-	private boolean requestFinished = true;
+	private AtomicBoolean requestFinished;
 
 	public interface CatalogDetailListener {
 		public void onCatalogDetailFinished(CatalogDetailEntry entry, Term term, Subject subject, int cnbr);
@@ -97,6 +94,7 @@ public class CatalogDetail implements HttpRequestListener {
 
 	public CatalogDetail(CatalogDetailListener catalogDetailListener) {
 		this.mListener = catalogDetailListener;
+		this.requestFinished.set(true);
 	}
 
 	public void getResult(Subject subject, int cnbr) throws RequestNotFinishedException {
@@ -132,11 +130,11 @@ public class CatalogDetail implements HttpRequestListener {
 	}
 
 	private synchronized void requestStart() {
-		this.requestFinished = false;
+		this.requestFinished.set(false);
 	}
 
 	private synchronized void requestEnd() {
-		this.requestFinished = true;
+		this.requestFinished.set(false);
 	}
 
 	/**
@@ -175,18 +173,6 @@ public class CatalogDetail implements HttpRequestListener {
 		} finally {
 			requestEnd();
 		}
-	}
-
-	@Override
-	public void onRequestFinished(ClientProtocolException e) {
-		e.printStackTrace();
-		requestEnd();
-	}
-
-	@Override
-	public void onRequestFinished(IOException e) {
-		mListener.onCatalogDetailFinished(e, this.term, this.subject, this.cnbr);
-		requestEnd();
 	}
 
 	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, IOException, ResultNotMatchException {
