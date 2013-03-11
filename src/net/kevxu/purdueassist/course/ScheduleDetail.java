@@ -28,6 +28,7 @@ package net.kevxu.purdueassist.course;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
@@ -75,8 +78,8 @@ public class ScheduleDetail {
 	private static final String URL_HEAD = "https://selfservice.mypurdue.purdue.edu/prod/"
 			+ "bzwsrch.p_schedule_detail";
 
-	private Term term;
-	private int crn;
+	private Term mTerm;
+	private int mCrn;
 
 	private HttpClient mHttpClient;
 
@@ -99,8 +102,8 @@ public class ScheduleDetail {
 	 *             If calling this method before previous request is finished,
 	 *             then will throw this exception.
 	 */
-	public void getResult(int crn) throws RequestNotFinishedException {
-		getResult(Term.CURRENT, crn);
+	public ScheduleDetailEntry getResult(int crn) throws RequestNotFinishedException, IOException , HtmlParseException, CourseNotFoundException, ResultNotMatchException{
+		return getResult(Term.CURRENT, crn);
 	}
 
 	/**
@@ -113,31 +116,55 @@ public class ScheduleDetail {
 	 * @throws RequestNotFinishedException
 	 *             If calling this method before previous request is finished,
 	 *             then will throw this exception.
+	 * @throws IOException
+	 * 
+	 * @throws ResultNotMatchException
+	 * @throws CourseNotFoundException
+	 * @throws HtmlParseException
 	 */
-	public void getResult(Term term, int crn) throws RequestNotFinishedException {
+	public ScheduleDetailEntry getResult(Term term, int crn) throws RequestNotFinishedException, IOException , HtmlParseException, CourseNotFoundException, ResultNotMatchException{
 		if (!isRequestFinished())
 			throw new RequestNotFinishedException();
 
 		requestStart();
 
 		if (term == null)
-			term = Term.CURRENT;
+			mTerm = Term.CURRENT;
+		else
+			mTerm = term;
 
-		this.term = term;
-		this.crn = crn;
+		mCrn = crn;
 
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(new BasicNameValuePair("term", term.getLinkName()));
-		parameters.add(new BasicNameValuePair("crn", Integer.toString(crn)));
+		ScheduleDetailEntry entry = null;
 
-		mHttpClient = new BasicHttpClientAsync(URL_HEAD, HttpMethod.POST, this);
 		try {
-			mHttpClient.setParameters(parameters);
-			mHttpClient.getResponse();
-		} catch (MethodNotPostException e) {
+			List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+			parameters.add(new BasicNameValuePair("term", term.getLinkName()));
+			parameters.add(new BasicNameValuePair("crn", Integer.toString(crn)));
+
+			HttpPost httpPost = new HttpPost(URL_HEAD);
+			httpPost.setEntity(new UrlEncodedFormEntity(parameters));
+
+			HttpResponse httpResponse = mHttpClient.execute(httpPost);
+			InputStream stream = httpResponse.getEntity().getContent();
+			Header encoding = httpResponse.getEntity().getContentEncoding();
+			Document document;
+			if (encoding == null) {
+				document = Jsoup.parse(stream, null, URL_HEAD);
+			} else {
+				document = Jsoup.parse(stream, encoding.getValue(), URL_HEAD);
+			}
+			stream.close();
+			entry = parseDocument(document);
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} finally {
 			requestEnd();
 		}
+		
+		return entry;
 	}
 
 	private void requestStart() {
@@ -157,53 +184,8 @@ public class ScheduleDetail {
 		return mRequestFinished.get();
 	}
 
-	@Override
-	public void onRequestFinished(HttpResponse httpResponse) {
-		try {
-			InputStream stream = httpResponse.getEntity().getContent();
-			Header encoding = httpResponse.getEntity().getContentEncoding();
-			Document document;
-			if (encoding == null) {
-				document = Jsoup.parse(stream, null, URL_HEAD);
-			} else {
-				document = Jsoup.parse(stream, encoding.getValue(), URL_HEAD);
-			}
-			stream.close();
-			ScheduleDetailEntry entry = parseDocument(document);
-			mListener.onScheduleDetailFinished(entry, this.term, this.crn);
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		} catch (HtmlParseException e) {
-			mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		} catch (CourseNotFoundException e) {
-			mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		} catch (ResultNotMatchException e) {
-			HtmlParseException he = new HtmlParseException(e.getMessage());
-			he.initCause(e);
-			mListener.onScheduleDetailFinished(he, this.term, this.crn);
-		} catch (Exception e) {
-			mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		} finally {
-			requestEnd();
-		}
-	}
-
-	@Override
-	public void onRequestFinished(ClientProtocolException e) {
-		e.printStackTrace();
-		requestEnd();
-	}
-
-	@Override
-	public void onRequestFinished(IOException e) {
-		mListener.onScheduleDetailFinished(e, this.term, this.crn);
-		requestEnd();
-	}
-
 	private ScheduleDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, ResultNotMatchException {
-		ScheduleDetailEntry entry = new ScheduleDetailEntry(term, crn);
+		ScheduleDetailEntry entry = new ScheduleDetailEntry(mTerm, mCrn);
 		Elements tableElements = document.getElementsByAttributeValue("summary", "This table is used to present the detailed class information.");
 
 		if (!tableElements.isEmpty()) {
