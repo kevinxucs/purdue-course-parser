@@ -6,7 +6,7 @@ This project is still under development. Features are not complete yet.
 
 ## Legal
 
-The source of Purdue Course Parser is released under Apache License 2.0.
+The source of Purdue Course Parser is released under MIT License.
 
 ## Build
 
