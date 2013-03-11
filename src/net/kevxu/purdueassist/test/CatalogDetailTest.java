@@ -43,7 +43,7 @@ public class CatalogDetailTest {
 		Scanner getInput = new Scanner(System.in);
 		Subject tem_subject = null;
 		try {
-			tem_subject = Subject.valueOf(getInput.next().toUpperCase());
+			tem_subject = Subject.valueOf(getInput.nextLine().toUpperCase());
 		} catch (IllegalArgumentException e) {
 			System.err.println("No such subject.");
 			System.exit(-1);
@@ -62,39 +62,43 @@ public class CatalogDetailTest {
 						@Override
 						public void onCatalogDetailFinished(
 								CatalogDetailEntry entry) {
-							System.out.println(entry.toString());
+							System.out.println(entry);
 							System.out.println("Course Found");
 							System.out.println("----------------------");
 						}
 
 						@Override
 						public void onCatalogDetailFinished(IOException e) {
-							System.out.println("INPUT: " + cnbr + " "
-									+ subject.toString());
-							System.out.println("IO Error!");
-							System.out.println("----------------------");
+							System.err
+									.println("INPUT: " + cnbr + " " + subject);
+							System.err.println("IO Error!");
+							System.err.println("----------------------");
 						}
 
 						@Override
 						public void onCatalogDetailFinished(HtmlParseException e) {
-							System.out.println("INPUT: " + cnbr + " "
-									+ subject.toString());
-							System.out.println("Parse Error!");
-							System.out.println("----------------------");
+							System.err
+									.println("INPUT: " + cnbr + " " + subject);
+							System.err.println("Parse Error!");
+							System.err.println("----------------------");
 						}
 
 						@Override
 						public void onCatalogDetailFinished(
 								CourseNotFoundException e) {
-							// System.out.println("INPUT: " + cnbr + " " +
-							// subject.toString());
-							// System.out.println("Course Not Found!");
-							// System.out.println("----------------------");
+							System.err
+									.println("INPUT: " + cnbr + " " + subject);
+							System.err.println("Course Not Found!");
+							System.err.println("----------------------");
 						}
 
 						@Override
 						public void onCatalogDetailFinished(Exception e) {
+							System.err
+									.println("INPUT: " + cnbr + " " + subject);
 							e.printStackTrace();
+							System.err.println("----------------------");
+
 						}
 
 					});
