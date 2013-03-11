@@ -102,7 +102,7 @@ public class CatalogDetail {
 	}
 
 	public void getResult(Term term, Subject subject, int cnbr) throws RequestNotFinishedException {
-		if (!this.requestFinished)
+		if (!isRequestFinished())
 			throw new RequestNotFinishedException();
 
 		requestStart();
@@ -143,7 +143,7 @@ public class CatalogDetail {
 	 * @return Return true if previous request has already finished.
 	 */
 	public boolean isRequestFinished() {
-		return this.requestFinished;
+		return requestFinished.get();
 	}
 
 	@Override
