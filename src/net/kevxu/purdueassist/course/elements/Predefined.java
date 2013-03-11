@@ -29,15 +29,16 @@ package net.kevxu.purdueassist.course.elements;
 public class Predefined {
 
 	public enum Term {
-		CURRENT("Current", "CURRENT"), SUMMER2013("Summer 2013", "201330"), SPRING2013(
-				"Spring 2013", "201320"), FALL2012("Fall 2012", "201310"), SUMMER2012(
-				"Summer 2012", "201230"), SPRING2012("Spring 2012", "201220"), FALL2011(
-				"Fall 2011", "201210"), SUMMER2011("Summer 2011", "201130"), SPRING2011(
-				"Spring 2011", "201120"), FALL2010("Fall 2010", "201110"), SUMMER2010(
-				"Summer 2010", "201030"), SPRING2010("Spring 2010", "201020"), FALL2009(
-				"Fall 2009", "201010"), SUMMER2009("Summer 2009", "200930"), SPRING2009(
-				"Spring 2009", "200920"), FALL2008("Fall 2008", "200910"), SUMMER2008(
-				"Summer 2008", "200830"), SPRING2008("Spring 2008", "200820");
+		CURRENT("Current", "CURRENT"), FALL2013("Fall 2013", "201410"), SUMMER2013(
+				"Summer 2013", "201330"), SPRING2013("Spring 2013", "201320"), FALL2012(
+				"Fall 2012", "201310"), SUMMER2012("Summer 2012", "201230"), SPRING2012(
+				"Spring 2012", "201220"), FALL2011("Fall 2011", "201210"), SUMMER2011(
+				"Summer 2011", "201130"), SPRING2011("Spring 2011", "201120"), FALL2010(
+				"Fall 2010", "201110"), SUMMER2010("Summer 2010", "201030"), SPRING2010(
+				"Spring 2010", "201020"), FALL2009("Fall 2009", "201010"), SUMMER2009(
+				"Summer 2009", "200930"), SPRING2009("Spring 2009", "200920"), FALL2008(
+				"Fall 2008", "200910"), SUMMER2008("Summer 2008", "200830"), SPRING2008(
+				"Spring 2008", "200820");
 
 		private final String name;
 		private final String linkName;
