@@ -303,9 +303,9 @@ public class CatalogDetail implements HttpRequestListener {
 			}
 		} else {
 			// test empty
-			Elements informationElements = document.getElementsByAttributeValue("summary", "This layout table holds message information");
+			Elements informationElements = document.getElementsByClass("pagebodydiv");
 			if (!informationElements.isEmpty()
-					&& informationElements.text().contains("No detailed class information found")) {
+					&& informationElements.text().contains("No course to display")) {
 				throw new CourseNotFoundException(informationElements.text());
 			} else {
 				throw new HtmlParseException("Course table not found, but page does not contain message stating no course found.");
