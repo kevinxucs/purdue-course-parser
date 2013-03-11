@@ -328,25 +328,6 @@ public class CatalogDetail implements HttpRequestListener {
 	 */
 	@SuppressWarnings("unused")
 	public class CatalogDetailEntry {
-		private Subject searchSubject;
-		private int searchCnbr;
-
-		public CatalogDetailEntry(Subject subject, int cnbr) {
-			this.searchSubject = subject;
-			this.searchCnbr = cnbr;
-			this.cnbr = cnbr;
-			this.subject = subject;
-			name = null;
-			description = null;
-			levels = null;
-			type = null;
-			offeredBy = null;
-			department = null;
-			campuses = null;
-			restrictions = null;
-			prerequisites = null;
-
-		}
 
 		private Subject subject;
 		private int cnbr;
@@ -360,46 +341,24 @@ public class CatalogDetail implements HttpRequestListener {
 		private String restrictions;
 		private List<String> prerequisites;
 
-		@Override
-		public String toString() {
-			StringBuilder myStr = new StringBuilder();
-			myStr.append("Subject: " + subject.toString() + "\n");
-			myStr.append("CNBR: " + cnbr + "\n");
-			if (name != null)
-				myStr.append("Name: " + name + "\n");
-			if (description != null)
-				myStr.append("Description: " + description + "\n");
-			if (levels != null) {
-				myStr.append("Level: ");
-				for (String s : levels)
-					myStr.append(s + " ; ");
-				myStr.append("\n");
-			}
-			if (type != null) {
-				myStr.append("Type: ");
-				for (Type t : type)
-					myStr.append(t.toString() + " ; ");
-				myStr.append("\n");
-			}
-			if (offeredBy != null)
-				myStr.append("OfferedBy: " + offeredBy + "\n");
-			if (department != null)
-				myStr.append("Department: " + department + "\n");
-			if (campuses != null) {
-				myStr.append("Campuses: ");
-				for (String s : campuses)
-					myStr.append(s + " ; ");
-				myStr.append("\n");
-			}
-			if (restrictions != null)
-				myStr.append("Restrictions: " + restrictions + "\n");
-			if (prerequisites != null) {
-				myStr.append("Prerequisites: ");
-				for (String s : prerequisites)
-					myStr.append(s + " ; ");
-				myStr.append("\n");
-			}
-			return myStr.toString();
+		private Subject searchSubject;
+		private int searchCnbr;
+
+		public CatalogDetailEntry(Subject subject, int cnbr) {
+			this.cnbr = cnbr;
+			this.subject = subject;
+			this.name = null;
+			this.description = null;
+			this.levels = null;
+			this.type = null;
+			this.offeredBy = null;
+			this.department = null;
+			this.campuses = null;
+			this.restrictions = null;
+			this.prerequisites = null;
+
+			this.searchSubject = subject;
+			this.searchCnbr = cnbr;
 		}
 
 		private Subject getSearchSubject() {
@@ -488,6 +447,60 @@ public class CatalogDetail implements HttpRequestListener {
 
 		public void setPrerequisites(List<String> prerequisites) {
 			this.prerequisites = prerequisites;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder myStr = new StringBuilder();
+
+			myStr.append("Subject: " + subject.toString() + "\n");
+			myStr.append("CNBR: " + cnbr + "\n");
+
+			if (name != null) {
+				myStr.append("Name: " + name + "\n");
+			}
+
+			if (description != null) {
+				myStr.append("Description: " + description + "\n");
+			}
+
+			if (levels != null) {
+				myStr.append("Level: ");
+				myStr.append(levels);
+				myStr.append("\n");
+			}
+
+			if (type != null) {
+				myStr.append("Type: ");
+				myStr.append(type);
+				myStr.append("\n");
+			}
+
+			if (offeredBy != null) {
+				myStr.append("OfferedBy: " + offeredBy + "\n");
+			}
+
+			if (department != null) {
+				myStr.append("Department: " + department + "\n");
+			}
+
+			if (campuses != null) {
+				myStr.append("Campuses: ");
+				myStr.append(campuses);
+				myStr.append("\n");
+			}
+
+			if (restrictions != null) {
+				myStr.append("Restrictions: " + restrictions + "\n");
+			}
+
+			if (prerequisites != null) {
+				myStr.append("Prerequisites: ");
+				myStr.append(prerequisites);
+				myStr.append("\n");
+			}
+
+			return myStr.toString();
 		}
 
 	}
