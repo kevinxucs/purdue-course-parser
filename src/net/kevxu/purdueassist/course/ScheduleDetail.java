@@ -464,7 +464,7 @@ public class ScheduleDetail implements HttpRequestListener {
 					String termString = info.substring(info.indexOf("</span>")
 							+ "</span>".length());
 					entry.setTerm(Term.valueOf(termString.replace(" ", "").toUpperCase()));
-					if (entry.getTerm() != entry.getSearchTerm()) {
+					if (entry.getTerm().equals(entry.getSearchTerm())) {
 						throw new ResultNotMatchException("Result not match with search term.");
 					}
 					continue;
