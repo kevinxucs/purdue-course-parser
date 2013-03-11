@@ -459,7 +459,10 @@ public class CatalogDetail implements HttpRequestListener {
 		public String toString() {
 			StringBuilder myStr = new StringBuilder();
 
-			myStr.append("Subject: " + subject.toString() + "\n");
+			if (subject != null) {
+				myStr.append("Subject: " + subject.toString() + "\n");
+			}
+
 			myStr.append("CNBR: " + cnbr + "\n");
 
 			if (name != null) {
