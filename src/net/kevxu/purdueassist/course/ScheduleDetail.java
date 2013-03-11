@@ -93,16 +93,15 @@ public class ScheduleDetail implements HttpRequestListener {
 	 * @author Kaiwen Xu (kevin)
 	 */
 	public interface ScheduleDetailListener {
-		public void onScheduleDetailFinished(ScheduleDetailEntry entry);
+		public void onScheduleDetailFinished(ScheduleDetailEntry entry, Term term, int crn);
 
-		public void onScheduleDetailFinished(IOException e);
+		public void onScheduleDetailFinished(IOException e, Term term, int crn);
 
-		public void onScheduleDetailFinished(HtmlParseException e);
+		public void onScheduleDetailFinished(HtmlParseException e, Term term, int crn);
 
-		public void onScheduleDetailFinished(CourseNotFoundException e,
-				Term term, int crn);
+		public void onScheduleDetailFinished(CourseNotFoundException e, Term term, int crn);
 
-		public void onScheduleDetailFinished(Exception e);
+		public void onScheduleDetailFinished(Exception e, Term term, int crn);
 	}
 
 	/**
@@ -190,20 +189,21 @@ public class ScheduleDetail implements HttpRequestListener {
 			}
 			stream.close();
 			ScheduleDetailEntry entry = parseDocument(document);
-			mListener.onScheduleDetailFinished(entry);
+			mListener.onScheduleDetailFinished(entry, this.term, this.crn);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		} catch (HtmlParseException e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		} catch (CourseNotFoundException e) {
-			mListener.onScheduleDetailFinished(e, term, crn);
+			mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		} catch (ResultNotMatchException e) {
-			mListener.onScheduleDetailFinished(new HtmlParseException(e
-					.getMessage()));
+			HtmlParseException he = new HtmlParseException(e.getMessage());
+			he.initCause(e);
+			mListener.onScheduleDetailFinished(he, this.term, this.crn);
 		} catch (Exception e) {
-			mListener.onScheduleDetailFinished(e);
+			mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		} finally {
 			this.requestFinished = true;
 		}
@@ -217,7 +217,7 @@ public class ScheduleDetail implements HttpRequestListener {
 
 	@Override
 	public void onRequestFinished(IOException e) {
-		mListener.onScheduleDetailFinished(e);
+		mListener.onScheduleDetailFinished(e, this.term, this.crn);
 		this.requestFinished = true;
 	}
 

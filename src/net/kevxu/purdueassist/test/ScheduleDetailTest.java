@@ -105,7 +105,7 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											HtmlParseException e) {
+											HtmlParseException e, Term term, int crn) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
@@ -118,7 +118,7 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											IOException e) {
+											IOException e, Term term, int crn) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
@@ -131,7 +131,7 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											ScheduleDetailEntry entry) {
+											ScheduleDetailEntry entry, Term term, int crn) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
@@ -143,7 +143,7 @@ public class ScheduleDetailTest {
 
 									@Override
 									public void onScheduleDetailFinished(
-											Exception e) {
+											Exception e, Term term, int crn) {
 										if (!silent) {
 											if (!smallSilent)
 												System.err.println("INPUT: "
@@ -175,7 +175,7 @@ public class ScheduleDetailTest {
 
 								@Override
 								public void onScheduleDetailFinished(
-										HtmlParseException e) {
+										HtmlParseException e, Term term, int crn) {
 									if (!silent) {
 										System.err.println("Parse Error: "
 												+ e.getMessage() + "\n");
@@ -184,7 +184,7 @@ public class ScheduleDetailTest {
 
 								@Override
 								public void onScheduleDetailFinished(
-										IOException e) {
+										IOException e, Term term, int crn) {
 									if (!silent) {
 										System.err.println("IO Error: "
 												+ e.getMessage() + "\n");
@@ -193,14 +193,14 @@ public class ScheduleDetailTest {
 
 								@Override
 								public void onScheduleDetailFinished(
-										ScheduleDetailEntry entry) {
+										ScheduleDetailEntry entry, Term term, int crn) {
 									if (!silent) {
 										System.out.println(entry);
 									}
 								}
 
 								@Override
-								public void onScheduleDetailFinished(Exception e) {
+								public void onScheduleDetailFinished(Exception e, Term term, int crn) {
 									if (!silent) {
 										e.printStackTrace();
 										System.err.println();
