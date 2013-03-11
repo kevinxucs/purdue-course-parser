@@ -37,6 +37,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Type;
 import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
+import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync;
 import net.kevxu.purdueassist.shared.httpclient.BasicHttpClientAsync.HttpRequestListener;
 import net.kevxu.purdueassist.shared.httpclient.HttpClientAsync.HttpMethod;
@@ -188,17 +189,27 @@ public class CatalogDetail implements HttpRequestListener {
 		requestEnd();
 	}
 
-	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, IOException {
+	private CatalogDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, IOException, ResultNotMatchException {
 		CatalogDetailEntry entry = new CatalogDetailEntry(this.term, this.subject, this.cnbr);
 		Elements tableElements = document.getElementsByAttributeValue("summary", "This table lists the course detail for the selected term.");
 		if (!tableElements.isEmpty()) {
+			String[] temp;
+
 			// get name
 			Element body = tableElements.first().select("tbody").first();
 			String nameBlock = body.select("tr td.nttitle").first().text();
-			String[] temp = nameBlock.split(subject.name() + " "
-					+ String.valueOf(cnbr));
-			String name = temp[temp.length - 1].substring(3);
-			entry.setName(name);
+			temp = new String[] {
+					nameBlock.substring(0, nameBlock.indexOf('-')).trim(),
+					nameBlock.substring(nameBlock.indexOf('-') + 1).trim() };
+			entry.setSubject(Subject.valueOf(temp[0].split(" ")[0].toUpperCase()));
+			if (!entry.getSubject().equals(entry.getSearchSubject())) {
+				throw new ResultNotMatchException("Result not match with search subject.");
+			}
+			entry.setCnbr(Integer.valueOf(temp[0].split(" ")[1]));
+			if (entry.getCnbr() != entry.getSearchCnbr()) {
+				throw new ResultNotMatchException("Result not match with search cnbr.");
+			}
+			entry.setName(temp[1]);
 
 			// get description
 			body = body.select(".ntdefault").first();
