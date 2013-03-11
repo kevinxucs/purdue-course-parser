@@ -192,125 +192,124 @@ public class CatalogDetail implements HttpRequestListener {
 		CatalogDetailEntry entry = new CatalogDetailEntry(this.term, this.subject, this.cnbr);
 		Elements tableElements = document.getElementsByAttributeValue("summary", "This table lists the course detail for the selected term.");
 		if (!tableElements.isEmpty()) {
-			try {
-				// get name
-				Element body = tableElements.first().select("tbody").first();
-				String nameBlock = body.select("tr td.nttitle").first().text();
-				String[] temp = nameBlock.split(subject.name() + " "
-						+ String.valueOf(cnbr));
-				String name = temp[temp.length - 1].substring(3);
-				entry.setName(name);
+			// get name
+			Element body = tableElements.first().select("tbody").first();
+			String nameBlock = body.select("tr td.nttitle").first().text();
+			String[] temp = nameBlock.split(subject.name() + " "
+					+ String.valueOf(cnbr));
+			String name = temp[temp.length - 1].substring(3);
+			entry.setName(name);
 
-				// get description
-				body = body.select(".ntdefault").first();
-				String text = body.text();
-				int split = text.indexOf("Levels:");
-				String description = text.substring(0, split);
-				description = description.substring(20);
-				entry.setDescription(description);
+			// get description
+			body = body.select(".ntdefault").first();
+			String text = body.text();
+			int split = text.indexOf("Levels:");
+			String description = text.substring(0, split);
+			description = description.substring(20);
+			entry.setDescription(description);
 
-				// get levels
-				int begin = split;
-				int end = text.indexOf("Schedule Types:");
-				String levels = text.substring(begin + 8, end);
-				temp = levels.split("[ ,]");
-				List<String> lvs = new ArrayList<String>();
-				for (String s : temp)
-					if (!s.equals("")) {
-						lvs.add(s);
+			// get levels
+			int begin = split;
+			int end = text.indexOf("Schedule Types:");
+			String levels = text.substring(begin + 8, end);
+			temp = levels.split("[ ,]");
+			List<String> lvs = new ArrayList<String>();
+			for (String s : temp)
+				if (!s.equals("")) {
+					lvs.add(s);
+				}
+			entry.setLevels(lvs);
+
+			// get type and prerequisites
+			List<Type> types = new ArrayList<Type>();
+			List<String> preq = new ArrayList<String>();
+			Elements parsing_A = body.select("a");
+			for (Element e : parsing_A) {
+				if (e.attr("href").contains("schd_in")
+						&& !(e.attr("href").contains("%"))) {
+
+					try {
+						types.add(Type.valueOf(e.text().replace(" ", "")));
+					} catch (Exception exception) {
+						throw new HtmlParseException();
 					}
-				entry.setLevels(lvs);
-
-				// get type and prerequisites
-				List<Type> types = new ArrayList<Type>();
-				List<String> preq = new ArrayList<String>();
-				Elements parsing_A = body.select("a");
-				for (Element e : parsing_A) {
-					if (e.attr("href").contains("schd_in")
-							&& !(e.attr("href").contains("%"))) {
-
-						try {
-							types.add(Type.valueOf(e.text().replace(" ", "")));
-						} catch (Exception exception) {
-							throw new HtmlParseException();
-						}
-					} else if (e.attr("href").contains("sel_attr=")) {
-						preq.add(e.text());
-					}
+				} else if (e.attr("href").contains("sel_attr=")) {
+					preq.add(e.text());
 				}
-				if (types.size() > 0)
-					entry.setType(types);
-				if (preq.size() > 0)
-					entry.setPrerequisites(preq);
+			}
+			if (types.size() > 0)
+				entry.setType(types);
+			if (preq.size() > 0)
+				entry.setPrerequisites(preq);
 
-				// get offered by
-				begin = text.indexOf("Offered By:");
-				end = text.indexOf("Department:");
-				if (end < 0)
-					end = text.indexOf("Course Attributes:");
-				if (end > 0) {
-					entry.setOfferedBy(text.substring(begin + 12, end - 1));
-				}
+			// get offered by
+			begin = text.indexOf("Offered By:");
+			end = text.indexOf("Department:");
+			if (end < 0)
+				end = text.indexOf("Course Attributes:");
+			if (end > 0) {
+				entry.setOfferedBy(text.substring(begin + 12, end - 1));
+			}
 
-				// get department
-				begin = text.indexOf("Department:");
-				if (begin > 0) {
-					end = text.indexOf("Course Attributes:");
-					entry.setDepartment((text.substring(begin + 12, end - 1)));
-				}
+			// get department
+			begin = text.indexOf("Department:");
+			if (begin > 0) {
+				end = text.indexOf("Course Attributes:");
+				entry.setDepartment((text.substring(begin + 12, end - 1)));
+			}
 
-				// get campus
-				begin = text.indexOf("May be offered at any of the following campuses:");
-				String campuses;
-				end = text.indexOf("Repeatable for Additional Credit:");
-				if (end < 0)
-					end = text.indexOf("Learning Objectives:");
-				if (end < 0)
-					end = text.indexOf("Restrictions:");
-				if (end < 0)
-					end = text.indexOf("Corequisites:");
-				if (end < 0)
-					end = text.indexOf("Prerequisites:");
-				if (end < 0) {
-					campuses = text.substring(begin
-							+ "May be offered at any of the following campuses:".length()
-							+ 5);
-				} else {
-					campuses = text.substring(begin
-							+ "May be offered at any of the following campuses:".length()
-							+ 5, end - 1);
-				}
-				temp = campuses.replace("       ", "#").split("#");
-				List<String> camps = new ArrayList<String>();
-				for (String s : temp) {
-					if (s.length() > 1) {
-						camps.add(s);
-					}
-
-				}
-				entry.setCampuses(camps);
-
-				// get restrictions
-				begin = text.indexOf("Restrictions:");
+			// get campus
+			begin = text.indexOf("May be offered at any of the following campuses:");
+			String campuses;
+			end = text.indexOf("Repeatable for Additional Credit:");
+			if (end < 0)
+				end = text.indexOf("Learning Objectives:");
+			if (end < 0)
+				end = text.indexOf("Restrictions:");
+			if (end < 0)
 				end = text.indexOf("Corequisites:");
-				if (end < 0)
-					end = text.indexOf("Prerequisites:");
-				if (begin > 0 && end < 0) {
-					entry.setRestrictions(text.substring(begin
-							+ "Restrictions:".length()).replace("            ", "\n"));
-				} else if (begin > 0) {
-					entry.setRestrictions(text.substring(begin
-							+ "Restrictions:".length(), end).replace("            ", "\n"));
+			if (end < 0)
+				end = text.indexOf("Prerequisites:");
+			if (end < 0) {
+				campuses = text.substring(begin
+						+ "May be offered at any of the following campuses:".length()
+						+ 5);
+			} else {
+				campuses = text.substring(begin
+						+ "May be offered at any of the following campuses:".length()
+						+ 5, end - 1);
+			}
+			temp = campuses.replace("       ", "#").split("#");
+			List<String> camps = new ArrayList<String>();
+			for (String s : temp) {
+				if (s.length() > 1) {
+					camps.add(s);
 				}
 
-			} catch (StringIndexOutOfBoundsException e) {
-				// no type, not available
-				// System.out.println("-----------");
-				// System.out.println("Error for cnbr = " + cnbr);
-				// System.out.println("-----------");
+			}
+			entry.setCampuses(camps);
+
+			// get restrictions
+			begin = text.indexOf("Restrictions:");
+			end = text.indexOf("Corequisites:");
+			if (end < 0)
+				end = text.indexOf("Prerequisites:");
+			if (begin > 0 && end < 0) {
+				entry.setRestrictions(text.substring(begin
+						+ "Restrictions:".length()).replace("            ", "\n"));
+			} else if (begin > 0) {
+				entry.setRestrictions(text.substring(begin
+						+ "Restrictions:".length(), end).replace("            ", "\n"));
 			}
 		} else {
-			throw new CourseNotFoundException();
+			// test empty
+			Elements informationElements = document.getElementsByAttributeValue("summary", "This layout table holds message information");
+			if (!informationElements.isEmpty()
+					&& informationElements.text().contains("No detailed class information found")) {
+				throw new CourseNotFoundException(informationElements.text());
+			} else {
+				throw new HtmlParseException("Course table not found, but page does not contain message stating no course found.");
+			}
 		}
 
 		return entry;
