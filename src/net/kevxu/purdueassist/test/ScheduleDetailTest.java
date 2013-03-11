@@ -49,8 +49,8 @@ public class ScheduleDetailTest {
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
 
-	private boolean silent;
-	private boolean smallSilent;
+	private static boolean silent;
+	private static boolean smallSilent;
 
 	public static void main(String[] args) throws InterruptedException {
 		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (optional)");
@@ -62,8 +62,6 @@ public class ScheduleDetailTest {
 		org.apache.commons.cli.CommandLine cmd;
 
 		Term term = null;
-		boolean silent = false;
-		boolean smallSilent = false;
 		String[] crns;
 		boolean parallel = false;
 		int crn = 0;
@@ -165,10 +163,5 @@ public class ScheduleDetailTest {
 
 	private static Term parseTerm(String termString) {
 		return Term.valueOf(termString.toUpperCase());
-	}
-
-	public ScheduleDetailTest(boolean silent, boolean smallSilent) {
-		this.silent = silent;
-		this.smallSilent = smallSilent;
 	}
 }

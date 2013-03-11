@@ -172,7 +172,7 @@ public class ScheduleDetail {
 	}
 
 	private void requestEnd() {
-		this.mRequestFinished.set(false);
+		this.mRequestFinished.set(true);
 	}
 
 	/**
