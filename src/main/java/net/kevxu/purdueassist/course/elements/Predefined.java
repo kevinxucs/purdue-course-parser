@@ -49,8 +49,8 @@ public class Predefined {
 		SUMMER2008("Summer 2008", "200830"),
 		SPRING2008("Spring 2008", "200820");
 
-		private final String mFullName;
-		private final String mLinkName;
+		private String mFullName;
+		private String mLinkName;
 
 		Term(String name, String linkName) {
 			mFullName = name;
@@ -243,8 +243,8 @@ public class Predefined {
 		NMCM("", "NMCM"),
 		PHSL("", "PHSL");
 
-		private final String mFullName;
-		private final String mLinkName;
+		private String mFullName;
+		private String mLinkName;
 
 		Subject(String fullName, String linkName) {
 			mFullName = fullName;
@@ -287,8 +287,8 @@ public class Predefined {
 		Clinic3("Clinic3", ""),
 		Studio1("Studio1", "");
 
-		private final String mFullName;
-		private final String mLinkName;
+		private String mFullName;
+		private String mLinkName;
 
 		Type(String name, String linkName) {
 			mFullName = name;
@@ -315,8 +315,8 @@ public class Predefined {
 		Professional("Professional", "PR"),
 		IndianaCollegeNetwork("Indiana College Network", "IC");
 
-		private final String mFullName;
-		private final String mLinkName;
+		private String mFullName;
+		private String mLinkName;
 
 		Level(String fullName, String linkName) {
 			mFullName = fullName;
