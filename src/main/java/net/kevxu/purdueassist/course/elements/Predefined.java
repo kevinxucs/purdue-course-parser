@@ -26,7 +26,7 @@
 
 package net.kevxu.purdueassist.course.elements;
 
-public class Predefined {
+public interface Predefined {
 
 	public enum Term {
 		CURRENT("Current", "CURRENT"),
