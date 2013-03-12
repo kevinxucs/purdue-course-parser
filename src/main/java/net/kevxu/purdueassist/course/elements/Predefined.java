@@ -49,213 +49,219 @@ public class Predefined {
 		SUMMER2008("Summer 2008", "200830"),
 		SPRING2008("Spring 2008", "200820");
 
-		private final String name;
-		private final String linkName;
+		private final String mFullName;
+		private final String mLinkName;
 
 		Term(String name, String linkName) {
-			this.name = name;
-			this.linkName = linkName;
+			mFullName = name;
+			mLinkName = linkName;
 		}
 
 		public String getName() {
-			return name;
+			return mFullName;
 		}
 
 		public String getLinkName() {
-			return linkName;
+			return mLinkName;
 		}
 
 		@Override
 		public String toString() {
-			return name;
+			return mLinkName;
 		}
 	}
 
 	public enum Subject {
-		AAE("Aero & Astro Engineering"),
-		AAS("African American Studies"),
-		ABE("Agri & Biol Engineering"),
-		AD("Art & Design"),
-		AFT("Aerospace Studies"),
-		AGEC("Agricultural Economics"),
-		AGR("Agriculture"),
-		AGRY("Agronomy"),
-		AMST("American Studies"),
-		ANSC("Animal Sciences"),
-		ANTH("Anthropology"),
-		ARAB("Arabic"),
-		ASAM("Asian American Studies"),
-		ASL("American Sign Language"),
-		ASM("Agricultural Systems Mgmt"),
-		ASTR("Astronomy"),
-		AT("Aviation Technology"),
-		BAND("Bands"),
-		BCHM("Biochemistry"),
-		BCM("Bldg Construct Mgmt Tech"),
-		BIOL("Biological Sciences"),
-		BME("Biomedical Engineering"),
-		BMS("Basic Medical Sciences"),
-		BTNY("Botany & Plant Pathology"),
-		BUS("Business"),
-		CAND("Candidate"),
-		CE("Civil Engineering"),
-		CEM("Construction Engr & Mgmt"),
-		CGT("Computer Graphics Tech"),
-		CHE("Chemical Engineering"),
-		CHM("Chemistry"),
-		CHNS("Chinese"),
-		CLCS("Classics"),
-		CLPH("Clinical Pharmacy"),
-		CMPL("Comparative Literature"),
-		CNIT("Computer & Info Tech"),
-		COM("Communication"),
-		CPB("Comparative Pathobiology"),
-		CS("Computer Sciences"),
-		CSR("Consumer ScI & Retailing"),
-		DANC("Dance"),
-		EAS("Earth & Atmospheric Sci"),
-		ECE("Electrical & Computer Engr"),
-		ECET("Electrical&Comp Engr Tech"),
-		ECON("Economics"),
-		EDCI("Educ-Curric & Instruction"),
-		EDPS("Educ-Ed'l and Psy Studies"),
-		EDST("Ed Leadrship&Cultrl Fnd"),
-		EEE("Environ & Ecological Engr"),
-		ENE("Engineering Education"),
-		ENGL("English"),
-		ENGR("First Year Engineering"),
-		ENTM("Entomology"),
-		ENTR("Entrepreneurship"),
-		EPCS("Engr Proj Cmity Service"),
-		FLL("Foreign Lang & Literatures"),
-		FNR("Forestry&Natural Resources"),
-		FR("French"),
-		FS("Food Science"),
-		FVS("Film And Video Studies"),
-		GEP("Global Engineering Program"),
-		GER("German"),
-		GRAD("Graduate Studies"),
-		GREK("Greek"),
-		GS("General Studies"),
-		HDFS("Human Dev &Family Studies"),
-		HEBR("Hebrew"),
-		HHS("College Health & Human Sci"),
-		HIST("History"),
-		HK("Health And Kinesiology"),
-		HONR("Honors"),
-		HORT("Horticulture"),
-		HSCI("Health Sciences"),
-		HTM("Hospitality & Tourism Mgmt"),
-		IDE("Interdisciplinary Engr"),
-		IDIS("Interdisciplinary Studies"),
-		IE("Industrial Engineering"),
-		IET("Industrial Engr Technology"),
-		IPPH("Industrial & Phys Pharm"),
-		IT("Industrial Technology"),
-		ITAL("Italian"),
-		JPNS("Japanese"),
-		JWST("Jewish Studies"),
-		LA("Landscape Architecture"),
-		LALS("Latina Am&Latino Studies"),
-		LATN("Latin"),
-		LC("Languages and Cultures"),
-		LCME("Lafayette Center Med Educ"),
-		LING("Linguistics"),
-		MA("Mathematics"),
-		MARS("Medieval &Renaissance Std"),
-		MCMP("Med Chem &Molecular Pharm"),
-		ME("Mechanical Engineering"),
-		MET("Mechanical Engr Tech"),
-		MFET("Manufacturing Engr Tech"),
-		MGMT("Management"),
-		MSE("Materials Engineering"),
-		MSL("Military Science & Ldrshp"),
-		MUS("Music History & Theory"),
-		NRES("Natural Res & Environ Sci"),
-		NS("Naval Science"),
-		NUCL("Nuclear Engineering"),
-		NUPH("Nuclear Pharmacy"),
-		NUR("Nursing"),
-		NUTR("Nutrition Science"),
-		OBHR("Orgnztnl Bhvr &Hum Resrce"),
-		OLS("Organiz Ldrshp&Supervision"),
-		PES("Physical Education Skills"),
-		PHAD("Pharmacy Administration"),
-		PHIL("Philosophy"),
-		PHPR("Pharmacy Practice"),
-		PHRM("Pharmacy"),
-		PHYS("Physics"),
-		POL("Political Science"),
-		PSY("Psychology"),
-		PTGS("Portuguese"),
-		REG("Reg File Maintenance"),
-		REL("Religious Studies"),
-		RUSS("Russian"),
-		SA("Study Abroad"),
-		SCI("General Science"),
-		SLHS("Speech, Lang&Hear Science"),
-		SOC("Sociology"),
-		SPAN("Spanish"),
-		STAT("Statistics"),
-		TECH("Technology"),
-		THTR("Theatre"),
-		USP("Undergrad Studies Prog"),
-		VCS("Veterinary Clinical Sci"),
-		VM("Veterinary Medicine"),
-		WOST("Women's Studies"),
-		YDAE("Youth Develop & Ag Educ"),
-		CIC("CIC"),
-		CMCI("CMCI"),
-		AST("AST"),
-		CHEM("CHEM"),
-		CSCI("CSCI"),
-		COMM("COMM"),
-		ENG("ENG"),
-		GEOL("GEOL"),
-		LSTU("LSTU"),
-		FINA("FINA"),
-		SPCH("SPCH"),
-		INFO("INFO"),
-		MATH("MATH"),
-		CMCL("CMCL"),
-		GEOG("GEOG"),
-		JOUR("JOUR"),
-		COAS("COAS"),
-		HPER("HPER"),
-		HSRV("HSRV"),
-		POLS("POLS"),
-		SPEA("SPEA"),
-		TEL("TEL"),
-		CIT("CIT"),
-		EALC("EALC"),
-		SWK("SWK"),
-		ANAT("ANAT"),
-		CJUS("CJUS"),
-		PHYT("PHYT"),
-		PMTD("PMTD"),
-		DRAF("DRAF"),
-		PRDM("PRDM"),
-		SUPV("SUPV"),
-		ERTH("ERTH"),
-		FOLK("FOLK"),
-		CMLT("CMLT"),
-		OADM("OADM"),
-		NMCM("NMCM"),
-		PHSL("PHSL");
+		AAE("Aero & Astro Engineering", "AAE"),
+		AAS("African American Studies", "AAS"),
+		ABE("Agri & Biol Engineering", "ABE"),
+		AD("Art & Design", "AD"),
+		AFT("Aerospace Studies", "AFT"),
+		AGEC("Agricultural Economics", "AGEC"),
+		AGR("Agriculture", "AGR"),
+		AGRY("Agronomy", "AGRY"),
+		AMST("American Studies", "AMST"),
+		ANSC("Animal Sciences", "ANSC"),
+		ANTH("Anthropology", "ANTH"),
+		ARAB("Arabic", "ARAB"),
+		ASAM("Asian American Studies", "ASAM"),
+		ASL("American Sign Language", "ASL"),
+		ASM("Agricultural Systems Mgmt", "ASM"),
+		ASTR("Astronomy", "ASTR"),
+		AT("Aviation Technology", "AT"),
+		BAND("Bands", "BAND"),
+		BCHM("Biochemistry", "BCHM"),
+		BCM("Bldg Construct Mgmt Tech", "BCM"),
+		BIOL("Biological Sciences", "BIOL"),
+		BME("Biomedical Engineering", "BME"),
+		BMS("Basic Medical Sciences", "BMS"),
+		BTNY("Botany & Plant Pathology", "BTNY"),
+		BUS("Business", "BUS"),
+		CAND("Candidate", "CAND"),
+		CE("Civil Engineering", "CE"),
+		CEM("Construction Engr & Mgmt", "CEM"),
+		CGT("Computer Graphics Tech", "CGT"),
+		CHE("Chemical Engineering", "CHE"),
+		CHM("Chemistry", "CHM"),
+		CHNS("Chinese", "CHNS"),
+		CLCS("Classics", "CLCS"),
+		CLPH("Clinical Pharmacy", "CLPH"),
+		CMPL("Comparative Literature", "CMPL"),
+		CNIT("Computer & Info Tech", "CNIT"),
+		COM("Communication", "COM"),
+		CPB("Comparative Pathobiology", "CPB"),
+		CS("Computer Sciences", "CS"),
+		CSR("Consumer ScI & Retailing", "CSR"),
+		DANC("Dance", "DANC"),
+		EAS("Earth & Atmospheric Sci", "EAS"),
+		ECE("Electrical & Computer Engr", "ECE"),
+		ECET("Electrical&Comp Engr Tech", "ECET"),
+		ECON("Economics", "ECON"),
+		EDCI("Educ-Curric & Instruction", "EDCI"),
+		EDPS("Educ-Ed'l and Psy Studies", "EDPS"),
+		EDST("Ed Leadrship&Cultrl Fnd", "EDST"),
+		EEE("Environ & Ecological Engr", "EEE"),
+		ENE("Engineering Education", "ENE"),
+		ENGL("English", "ENGL"),
+		ENGR("First Year Engineering", "ENGR"),
+		ENTM("Entomology", "ENTM"),
+		ENTR("Entrepreneurship", "ENTR"),
+		EPCS("Engr Proj Cmity Service", "EPCS"),
+		FLL("Foreign Lang & Literatures", "FLL"),
+		FNR("Forestry&Natural Resources", "FNR"),
+		FR("French", "FR"),
+		FS("Food Science", "FS"),
+		FVS("Film And Video Studies", "FVS"),
+		GEP("Global Engineering Program", "GEP"),
+		GER("German", "GER"),
+		GRAD("Graduate Studies", "GRAD"),
+		GREK("Greek", "GREK"),
+		GS("General Studies", "GS"),
+		HDFS("Human Dev &Family Studies", "HDFS"),
+		HEBR("Hebrew", "HEBR"),
+		HHS("College Health & Human Sci", "HHS"),
+		HIST("History", "HIST"),
+		HK("Health And Kinesiology", "HK"),
+		HONR("Honors", "HONR"),
+		HORT("Horticulture", "HORT"),
+		HSCI("Health Sciences", "HSCI"),
+		HTM("Hospitality & Tourism Mgmt", "HTM"),
+		IDE("Interdisciplinary Engr", "IDE"),
+		IDIS("Interdisciplinary Studies", "IDIS"),
+		IE("Industrial Engineering", "IE"),
+		IET("Industrial Engr Technology", "IET"),
+		IPPH("Industrial & Phys Pharm", "IPPH"),
+		IT("Industrial Technology", "IT"),
+		ITAL("Italian", "ITAL"),
+		JPNS("Japanese", "JPNS"),
+		JWST("Jewish Studies", "JWST"),
+		LA("Landscape Architecture", "LA"),
+		LALS("Latina Am&Latino Studies", "LALS"),
+		LATN("Latin", "LATN"),
+		LC("Languages and Cultures", "LC"),
+		LCME("Lafayette Center Med Educ", "LCME"),
+		LING("Linguistics", "LING"),
+		MA("Mathematics", "MA"),
+		MARS("Medieval &Renaissance Std", "MARS"),
+		MCMP("Med Chem &Molecular Pharm", "MCMP"),
+		ME("Mechanical Engineering", "ME"),
+		MET("Mechanical Engr Tech", "MET"),
+		MFET("Manufacturing Engr Tech", "MFET"),
+		MGMT("Management", "MGMT"),
+		MSE("Materials Engineering", "MSE"),
+		MSL("Military Science & Ldrshp", "MSL"),
+		MUS("Music History & Theory", "MUS"),
+		NRES("Natural Res & Environ Sci", "NRES"),
+		NS("Naval Science", "NS"),
+		NUCL("Nuclear Engineering", "NUCL"),
+		NUPH("Nuclear Pharmacy", "NUPH"),
+		NUR("Nursing", "NUR"),
+		NUTR("Nutrition Science", "NUTR"),
+		OBHR("Orgnztnl Bhvr &Hum Resrce", "OBHR"),
+		OLS("Organiz Ldrshp&Supervision", "OLS"),
+		PES("Physical Education Skills", "PES"),
+		PHAD("Pharmacy Administration", "PHAD"),
+		PHIL("Philosophy", "PHIL"),
+		PHPR("Pharmacy Practice", "PHPR"),
+		PHRM("Pharmacy", "PHRM"),
+		PHYS("Physics", "PHYS"),
+		POL("Political Science", "POL"),
+		PSY("Psychology", "PSY"),
+		PTGS("Portuguese", "PTGS"),
+		REG("Reg File Maintenance", "REG"),
+		REL("Religious Studies", "REL"),
+		RUSS("Russian", "RUSS"),
+		SA("Study Abroad", "SA"),
+		SCI("General Science", "SCI"),
+		SLHS("Speech, Lang&Hear Science", "SLHS"),
+		SOC("Sociology", "SOC"),
+		SPAN("Spanish", "SPAN"),
+		STAT("Statistics", "STAT"),
+		TECH("Technology", "TECH"),
+		THTR("Theatre", "THTR"),
+		USP("Undergrad Studies Prog", "USP"),
+		VCS("Veterinary Clinical Sci", "VCS"),
+		VM("Veterinary Medicine", "VM"),
+		WOST("Women's Studies", "WOST"),
+		YDAE("Youth Develop & Ag Educ", "YDAE"),
+		CIC("", "CIC"),
+		CMCI("", "CMCI"),
+		AST("", "AST"),
+		CHEM("", "CHEM"),
+		CSCI("", "CSCI"),
+		COMM("", "COMM"),
+		ENG("", "ENG"),
+		GEOL("", "GEOL"),
+		LSTU("", "LSTU"),
+		FINA("", "FINA"),
+		SPCH("", "SPCH"),
+		INFO("", "INFO"),
+		MATH("", "MATH"),
+		CMCL("", "CMCL"),
+		GEOG("", "GEOG"),
+		JOUR("", "JOUR"),
+		COAS("", "COAS"),
+		HPER("", "HPER"),
+		HSRV("", "HSRV"),
+		POLS("", "POLS"),
+		SPEA("", "SPEA"),
+		TEL("", "TEL"),
+		CIT("", "CIT"),
+		EALC("", "EALC"),
+		SWK("", "SWK"),
+		ANAT("", "ANAT"),
+		CJUS("", "CJUS"),
+		PHYT("", "PHYT"),
+		PMTD("", "PMTD"),
+		DRAF("", "DRAF"),
+		PRDM("", "PRDM"),
+		SUPV("", "SUPV"),
+		ERTH("", "ERTH"),
+		FOLK("", "FOLK"),
+		CMLT("", "CMLT"),
+		OADM("", "OADM"),
+		NMCM("", "NMCM"),
+		PHSL("", "PHSL");
 
-		private final String fullName;
+		private final String mFullName;
+		private final String mLinkName;
 
-		Subject(String fullName) {
-			this.fullName = fullName;
+		Subject(String fullName, String linkName) {
+			mFullName = fullName;
+			mLinkName = linkName;
 		}
 
-		public String getFullName() {
-			return fullName;
+		public String getName() {
+			return mFullName;
+		}
+
+		public String getLinkName() {
+			return mLinkName;
 		}
 
 		@Override
 		public String toString() {
-			return fullName;
+			return mLinkName;
 		}
 	}
 
@@ -281,25 +287,53 @@ public class Predefined {
 		Clinic3("Clinic3", ""),
 		Studio1("Studio1", "");
 
-		private final String name;
-		private final String linkName;
+		private final String mFullName;
+		private final String mLinkName;
 
 		Type(String name, String linkName) {
-			this.name = name;
-			this.linkName = linkName;
+			mFullName = name;
+			mLinkName = linkName;
 		}
 
 		public String getName() {
-			return name;
+			return mFullName;
 		}
 
 		public String getLinkName() {
-			return linkName;
+			return mLinkName;
 		}
 
 		@Override
 		public String toString() {
-			return name;
+			return mFullName;
+		}
+	}
+
+	public enum Level {
+		Undergraduate("Undergraduate", "UG"),
+		Graduate("Graduate", "GR"),
+		Professional("Professional", "PR"),
+		IndianaCollegeNetwork("Indiana College Network", "IC");
+
+		private final String mFullName;
+		private final String mLinkName;
+
+		Level(String fullName, String linkName) {
+			mFullName = fullName;
+			mLinkName = linkName;
+		}
+
+		public String getName() {
+			return mFullName;
+		}
+
+		public String getLinkName() {
+			return mLinkName;
+		}
+
+		@Override
+		public String toString() {
+			return mFullName;
 		}
 	}
 }
