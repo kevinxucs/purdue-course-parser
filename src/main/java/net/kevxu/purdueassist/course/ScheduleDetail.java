@@ -83,14 +83,10 @@ public class ScheduleDetail {
 
 	private HttpClient mHttpClient;
 
-	private AtomicBoolean mRequestFinished;
+	private boolean mRequestFinished = true;
 
-	/**
-	 * Constructor.
-	 */
 	public ScheduleDetail() {
 		mHttpClient = new DefaultHttpClient();
-		mRequestFinished = new AtomicBoolean(true);
 	}
 
 	/**
@@ -102,7 +98,7 @@ public class ScheduleDetail {
 	 *             If calling this method before previous request is finished,
 	 *             then will throw this exception.
 	 */
-	public ScheduleDetailEntry getResult(int crn) throws RequestNotFinishedException, IOException , HtmlParseException, CourseNotFoundException, ResultNotMatchException{
+	public ScheduleDetailEntry getResult(int crn) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
 		return getResult(Term.CURRENT, crn);
 	}
 
@@ -122,7 +118,7 @@ public class ScheduleDetail {
 	 * @throws CourseNotFoundException
 	 * @throws HtmlParseException
 	 */
-	public ScheduleDetailEntry getResult(Term term, int crn) throws RequestNotFinishedException, IOException , HtmlParseException, CourseNotFoundException, ResultNotMatchException{
+	public ScheduleDetailEntry getResult(Term term, int crn) throws RequestNotFinishedException, IOException, HtmlParseException, CourseNotFoundException, ResultNotMatchException {
 		if (!isRequestFinished())
 			throw new RequestNotFinishedException();
 
@@ -163,16 +159,16 @@ public class ScheduleDetail {
 		} finally {
 			requestEnd();
 		}
-		
+
 		return entry;
 	}
 
-	private void requestStart() {
-		this.mRequestFinished.set(false);
+	private synchronized void requestStart() {
+		mRequestFinished = false;
 	}
 
-	private void requestEnd() {
-		this.mRequestFinished.set(true);
+	private synchronized void requestEnd() {
+		mRequestFinished = true;
 	}
 
 	/**
@@ -180,8 +176,8 @@ public class ScheduleDetail {
 	 * 
 	 * @return Return true if previous request has already finished.
 	 */
-	public boolean isRequestFinished() {
-		return mRequestFinished.get();
+	public synchronized boolean isRequestFinished() {
+		return mRequestFinished;
 	}
 
 	private ScheduleDetailEntry parseDocument(Document document) throws HtmlParseException, CourseNotFoundException, ResultNotMatchException {
