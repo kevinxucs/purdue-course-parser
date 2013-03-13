@@ -27,9 +27,11 @@
 package net.kevxu.purdueassist.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,7 +214,20 @@ class ScheduleDetailTestRunnable implements Runnable {
 					System.out.println(entry);
 				}
 			} else {
-				writer.append(new FileWriterEntry(folder + File.separator + crn, entry.toString()));
+				// writer.append(new FileWriterEntry(folder + File.separator +
+				// crn, entry.toString()));
+				File dir = new File(folder);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				File file = new File(folder + File.separator + crn);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+				writer.write(entry.toString());
+				writer.flush();
+				writer.close();
 			}
 		} catch (RequestNotFinishedException e1) {
 			e1.printStackTrace();
@@ -229,12 +244,12 @@ class ScheduleDetailTestRunnable implements Runnable {
 				System.err.println("Parse Error: " + e.getMessage() + "\n");
 			}
 		} catch (CourseNotFoundException e) {
-//			if (!silent) {
-//				if (!smallSilent)
-//					System.err.println("INPUT: " + crn + " " + term);
-//				System.out.println("CRN: " + crn + " " + "Term: " + term
-//						+ " Not Found: " + e.getMessage() + "\n");
-//			}
+			// if (!silent) {
+			// if (!smallSilent)
+			// System.err.println("INPUT: " + crn + " " + term);
+			// System.out.println("CRN: " + crn + " " + "Term: " + term
+			// + " Not Found: " + e.getMessage() + "\n");
+			// }
 		} catch (ResultNotMatchException e) {
 			if (!silent) {
 				if (!smallSilent)
