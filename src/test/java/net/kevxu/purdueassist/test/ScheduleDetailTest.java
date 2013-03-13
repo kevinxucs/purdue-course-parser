@@ -163,10 +163,6 @@ class ScheduleDetailTestRunnable implements Runnable {
 		this.folder = folder;
 	}
 
-	public void outputEntry(ScheduleDetailEntry entry) {
-
-	}
-
 	@Override
 	public void run() {
 		ScheduleDetail detail = new ScheduleDetail();
