@@ -133,7 +133,7 @@ public class CatalogDetail {
 		} finally {
 			requestEnd();
 		}
-		
+
 		return entry;
 	}
 
@@ -214,7 +214,7 @@ public class CatalogDetail {
 				}
 			}
 			if (types.size() > 0)
-				entry.setType(types);
+				entry.setTypes(types);
 			if (preq.size() > 0)
 				entry.setPrerequisites(preq);
 
@@ -305,7 +305,7 @@ public class CatalogDetail {
 		private String name;
 		private String description;
 		private List<String> levels;
-		private List<Type> type;
+		private List<Type> types;
 		private String offeredBy;
 		private String department;
 		private List<String> campuses;
@@ -358,8 +358,8 @@ public class CatalogDetail {
 			return this.levels;
 		}
 
-		public List<Type> getType() {
-			return this.type;
+		public List<Type> getTypes() {
+			return this.types;
 		}
 
 		public String getOfferedBy() {
@@ -406,8 +406,8 @@ public class CatalogDetail {
 			this.levels = levels;
 		}
 
-		private void setType(List<Type> type) {
-			this.type = type;
+		private void setTypes(List<Type> types) {
+			this.types = types;
 		}
 
 		private void setOfferedBy(String offeredBy) {
@@ -432,59 +432,14 @@ public class CatalogDetail {
 
 		@Override
 		public String toString() {
-			StringBuilder myStr = new StringBuilder();
-
-			if (subject != null) {
-				myStr.append("Subject: " + subject.toString() + "\n");
-			}
-
-			myStr.append("CNBR: " + cnbr + "\n");
-
-			if (name != null) {
-				myStr.append("Name: " + name + "\n");
-			}
-
-			if (description != null) {
-				myStr.append("Description: " + description + "\n");
-			}
-
-			if (levels != null) {
-				myStr.append("Level: ");
-				myStr.append(levels);
-				myStr.append("\n");
-			}
-
-			if (type != null) {
-				myStr.append("Type: ");
-				myStr.append(type);
-				myStr.append("\n");
-			}
-
-			if (offeredBy != null) {
-				myStr.append("OfferedBy: " + offeredBy + "\n");
-			}
-
-			if (department != null) {
-				myStr.append("Department: " + department + "\n");
-			}
-
-			if (campuses != null) {
-				myStr.append("Campuses: ");
-				myStr.append(campuses);
-				myStr.append("\n");
-			}
-
-			if (restrictions != null) {
-				myStr.append("Restrictions: " + restrictions + "\n");
-			}
-
-			if (prerequisites != null) {
-				myStr.append("Prerequisites: ");
-				myStr.append(prerequisites);
-				myStr.append("\n");
-			}
-
-			return myStr.toString();
+			return "Term: " + term + "\n" + "Subject: " + subject + "\n"
+					+ "CNBR: " + cnbr + "\n" + "Course Name: " + name + "\n"
+					+ "Description: " + description + "\n" + "Levels: "
+					+ levels + "\n" + "Types: " + types + "\n" + "Offered by: "
+					+ offeredBy + "\n" + "Department: " + department + "\n"
+					+ "Campuses: " + campuses + "\n" + "Restrictions: "
+					+ restrictions + "\n" + "Prerequisites: " + prerequisites
+					+ "\n";
 		}
 
 	}
