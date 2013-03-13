@@ -10,6 +10,5 @@ public class SearchConfig {
 	private int cnbr;
 	private int[] cnbr_range;
 	private String title;
-	private 
 
 }
