@@ -137,6 +137,7 @@ public class ScheduleDetailTest {
 					}
 				} else {
 					// Parallel
+					// TODO: bug fix - some request lost during execution
 					ExecutorService executor = Executors.newFixedThreadPool(threads);
 					for (int crn : crns) {
 						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, folder, writer));
