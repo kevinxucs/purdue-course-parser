@@ -137,7 +137,6 @@ public class ScheduleDetailTest {
 					}
 				} else {
 					// Parallel
-					// TODO: bug fix - some request lost during execution
 					ExecutorService executor = Executors.newFixedThreadPool(threads);
 					for (int crn : crns) {
 						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, folder, writer));
@@ -215,25 +214,19 @@ class ScheduleDetailTestRunnable implements Runnable {
 					System.out.println(entry);
 				}
 			} else {
-				// writer.append(new FileWriterEntry(folder + File.separator +
-				// crn, entry.toString()));
-				if (!silent) {
-					if (!smallSilent)
-						System.err.println("INPUT: " + crn + " " + term);
-					System.err.println("Suppose to write to file.");
-				}
-				File dir = new File(folder);
-				if (!dir.exists()) {
-					dir.mkdirs();
-				}
-				File file = new File(folder + File.separator + crn);
-				if (!file.exists()) {
-					file.createNewFile();
-				}
-				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-				writer.write(entry.toString());
-				writer.flush();
-				writer.close();
+				writer.append(new FileWriterEntry(folder + File.separator + crn, entry.toString()));
+//				File dir = new File(folder);
+//				if (!dir.exists()) {
+//					dir.mkdirs();
+//				}
+//				File file = new File(folder + File.separator + crn);
+//				if (!file.exists()) {
+//					file.createNewFile();
+//				}
+//				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+//				writer.write(entry.toString());
+//				writer.flush();
+//				writer.close();
 			}
 		} catch (RequestNotFinishedException e1) {
 			e1.printStackTrace();
