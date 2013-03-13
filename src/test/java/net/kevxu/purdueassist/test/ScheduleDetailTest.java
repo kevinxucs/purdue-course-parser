@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import net.kevxu.purdueassist.course.ScheduleDetail;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
@@ -136,7 +138,10 @@ public class ScheduleDetailTest {
 					}
 				} else {
 					// Parallel
-
+					ExecutorService executor = Executors.newFixedThreadPool(threads);
+					for (int crn : crns) {
+						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, termString, writer));
+					}
 				}
 
 				while (writer.queueSize() > 0) {
