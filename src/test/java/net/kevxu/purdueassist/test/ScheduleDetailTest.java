@@ -229,12 +229,12 @@ class ScheduleDetailTestRunnable implements Runnable {
 				System.err.println("Parse Error: " + e.getMessage() + "\n");
 			}
 		} catch (CourseNotFoundException e) {
-			if (!silent) {
-				if (!smallSilent)
-					System.err.println("INPUT: " + crn + " " + term);
-				System.out.println("CRN: " + crn + " " + "Term: " + term
-						+ " Not Found: " + e.getMessage() + "\n");
-			}
+//			if (!silent) {
+//				if (!smallSilent)
+//					System.err.println("INPUT: " + crn + " " + term);
+//				System.out.println("CRN: " + crn + " " + "Term: " + term
+//						+ " Not Found: " + e.getMessage() + "\n");
+//			}
 		} catch (ResultNotMatchException e) {
 			if (!silent) {
 				if (!smallSilent)

@@ -81,7 +81,7 @@ public class FileWriterQueue implements Runnable {
 	public void run() {
 		while (!isStopped()) {
 			try {
-				FileWriterEntry entry = queue.poll(10, TimeUnit.MILLISECONDS);
+				FileWriterEntry entry = queue.poll(100, TimeUnit.MILLISECONDS);
 				if (entry != null) {
 					File file = new File(entry.getPath());
 					if (!file.exists()) {
