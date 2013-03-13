@@ -56,8 +56,6 @@ import org.apache.commons.cli.ParseException;
 
 public class ScheduleDetailTest {
 
-	public static final String VERSION = "0.2.0-SNAPSHOT";
-
 	private static final HelpFormatter formatter = new HelpFormatter();
 	private static final Options options = new Options();
 

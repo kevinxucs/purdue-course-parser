@@ -67,7 +67,7 @@ public interface Predefined {
 
 		@Override
 		public String toString() {
-			return mLinkName;
+			return mFullName;
 		}
 	}
 
