@@ -27,6 +27,7 @@
 package net.kevxu.purdueassist.test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,6 +42,8 @@ import net.kevxu.purdueassist.course.shared.CourseNotFoundException;
 import net.kevxu.purdueassist.course.shared.HtmlParseException;
 import net.kevxu.purdueassist.course.shared.RequestNotFinishedException;
 import net.kevxu.purdueassist.course.shared.ResultNotMatchException;
+import net.kevxu.purdueassist.test.utility.FileWriterQueue;
+import net.kevxu.purdueassist.test.utility.FileWriterQueue.FileWriterEntry;
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -62,6 +65,8 @@ public class ScheduleDetailTest {
 	private static boolean parallel;
 	private static int threads;
 	private static String folder;
+
+	private static FileWriterQueue writer;
 
 	public static void main(String[] args) {
 		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (optional)");
@@ -120,6 +125,25 @@ public class ScheduleDetailTest {
 						crns.add(Integer.valueOf(crnString));
 					}
 				}
+
+				writer = new FileWriterQueue();
+				writer.start();
+
+				if (!parallel) {
+					// Not parallel
+					for (int crn : crns) {
+						new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, termString, writer).run();
+					}
+				} else {
+					// Parallel
+
+				}
+
+				while (writer.queueSize() > 0) {
+					Thread.sleep(100);
+				}
+
+				writer.stop();
 			}
 		} catch (ParseException e) {
 			System.err.println("Command line arguments parsing failed. Reason: "
@@ -134,6 +158,8 @@ public class ScheduleDetailTest {
 		} catch (RuntimeException e) {
 			System.err.println("Runtime exception: " + e.getMessage());
 			printHelp(formatter, options);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -154,13 +180,15 @@ class ScheduleDetailTestRunnable implements Runnable {
 	private boolean silent;
 	private boolean smallSilent;
 	private String folder;
+	private FileWriterQueue writer;
 
-	public ScheduleDetailTestRunnable(Term term, int crn, boolean silent, boolean smallSilent, String folder) {
+	public ScheduleDetailTestRunnable(Term term, int crn, boolean silent, boolean smallSilent, String folder, FileWriterQueue writer) {
 		this.term = term;
 		this.crn = crn;
 		this.silent = silent;
 		this.smallSilent = smallSilent;
 		this.folder = folder;
+		this.writer = writer;
 	}
 
 	@Override
@@ -176,7 +204,7 @@ class ScheduleDetailTestRunnable implements Runnable {
 					System.out.println(entry);
 				}
 			} else {
-				
+				writer.append(new FileWriterEntry(folder + File.separator + crn, entry.toString()));
 			}
 		} catch (RequestNotFinishedException e1) {
 			e1.printStackTrace();
