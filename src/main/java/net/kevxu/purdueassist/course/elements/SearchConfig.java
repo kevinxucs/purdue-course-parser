@@ -5,6 +5,7 @@ import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
 
+@SuppressWarnings("unused")
 public class SearchConfig {
 
 	private Term term;
@@ -15,6 +16,5 @@ public class SearchConfig {
 	private Level level;
 	private Type scheduleType;
 	private String college;
-	
 
 }
