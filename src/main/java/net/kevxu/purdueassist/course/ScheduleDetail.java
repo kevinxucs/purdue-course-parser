@@ -32,8 +32,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import net.kevxu.purdueassist.course.elements.Predefined.Level;
 import net.kevxu.purdueassist.course.elements.Predefined.Subject;
 import net.kevxu.purdueassist.course.elements.Predefined.Term;
 import net.kevxu.purdueassist.course.elements.Predefined.Type;
@@ -423,9 +423,13 @@ public class ScheduleDetail {
 					}
 					continue;
 				} else if (info.contains("Levels: ")) {
+					ArrayList<Level> levels = new ArrayList<Level>();
 					String levelsString = info.substring(info.indexOf("</span>")
 							+ "</span>".length());
-					entry.setLevels(new ArrayList<String>(Arrays.asList(levelsString.split(", "))));
+					for (String levelString : levelsString.split(", ")) {
+						levels.add(Level.valueOf(levelString));
+					}
+					entry.setLevels(levels);
 					continue;
 				} else if (info.contains("Campus")) {
 					String campusString = info.substring(0, info.indexOf("Campus")).trim();
@@ -498,7 +502,7 @@ public class ScheduleDetail {
 		private String cnbr;
 		private String section;
 		private Term term;
-		private List<String> levels;
+		private List<Level> levels;
 		private String campus;
 		private Type type;
 		private double credits;
@@ -550,7 +554,7 @@ public class ScheduleDetail {
 			return term;
 		}
 
-		public List<String> getLevels() {
+		public List<Level> getLevels() {
 			return levels;
 		}
 
@@ -618,7 +622,7 @@ public class ScheduleDetail {
 			this.term = term;
 		}
 
-		private void setLevels(List<String> levels) {
+		private void setLevels(List<Level> levels) {
 			this.levels = levels;
 		}
 
