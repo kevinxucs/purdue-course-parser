@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import net.kevxu.purdueassist.course.ScheduleDetail;
 import net.kevxu.purdueassist.course.ScheduleDetail.ScheduleDetailEntry;
@@ -67,8 +68,6 @@ public class ScheduleDetailTest {
 	private static boolean parallel;
 	private static int threads;
 	private static String folder;
-
-	private static FileWriterQueue writer;
 
 	public static void main(String[] args) {
 		options.addOption("t", "term", true, "full name (without space) for school term. i.e. fall2012 (optional)");
@@ -128,7 +127,7 @@ public class ScheduleDetailTest {
 					}
 				}
 
-				writer = new FileWriterQueue();
+				final FileWriterQueue writer = new FileWriterQueue();
 				writer.start();
 
 				if (!parallel) {
@@ -142,9 +141,18 @@ public class ScheduleDetailTest {
 					for (int crn : crns) {
 						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, folder, writer));
 					}
+
+					executor.shutdown();
+
+					while (!executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+
+					}
 				}
 
-				while (writer.queueSize() > 0) {
+				while (true) {
+					if (writer.queueSize() == 0)
+						break;
+
 					Thread.sleep(100);
 				}
 

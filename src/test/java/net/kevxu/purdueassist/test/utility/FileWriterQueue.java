@@ -39,23 +39,21 @@ public class FileWriterQueue implements Runnable {
 		queue = new LinkedBlockingQueue<FileWriterQueue.FileWriterEntry>();
 	}
 
-	private synchronized boolean isStarted() {
+	public synchronized boolean isStarted() {
 		return started;
 	}
 
-	private synchronized boolean isStopped() {
+	public synchronized boolean isStopped() {
 		return stopped;
 	}
 
 	public synchronized void start() {
 		this.started = true;
-		this.stopped = false;
 
 		new Thread(this).start();
 	}
 
 	public synchronized void stop() {
-		this.started = false;
 		this.stopped = true;
 	}
 
