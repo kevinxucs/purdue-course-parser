@@ -134,13 +134,13 @@ public class ScheduleDetailTest {
 				if (!parallel) {
 					// Not parallel
 					for (int crn : crns) {
-						new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, termString, writer).run();
+						new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, folder, writer).run();
 					}
 				} else {
 					// Parallel
 					ExecutorService executor = Executors.newFixedThreadPool(threads);
 					for (int crn : crns) {
-						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, termString, writer));
+						executor.submit(new ScheduleDetailTestRunnable(term, crn, silent, smallSilent, folder, writer));
 					}
 				}
 
