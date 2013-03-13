@@ -217,6 +217,11 @@ class ScheduleDetailTestRunnable implements Runnable {
 			} else {
 				// writer.append(new FileWriterEntry(folder + File.separator +
 				// crn, entry.toString()));
+				if (!silent) {
+					if (!smallSilent)
+						System.err.println("INPUT: " + crn + " " + term);
+					System.err.println("Suppose to write to file.");
+				}
 				File dir = new File(folder);
 				if (!dir.exists()) {
 					dir.mkdirs();
