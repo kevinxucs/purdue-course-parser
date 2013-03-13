@@ -427,7 +427,7 @@ public class ScheduleDetail {
 					String levelsString = info.substring(info.indexOf("</span>")
 							+ "</span>".length());
 					for (String levelString : levelsString.split(", ")) {
-						levels.add(Level.valueOf(levelString));
+						levels.add(Level.valueOf(levelString.replace(" ", "")));
 					}
 					entry.setLevels(levels);
 					continue;

@@ -154,9 +154,6 @@ public class ScheduleDetailTest {
 			System.err.println("Command line arguments parsing failed. Reason: "
 					+ e.getMessage());
 			printHelp(formatter, options);
-		} catch (IllegalArgumentException e) {
-			System.err.println("No such school term.");
-			printHelp(formatter, options);
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found: " + e.getMessage());
 			printHelp(formatter, options);
@@ -233,6 +230,13 @@ class ScheduleDetailTestRunnable implements Runnable {
 						+ " Not Found: " + e.getMessage() + "\n");
 			}
 		} catch (ResultNotMatchException e) {
+			if (!silent) {
+				if (!smallSilent)
+					System.err.println("INPUT: " + crn + " " + term);
+				e.printStackTrace();
+				System.err.println();
+			}
+		} catch (RuntimeException e) {
 			if (!silent) {
 				if (!smallSilent)
 					System.err.println("INPUT: " + crn + " " + term);
