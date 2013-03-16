@@ -255,7 +255,9 @@ public class CatalogDetail {
 						+ "May be offered at any of the following campuses:".length()
 						+ 5, end - 1);
 			}
-			temp = campuses.replace("       ", "#").split("#");
+			
+			String ttt=campuses.substring(0,7);
+			temp = campuses.replace(ttt, "#").split("#");
 			List<String> camps = new ArrayList<String>();
 			for (String s : temp) {
 				if (s.length() > 1) {
