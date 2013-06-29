@@ -1,26 +1,26 @@
 /*
  * CatalogDetail.java
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2013 Kaiwen Xu and Rendong Chen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is furnished 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all 
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
@@ -65,7 +65,7 @@ import org.jsoup.select.Elements;
  * Output: <br />
  * subject cnbr name description levels type offeredBy department campuses
  * restrictions prerequisites
- * 
+ *
  * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
  */
 public class CatalogDetail {
@@ -147,7 +147,7 @@ public class CatalogDetail {
 
 	/**
 	 * Check whether previous request has been finished.
-	 * 
+	 *
 	 * @return Return true if previous request has already finished.
 	 */
 	public boolean isRequestFinished() {
@@ -255,7 +255,7 @@ public class CatalogDetail {
 						+ "May be offered at any of the following campuses:".length()
 						+ 5, end - 1);
 			}
-			
+
 			String ttt=campuses.substring(0,7);
 			temp = campuses.replace(ttt, "#").split("#");
 			List<String> camps = new ArrayList<String>();
@@ -273,11 +273,11 @@ public class CatalogDetail {
 			if (end < 0)
 				end = text.indexOf("Prerequisites:");
 			if (begin > 0 && end < 0) {
-				entry.setRestrictions(text.substring(begin
-						+ "Restrictions:".length()).replace("            ", "\n"));
+				// entry.setRestrictions(text.substring(begin
+				// 		+ "Restrictions:".length()).replace("", "\n"));
 			} else if (begin > 0) {
-				entry.setRestrictions(text.substring(begin
-						+ "Restrictions:".length(), end).replace("            ", "\n"));
+				// entry.setRestrictions(text.substring(begin
+				// 		+ "Restrictions:".length(), end).replace("", "\n"));
 			}
 		} else {
 			// test empty
@@ -295,7 +295,7 @@ public class CatalogDetail {
 
 	/**
 	 * This class contains information return by CatalogDetail.
-	 * 
+	 *
 	 * @author Rendong Chen (ryan), Kaiwen Xu (kevin)
 	 */
 	@SuppressWarnings("unused")

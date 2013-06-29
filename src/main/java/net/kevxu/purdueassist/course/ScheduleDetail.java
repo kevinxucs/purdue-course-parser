@@ -1,26 +1,26 @@
 /*
  * ScheduleDetail.java
- * 
+ *
  * The MIT License
  *
  * Copyright (c) 2013 Kaiwen Xu and Rendong Chen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is furnished 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
  * to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all 
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
@@ -68,7 +68,7 @@ import org.jsoup.select.Elements;
  * Output: <br />
  * name crn subject cnbr section term levels campus type credits seats
  * waitlistSeats restrictions prerequisites generalRequirements corequisites;
- * 
+ *
  * @author Kaiwen Xu (kevin)
  * @see ScheduleDetailListener
  */
@@ -90,7 +90,7 @@ public class ScheduleDetail {
 
 	/**
 	 * Call this method to start retrieving and parsing data.
-	 * 
+	 *
 	 * @param crn
 	 *            CRN number of course.
 	 * @throws RequestNotFinishedException
@@ -103,7 +103,7 @@ public class ScheduleDetail {
 
 	/**
 	 * Call this method to start retrieving and parsing data.
-	 * 
+	 *
 	 * @param term
 	 *            School term. If it's null, current school term will be used.
 	 * @param crn
@@ -112,7 +112,7 @@ public class ScheduleDetail {
 	 *             If calling this method before previous request is finished,
 	 *             then will throw this exception.
 	 * @throws IOException
-	 * 
+	 *
 	 * @throws ResultNotMatchException
 	 * @throws CourseNotFoundException
 	 * @throws HtmlParseException
@@ -172,7 +172,7 @@ public class ScheduleDetail {
 
 	/**
 	 * Check whether previous request has been finished.
-	 * 
+	 *
 	 * @return Return true if previous request has already finished.
 	 */
 	public synchronized boolean isRequestFinished() {
@@ -245,7 +245,7 @@ public class ScheduleDetail {
 	/**
 	 * Set course name, crn, subject - cnbr and section number based on the
 	 * string passed to this method.
-	 * 
+	 *
 	 * @param entry
 	 *            ScheduleDetailEntry to be set.
 	 * @param basicInfo
@@ -284,7 +284,7 @@ public class ScheduleDetail {
 
 	/**
 	 * Set seats information, which contains capacity, actual and remaining.
-	 * 
+	 *
 	 * @param entry
 	 *            ScheduleDetailEntry to be set.
 	 * @param seatsInfo
@@ -303,7 +303,7 @@ public class ScheduleDetail {
 
 	/**
 	 * Same as setSeats().
-	 * 
+	 *
 	 * @param entry
 	 *            ScheduleDetailEntry to be set.
 	 * @param waitlistSeatsInfo
@@ -332,7 +332,7 @@ public class ScheduleDetail {
 	/**
 	 * Set term, levels, campus and etc. based on the html passed to this
 	 * method.
-	 * 
+	 *
 	 * @param entry
 	 *            ScheduleDetailEntry to be set.
 	 * @param remainingInfoHtml
@@ -490,7 +490,7 @@ public class ScheduleDetail {
 
 	/**
 	 * This class contains information return by ScheduleDetail.
-	 * 
+	 *
 	 * @author Kaiwen Xu (kevin)
 	 */
 	public class ScheduleDetailEntry {
