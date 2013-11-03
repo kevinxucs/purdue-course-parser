@@ -114,6 +114,7 @@ public interface Predefined {
 		CS("Computer Sciences", "CS"),
 		CSR("Consumer ScI & Retailing", "CSR"),
 		DANC("Dance", "DANC"),
+		EAPS("Earth Atmos Planetary Sci", "EAPS"),
 		EAS("Earth & Atmospheric Sci", "EAS"),
 		ECE("Electrical & Computer Engr", "ECE"),
 		ECET("Electrical&Comp Engr Tech", "ECET"),
