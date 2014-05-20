@@ -30,6 +30,8 @@ public interface Predefined {
 
 	public enum Term {
 		CURRENT("Current", "CURRENT"),
+		FALL2014("Fall 2014", "201510"),
+		SUMMER2014("Summer 2014", "201430"),
 		SPRING2014("Spring 2014", "201420"),
 		FALL2013("Fall 2013", "201410"),
 		SUMMER2013("Summer 2013", "201330"),
